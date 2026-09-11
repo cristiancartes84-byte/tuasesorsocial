@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Tu Asesor Social: Asistencia Social Profesional Chile 2026 | 10 Años Experiencia</title>
+    <meta name="description" content="Asesoría social profesional en Chile: orientación socio-jurídica, mediación familiar certificada y gestión de subsidios. 10 años de experiencia. Atención online y presencial. Resultados garantizados.">
+    <meta name="keywords" content="asesor social chile, mediación familiar, subsidio eléctrico, subsidio arriendo, asistencia social, trabajador social">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tuasesorsocial.cl/">
+    <meta property="og:title" content="Tu Asesor Social | Asistencia y Consultoría Social Online">
+    <meta property="og:description" content="Orientación socio-jurídica, mediación familiar y gestión de subsidios en Chile.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Tu Asesor Social | Asistencia y Consultoría Social Online">
+    <meta property="twitter:description" content="Orientación socio-jurídica, mediación familiar y gestión de subsidios en Chile.">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Tu Asesor Social",
+      "description": "Asistencia y Consultoría Social Online",
+      "url": "https://tuasesorsocial.cl",
+      "telephone": "+56937712927",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "CL"
+      }
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-confiable: #2563eb;
+            --verde-esperanza: #059669;
+            --naranja-acogedor: #ea580c;
+            --gris-oscuro: #1f2937;
+            --gris-claro: #f3f4f6;
+            --blanco: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--gris-oscuro);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navegación */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--azul-confiable);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gris-oscuro);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--azul-confiable);
+        }
+
+        /* Hero Section - Estilo Diego VZ */
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(20px) rotate(-5deg);
+            }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb, #059669, #10b981);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255,255,255,0.15) 0%,
+                transparent 70%
+            );
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero:hover::before {
+            opacity: 1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+            z-index: 0;
+        }
+
+        .floating-icon:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; animation-name: floatReverse; }
+        .floating-icon:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 2s; }
+        .floating-icon:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 3s; animation-name: floatReverse; }
+        .floating-icon:nth-child(5) { top: 50%; left: 5%; animation-delay: 4s; }
+        .floating-icon:nth-child(6) { top: 60%; right: 8%; animation-delay: 5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(7) { top: 35%; left: 25%; animation-delay: 1.5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(8) { bottom: 40%; right: 22%; animation-delay: 2.5s; }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4rem;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.2);
+            border: 2px solid var(--azul-confiable);
+            color: var(--azul-confiable);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .hero-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        .hero-title .greeting {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 400;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline;
+            font-weight: 900;
+        }
+
+        .hero-credentials {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.4s forwards;
+        }
+
+        .credential-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.95);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .credential-icon {
+            font-size: 1.3rem;
+        }
+
+        .hero-intro {
+            font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+            color: rgba(255,255,255,0.95);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+            font-weight: 400;
+        }
+
+        .hero-specialties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        .specialty-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .specialty-item:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+        }
+
+        .specialty-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .specialty-text {
+            color: rgba(255,255,255,0.9);
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+            from { opacity: 0; }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% {
+                box-shadow: 0 20px 50px rgba(37, 99, 235, 0.15),
+                            0 10px 25px rgba(5, 150, 105, 0.1);
+            }
+            50% {
+                box-shadow: 0 20px 50px rgba(37, 99, 235, 0.2),
+                            0 10px 25px rgba(5, 150, 105, 0.15);
+            }
+        }
+
+        .service-card:hover {
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+
+        /* Efecto de brillo sutil */
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+            pointer-events: none;
+        }
+
+        .service-card:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1s forwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--naranja-acogedor);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--azul-confiable);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 4rem 0;
+            background: var(--blanco);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--gris-oscuro);
+            margin-top: 0.5rem;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 6rem 0;
+            background: var(--gris-claro);
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gris-oscuro);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--azul-confiable), var(--verde-esperanza));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.15),
+                        0 10px 25px rgba(5, 150, 105, 0.1);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-card:hover h3 {
+            color: var(--azul-confiable);
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .service-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover .service-icon::after {
+            opacity: 0.3;
+        }
+
+        .service-card:nth-child(1) .service-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .service-card:nth-child(2) .service-icon {
+            background: linear-gradient(135deg, var(--verde-esperanza), #10b981);
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: linear-gradient(135deg, var(--naranja-acogedor), #f59e0b);
+        }
+
+        .service-card:nth-child(4) .service-icon {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+        }
+
+        .service-card:nth-child(5) .service-icon {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+
+        .service-card:nth-child(6) .service-icon {
+            background: linear-gradient(135deg, #14b8a6, #059669);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--gris-oscuro);
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            color: #6b7280;
+            line-height: 1.7;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover p {
+            color: #4b5563;
+        }
+
+        /* Animación de entrada escalonada para las tarjetas */
+        .service-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .service-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .service-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        .service-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        .service-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+        .service-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 6rem 0;
+            background: white;
+        }
+
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 2px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(251, 191, 36, 0.25);
+            border-color: #fbbf24;
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .testimonial-info h4 {
+            color: #78350f;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-location {
+            color: #92400e;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            color: #f59e0b;
+            font-size: 1.25rem;
+        }
+
+        .testimonial-text {
+            color: #78350f;
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .testimonial-date {
+            color: #92400e;
+            font-size: 0.85rem;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .testimonial-quote {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 4rem;
+            color: rgba(251, 191, 36, 0.2);
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--azul-confiable), #1e40af);
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .contact-info {
+            color: white;
+        }
+
+        .contact-info h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-item-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #25d366;
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128c7e;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+        }
+
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--azul-confiable);
+        }
+
+        .contact-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gris-oscuro);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .hero-container {
+                padding: 0 2rem;
+            }
+
+            .hero-credentials {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .credential-item {
+                justify-content: center;
+            }
+
+            .hero-specialties {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .floating-icon {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .services-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🙌</div>
+                <span>Tu Asesor Social</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="/subsidio-electrico/">Subsidio Eléctrico</a></li>
+                <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <!-- Iconos flotantes del trabajo social -->
+        <div class="floating-icon">⚖️</div>
+        <div class="floating-icon">🤝</div>
+        <div class="floating-icon">👨‍👩‍👧</div>
+        <div class="floating-icon">📋</div>
+        <div class="floating-icon">💼</div>
+        <div class="floating-icon">🏠</div>
+        <div class="floating-icon">💚</div>
+        <div class="floating-icon">✨</div>
+
+        <div class="hero-container">
+            <div class="hero-badge">Tu Asesor Social</div>
+
+            <h1 class="hero-title">
+                <span class="greeting">Hola, soy</span>
+                <span class="accent">Francis Carter Sanhueza</span>
+            </h1>
+
+            <div class="hero-credentials">
+                <div class="credential-item">
+                    <span class="credential-icon">💼</span>
+                    <span>Asistente Social</span>
+                </div>
+                <div class="credential-item">
+                    <span class="credential-icon">🎓</span>
+                    <span>Licenciada en Trabajo Social</span>
+                </div>
+                <div class="credential-item">
+                    <span class="credential-icon">📜</span>
+                    <span>Diplomada en Intervención Social</span>
+                </div>
+            </div>
+
+            <p class="hero-intro">
+                Trabajadora Social con <strong>10 años de experiencia</strong> dedicada a ofrecer servicios de alta calidad y personalizados para apoyar a individuos y familias en Chile.
+            </p>
+
+            <div class="hero-specialties">
+                <div class="specialty-item">
+                    <span class="specialty-icon">⚖️</span>
+                    <span class="specialty-text">Orientación Socio-Jurídica Profesional</span>
+                </div>
+                <div class="specialty-item">
+                    <span class="specialty-icon">🤝</span>
+                    <span class="specialty-text">Mediación Familiar Certificada</span>
+                </div>
+                <div class="specialty-item">
+                    <span class="specialty-icon">🏠</span>
+                    <span class="specialty-text">Gestión de Subsidios Estatales</span>
+                </div>
+                <div class="specialty-item">
+                    <span class="specialty-icon">📋</span>
+                    <span class="specialty-text">Informes Sociales Profesionales</span>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#contacto" class="btn btn-primary">Contactar Ahora</a>
+                <a href="#servicios" class="btn btn-secondary">Ver Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Efecto spotlight que sigue al cursor
+        const hero = document.getElementById('hero');
+
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            hero.style.setProperty('--mouse-x', `${x}%`);
+            hero.style.setProperty('--mouse-y', `${y}%`);
+        });
+
+        // Animación de los iconos flotantes al pasar el cursor
+        const floatingIcons = document.querySelectorAll('.floating-icon');
+        floatingIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', () => {
+                icon.style.transform = 'scale(1.5) rotate(15deg)';
+                icon.style.opacity = '0.4';
+            });
+            icon.addEventListener('mouseleave', () => {
+                icon.style.transform = '';
+                icon.style.opacity = '0.15';
+            });
+        });
+
+        // Paralax suave del hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroContainer = document.querySelector('.hero-container');
+            if (scrolled < window.innerHeight) {
+                heroContainer.style.transform = `translateY(${scrolled * 0.5}px)`;
+                heroContainer.style.opacity = 1 - (scrolled / window.innerHeight);
+            }
+        });
+    </script>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" data-target="10">0</div>
+                <div class="stat-label">Años de Experiencia</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="500">0</div>
+                <div class="stat-label">Familias Atendidas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Orientación Online</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-subtitle">Atención profesional personalizada para cada una de tus necesidades sociales y familiares</p>
+
+        <div class="services-container">
+            <a href="/orientacion-socio-juridica/" class="service-card" style="text-decoration: none; color: inherit;">
+                <div class="service-icon">⚖️</div>
+                <h3>Orientación Socio-Jurídica</h3>
+                <p>Asesoría profesional en temas sociales y legales. Te guiamos en cada paso del proceso.</p>
+            </a>
+
+            <div class="service-card">
+                <div class="service-icon">👨‍👩‍👧</div>
+                <h3>Mediación Familiar</h3>
+                <p>Resolución pacífica de conflictos familiares con mediación certificada online y presencial.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">💡</div>
+                <h3>Subsidio Eléctrico</h3>
+                <p>Te ayudamos a postular al subsidio eléctrico. Asesoría completa en requisitos y plazos.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🏠</div>
+                <h3>Subsidio de Arriendo</h3>
+                <p>Gestión completa para obtener el subsidio de arriendo del MINVU.</p>
+            </div>
+
+            <a href="/informes-sociales/" class="service-card" style="text-decoration: none; color: inherit;">
+                <div class="service-icon">📋</div>
+                <h3>Informes Sociales</h3>
+                <p>Elaboración de informes sociales profesionales para diferentes instituciones.</p>
+            </a>
+
+            <a href="/jornadas-autocuidado/" class="service-card" style="text-decoration: none; color: inherit;">
+                <div class="service-icon">💚</div>
+                <h3>Jornadas de Autocuidado</h3>
+                <p>Talleres y capacitaciones en bienestar emocional y autocuidado personal.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+        <p class="section-subtitle">Más de 500 familias y personas han confiado en nuestra asesoría profesional</p>
+
+        <div class="testimonials-container">
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">CM</div>
+                        <div class="testimonial-info">
+                            <h4>Carlos Martínez</h4>
+                            <div class="testimonial-location">Valparaíso, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">Muy contento con la asesoría recibida. Claros, precisos y con un trato muy amable. Me ayudaron a obtener el subsidio habitacional que tanto necesitaba mi familia. ¡Totalmente recomendados!</p>
+                    <div class="testimonial-date">Febrero 2026</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">MG</div>
+                        <div class="testimonial-info">
+                            <h4>María González</h4>
+                            <div class="testimonial-location">Santiago, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">Excelente servicio, muy profesionales. La mediación familiar me ayudó a resolver un conflicto que arrastraba hace años. El proceso fue claro, respetuoso y efectivo. Súper agradecida.</p>
+                    <div class="testimonial-date">Enero 2026</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">LF</div>
+                        <div class="testimonial-info">
+                            <h4>Lucía Fernández</h4>
+                            <div class="testimonial-location">Concepción, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">Es un servicio que vale mucho la pena. Las sesiones fueron claras, profesionales y muy útiles. Me orientaron sobre cómo gestionar un conflicto familiar y me brindaron herramientas concretas.</p>
+                    <div class="testimonial-date">Diciembre 2025</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">JD</div>
+                        <div class="testimonial-info">
+                            <h4>Jorge Díaz</h4>
+                            <div class="testimonial-location">Antofagasta, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">Buen servicio, aunque me hubiera gustado un poco más de rapidez en la respuesta inicial. Una vez que comenzamos el proceso, todo fue excelente. Los recomiendo al 100%.</p>
+                    <div class="testimonial-date">Noviembre 2025</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">LP</div>
+                        <div class="testimonial-info">
+                            <h4>Lucía Pérez</h4>
+                            <div class="testimonial-location">Viña del Mar, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">Increíble experiencia. El equipo es muy atento y sabe exactamente lo que hace. Me ayudaron con el informe social para mi postulación a beca y todo salió perfecto. ¡Gracias por su dedicación!</p>
+                    <div class="testimonial-date">Octubre 2025</div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">AL</div>
+                        <div class="testimonial-info">
+                            <h4>Ana López</h4>
+                            <div class="testimonial-location">Concepción, Chile</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <p class="testimonial-text">No puedo estar más agradecida. Me guiaron paso a paso y logramos solucionar todo en tiempo récord. El apoyo que recibí fue fundamental en un momento muy difícil de mi vida. ¡Gracias!</p>
+                    <div class="testimonial-date">Septiembre 2025</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contacto">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>¿Necesitas Ayuda?</h2>
+                <p>Estamos aquí para ayudarte. Contáctanos y resolveremos tus dudas de forma rápida y profesional.</p>
+
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📱</div>
+                        <div>+569 3771 2927</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📍</div>
+                        <div>Atención en todo Chile</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">⏰</div>
+                        <div>Lunes a Viernes 9:00 - 18:00</div>
+                    </div>
+                </div>
+
+                <a href="https://wa.me/56937712927?text=Hola%2C%20necesito%20asesoría%20social" class="whatsapp-btn" target="_blank">
+                    <span>💬</span>
+                    Consulta por WhatsApp
+                </a>
+            </div>
+
+            <div class="contact-form">
+                <input type="text" placeholder="Tu Nombre" required>
+                <input type="email" placeholder="Tu Email" required>
+                <input type="tel" placeholder="Tu Teléfono">
+                <textarea placeholder="¿En qué podemos ayudarte?"></textarea>
+                <button class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="/">Inicio</a>
+                <a href="/subsidio-electrico/">Subsidio Eléctrico</a>
+                <a href="/mediacion-familiar/">Mediación Familiar</a>
+                <a href="/subsidio-de-arriendo/">Subsidio de Arriendo</a>
+            </div>
+            <div class="copyright">
+                © 2026 Tu Asesor Social. Todos los derechos reservados. | Francis Carter Sanhueza - Trabajadora Social
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.stat-item, .service-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    element.textContent = Math.floor(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            };
+
+            updateCounter();
+        }
+
+        // Trigger counters on scroll
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target.querySelector('[data-target]');
+                    if (counter && counter.textContent === '0') {
+                        animateCounter(counter);
+                    }
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-item').forEach(el => {
+            statsObserver.observe(el);
+        });
+    </script>
+</body>
+</html>

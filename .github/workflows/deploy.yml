@@ -1,0 +1,25 @@
+name: Deploy a producción
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy por SSH al servidor Hetzner
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          port: ${{ secrets.HETZNER_PORT }}
+          script: |
+            set -e
+            cd /var/www/tuasesorsocial
+            git pull origin main
+            npm install --production
+            pm2 reload ecosystem.config.js --env production

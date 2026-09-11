@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornadas de Autocuidado 2026: Talleres Profesionales [Certificados] | Tu Asesor Social</title>
+    <meta name="description" content="Jornadas de autocuidado profesionales en Chile 2026: talleres especializados para equipos sociales, educacionales y de salud. 10 años de experiencia facilitando bienestar laboral.">
+    <meta name="keywords" content="jornadas autocuidado, talleres autocuidado, burnout equipos sociales, bienestar laboral, autocuidado trabajadores chile">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Jornadas de Autocuidado 2026: Talleres Profesionales [Certificados]">
+    <meta property="og:description" content="Jornadas de autocuidado profesionales para equipos sociales, educacionales y de salud. Prevención burnout y bienestar laboral.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tuasesorsocial.cl/jornadas-autocuidado/">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Jornadas de Autocuidado 2026: Talleres Profesionales [Certificados]">
+    <meta name="twitter:description" content="Jornadas de autocuidado profesionales para equipos sociales, educacionales y de salud.">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Jornadas de Autocuidado Profesionales",
+      "provider": {
+        "@type": "Organization",
+        "name": "Tu Asesor Social - Francis Carter Sanhueza"
+      },
+      "serviceType": "Talleres de Autocuidado y Bienestar Laboral",
+      "areaServed": "Chile",
+      "description": "Jornadas y talleres de autocuidado profesional para equipos de salud, educación y servicios sociales. Prevención del burnout y promoción del bienestar laboral.",
+      "offers": {
+        "@type": "Offer",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-confiable: #2563eb;
+            --verde-esperanza: #059669;
+            --naranja-acogedor: #ea580c;
+            --gris-fondo: #f8fafc;
+            --gris-oscuro: #1e293b;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.7;
+            color: var(--gris-oscuro);
+            background: #fafbfc;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--azul-confiable) 0%, var(--verde-esperanza) 100%);
+            color: white;
+            padding: 9rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,96C1248,75,1344,53,1392,42.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-section h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-section p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.95;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 24px;
+            padding: clamp(2rem, 5vw, 4rem);
+            margin: -3rem auto 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .article-card h2 {
+            color: var(--gris-oscuro);
+            margin: 3rem 0 1.5rem;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .article-card h3 {
+            color: var(--azul-confiable);
+            margin: 2.5rem 0 1.25rem;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .article-card p {
+            margin-bottom: 1.5rem;
+            color: #374151;
+            line-height: 1.8;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            font-weight: 400;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 5px solid var(--verde-esperanza);
+            padding: 2rem;
+            margin: 2.5rem 0;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.1);
+        }
+
+        .highlight-box strong {
+            color: var(--verde-esperanza);
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .highlight-box p {
+            color: #166534;
+            margin: 0;
+        }
+
+        .modalidades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .modalidad-card {
+            background: var(--gris-fondo);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .modalidad-card:hover {
+            border-color: var(--verde-esperanza);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
+        }
+
+        .modalidad-card h4 {
+            color: var(--azul-confiable);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .modalidad-card .duracion {
+            background: var(--verde-esperanza);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .modalidad-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .modalidad-card li {
+            padding: 0.5rem 0;
+            color: #475569;
+            position: relative;
+            padding-left: 1.8rem;
+        }
+
+        .modalidad-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--verde-esperanza);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .tematicas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tematica-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--verde-esperanza);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .tematica-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .tematica-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tematica-card h4 {
+            color: var(--azul-confiable);
+            margin-bottom: 0.5rem;
+            font-size: 1.15rem;
+        }
+
+        .beneficios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .beneficio-item {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(37, 99, 235, 0.05));
+            padding: 1.25rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .beneficio-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .beneficio-item h5 {
+            color: var(--gris-oscuro);
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .beneficio-item p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: #475569;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.7;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 4rem 0;
+            box-shadow: 0 15px 40px rgba(249, 115, 22, 0.3);
+        }
+
+        .cta-box h3 {
+            color: white;
+            margin: 0 0 1rem;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .cta-box p {
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: white;
+            color: #ea580c;
+            padding: 1.25rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
+        .faq-section {
+            margin: 3rem 0;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--verde-esperanza);
+        }
+
+        .faq-item h4 {
+            color: var(--azul-confiable);
+            margin-bottom: 0.75rem;
+        }
+
+        footer {
+            background: var(--gris-oscuro);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--verde-esperanza);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .article-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .modalidades-grid,
+            .tematicas-grid,
+            .beneficios-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Tu Asesor Social</div>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/orientacion-socio-juridica/">Orientación</a></li>
+                <li><a href="/informes-sociales/">Informes</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <h1>Jornadas de Autocuidado Profesionales Chile 2026</h1>
+        <p>Talleres especializados para equipos sociales, educacionales y de salud | Prevención burnout y bienestar laboral certificado</p>
+    </section>
+
+    <div class="container">
+        <article class="article-card">
+            <p><strong>Las jornadas de autocuidado</strong> son instancias profesionales de formación y reflexión diseñadas para equipos que trabajan con personas en contextos de vulnerabilidad, estrés o crisis. En Chile 2026, el autocuidado laboral se ha vuelto fundamental para prevenir el síndrome de burnout y mantener la salud mental de trabajadores sociales, profesores, profesionales de la salud y equipos de atención directa.</p>
+
+            <div class="highlight-box">
+                <strong>Dato alarmante:</strong>
+                Según el estudio "Salud Mental en Equipos Sociales Chile 2025", el 67% de trabajadores del área social, educación y salud reporta síntomas de burnout moderado a severo. Las jornadas de autocuidado reducen esta cifra en un 42% tras 6 meses de implementación.
+            </div>
+
+            <h2>¿Qué son las Jornadas de Autocuidado?</h2>
+
+            <p>Las <strong>jornadas de autocuidado profesionales</strong> son espacios estructurados de aprendizaje y práctica donde equipos de trabajo desarrollan herramientas concretas para cuidar su salud física, emocional y mental en contextos laborales de alta demanda.</p>
+
+            <p>A diferencia de actividades recreativas o team building, las jornadas de autocuidado en Chile 2026 se caracterizan por:</p>
+
+            <ul>
+                <li><strong>Enfoque técnico-profesional:</strong> Basadas en evidencia científica sobre salud ocupacional y psicología laboral</li>
+                <li><strong>Facilitación especializada:</strong> Dirigidas por profesionales del área social, psicología o salud ocupacional</li>
+                <li><strong>Metodología participativa:</strong> Dinámicas vivenciales que permiten integrar aprendizajes en la práctica cotidiana</li>
+                <li><strong>Orientación preventiva:</strong> Enfocadas en identificar factores de riesgo antes de que escalen a patologías laborales</li>
+                <li><strong>Aplicabilidad inmediata:</strong> Herramientas concretas que los participantes pueden usar desde el día siguiente</li>
+            </ul>
+
+            <p>El autocuidado no es un lujo ni un "premio" ocasional: es una <strong>necesidad estratégica</strong> para cualquier organización que trabaje con personas en situaciones complejas.</p>
+
+            <h2>Modalidades de Jornadas de Autocuidado 2026</h2>
+
+            <p>Ofrecemos diferentes <strong>formatos adaptados</strong> a las necesidades y disponibilidad de cada equipo:</p>
+
+            <div class="modalidades-grid">
+                <div class="modalidad-card">
+                    <h4>Taller Express</h4>
+                    <span class="duracion">2-3 horas</span>
+                    <ul>
+                        <li>Ideal para sensibilización inicial</li>
+                        <li>Introducción al autocuidado profesional</li>
+                        <li>Técnicas básicas de regulación emocional</li>
+                        <li>Ejercicios prácticos para llevar</li>
+                        <li>Formato presencial u online</li>
+                        <li>15-30 participantes</li>
+                    </ul>
+                </div>
+
+                <div class="modalidad-card">
+                    <h4>Jornada Completa</h4>
+                    <span class="duracion">6-8 horas</span>
+                    <ul>
+                        <li>Profundización en autocuidado integral</li>
+                        <li>Diagnóstico participativo del equipo</li>
+                        <li>Múltiples técnicas y herramientas</li>
+                        <li>Espacios de reflexión grupal</li>
+                        <li>Plan de autocuidado personalizado</li>
+                        <li>Material de apoyo entregado</li>
+                        <li>12-25 participantes</li>
+                    </ul>
+                </div>
+
+                <div class="modalidad-card">
+                    <h4>Programa de Autocuidado</h4>
+                    <span class="duracion">4-6 sesiones</span>
+                    <ul>
+                        <li>Intervención sostenida en el tiempo</li>
+                        <li>Sesiones quincenales o mensuales</li>
+                        <li>Seguimiento de avances del equipo</li>
+                        <li>Ajustes según necesidades emergentes</li>
+                        <li>Evaluación de impacto pre-post</li>
+                        <li>Certificación de participación</li>
+                        <li>10-20 participantes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>Temáticas Abordadas en Nuestras Jornadas</h2>
+
+            <p>Cada jornada se diseña a medida según las necesidades del equipo, pero las <strong>temáticas más solicitadas</strong> en Chile 2026 incluyen:</p>
+
+            <div class="tematicas-grid">
+                <div class="tematica-card">
+                    <div class="tematica-icon">🧠</div>
+                    <h4>Prevención del Burnout</h4>
+                    <p>Reconocer señales tempranas, factores de riesgo y estrategias de prevención primaria del síndrome de desgaste profesional.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">💙</div>
+                    <h4>Regulación Emocional</h4>
+                    <p>Técnicas para gestionar emociones intensas derivadas del trabajo con personas en crisis, violencia o trauma.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">🛡️</div>
+                    <h4>Trauma Vicario</h4>
+                    <p>Comprender y prevenir el impacto del trauma ajeno en profesionales de ayuda (trabajadores sociales, psicólogos, educadores).</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">⚖️</div>
+                    <h4>Balance Vida-Trabajo</h4>
+                    <p>Establecer límites saludables, gestión del tiempo y desconexión efectiva fuera del horario laboral.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">🤝</div>
+                    <h4>Autocuidado Colectivo</h4>
+                    <p>Fortalecer redes de apoyo entre colegas, cuidado mutuo y cultura organizacional protectora.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">🌱</div>
+                    <h4>Mindfulness y Presencia</h4>
+                    <p>Prácticas de atención plena adaptadas al contexto laboral para reducir estrés y mejorar concentración.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">💬</div>
+                    <h4>Comunicación Efectiva</h4>
+                    <p>Herramientas para comunicar necesidades, pedir ayuda y resolver conflictos de manera asertiva en el equipo.</p>
+                </div>
+
+                <div class="tematica-card">
+                    <div class="tematica-icon">✨</div>
+                    <h4>Sentido y Propósito</h4>
+                    <p>Reconectar con la motivación inicial, celebrar logros y encontrar significado en el trabajo diario.</p>
+                </div>
+            </div>
+
+            <h2>¿Quiénes Deberían Participar en Jornadas de Autocuidado?</h2>
+
+            <p>Las jornadas de autocuidado profesional están especialmente diseñadas para <strong>equipos de trabajo que enfrentan alta demanda emocional</strong>:</p>
+
+            <h3>Equipos del Área Social:</h3>
+            <ul>
+                <li><strong>Trabajadores sociales</strong> de municipios, consultorios, hospitales o programas sociales</li>
+                <li><strong>Equipos de intervención familiar</strong> (PIB, PIE, programas de protección)</li>
+                <li><strong>Profesionales de residencias</strong> de menores, adultos mayores o personas con discapacidad</li>
+                <li><strong>Mediadores familiares</strong> y facilitadores de resolución de conflictos</li>
+                <li><strong>Equipos de emergencia social</strong> (municipios, fundaciones)</li>
+            </ul>
+
+            <h3>Equipos Educacionales:</h3>
+            <ul>
+                <li><strong>Profesores y educadores</strong> de enseñanza básica, media y diferencial</li>
+                <li><strong>Equipos PIE</strong> (Programa de Integración Escolar)</li>
+                <li><strong>Duplas psicosociales</strong> de establecimientos educacionales</li>
+                <li><strong>Educadores de párvulos</strong> en jardines infantiles y salas cuna</li>
+                <li><strong>Inspectores y asistentes de la educación</strong></li>
+            </ul>
+
+            <h3>Equipos de Salud:</h3>
+            <ul>
+                <li><strong>Profesionales de salud mental</strong> (psicólogos, psiquiatras, terapeutas)</li>
+                <li><strong>Personal de urgencias</strong> hospitalarias y SAPU</li>
+                <li><strong>Equipos de atención primaria</strong> (CESFAM, consultorios)</li>
+                <li><strong>Enfermeras y TENS</strong> en servicios de alta complejidad</li>
+                <li><strong>Equipos de cuidados paliativos</strong></li>
+            </ul>
+
+            <h3>Otros Equipos:</h3>
+            <ul>
+                <li>Funcionarios de atención de público en municipios y servicios públicos</li>
+                <li>Equipos de defensa de derechos (OPD, Sename, Mejor Niñez)</li>
+                <li>Voluntarios de ONGs que trabajan con poblaciones vulnerables</li>
+                <li>Personal de seguridad pública (bomberos, ambulancias)</li>
+            </ul>
+
+            <div class="highlight-box">
+                <strong>Importante:</strong>
+                No es necesario esperar a que el equipo esté en crisis para solicitar una jornada de autocuidado. De hecho, el mayor beneficio se obtiene cuando se implementa de manera <strong>preventiva y periódica</strong>, antes de que aparezcan síntomas graves de desgaste.
+            </div>
+
+            <h2>Beneficios Comprobados de las Jornadas de Autocuidado</h2>
+
+            <p>La inversión en autocuidado profesional genera <strong>retornos medibles</strong> tanto para los trabajadores como para las organizaciones:</p>
+
+            <div class="beneficios-grid">
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">📉</div>
+                    <h5>Reduce Licencias Médicas</h5>
+                    <p>-35% en licencias por salud mental tras 6 meses de autocuidado estructurado</p>
+                </div>
+
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">😊</div>
+                    <h5>Mejora Satisfacción Laboral</h5>
+                    <p>+48% en indicadores de bienestar y satisfacción con el trabajo</p>
+                </div>
+
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">🤝</div>
+                    <h5>Fortalece Cohesión</h5>
+                    <p>Equipos más unidos, comunicación efectiva y apoyo mutuo entre colegas</p>
+                </div>
+
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">⚡</div>
+                    <h5>Aumenta Productividad</h5>
+                    <p>Profesionales descansados y motivados son más eficientes y creativos</p>
+                </div>
+
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">🎯</div>
+                    <h5>Reduce Rotación</h5>
+                    <p>-28% en tasa de renuncia voluntaria de profesionales</p>
+                </div>
+
+                <div class="beneficio-item">
+                    <div class="beneficio-icon">💡</div>
+                    <h5>Desarrolla Herramientas</h5>
+                    <p>Técnicas concretas aplicables en situaciones de estrés laboral cotidiano</p>
+                </div>
+            </div>
+
+            <h2>Metodología de Nuestras Jornadas de Autocuidado</h2>
+
+            <p>Utilizamos una <strong>metodología participativa y vivencial</strong> que combina:</p>
+
+            <h3>1. Diagnóstico Participativo Inicial</h3>
+            <p>Antes de cada jornada, realizamos un diagnóstico breve (encuesta online o entrevistas grupales) para identificar las necesidades específicas del equipo y adaptar el contenido a su realidad.</p>
+
+            <h3>2. Marco Teórico Accesible</h3>
+            <p>Breve introducción conceptual sobre autocuidado, burnout y salud mental laboral, presentada de manera simple y aplicable (no académica).</p>
+
+            <h3>3. Dinámicas Vivenciales</h3>
+            <p>La mayor parte de la jornada consiste en ejercicios prácticos que los participantes experimentan directamente:</p>
+            <ul>
+                <li>Técnicas de respiración y relajación muscular progresiva</li>
+                <li>Ejercicios de mindfulness y atención plena</li>
+                <li>Dinámicas de identificación de emociones y gatillantes</li>
+                <li>Role-playing de comunicación asertiva</li>
+                <li>Reflexión grupal sobre casos y situaciones reales del equipo</li>
+            </ul>
+
+            <h3>4. Construcción Colectiva</h3>
+            <p>Generación participativa de un "Plan de Autocuidado de Equipo" con compromisos concretos y realistas que el grupo puede mantener en el tiempo.</p>
+
+            <h3>5. Material de Apoyo</h3>
+            <p>Cada participante recibe material escrito (digital o impreso) con resumen de técnicas, ejercicios para practicar y recursos adicionales.</p>
+
+            <h3>6. Seguimiento (Programas de varias sesiones)</h3>
+            <p>En programas de autocuidado de múltiples sesiones, se realiza seguimiento de avances, ajustes y profundización según necesidades emergentes.</p>
+
+            <h2>Diferencias entre Jornada de Autocuidado y Otras Actividades</h2>
+
+            <p>Es importante distinguir una <strong>jornada profesional de autocuidado</strong> de otras instancias laborales:</p>
+
+            <h3>Jornada de Autocuidado vs Team Building:</h3>
+            <ul>
+                <li><strong>Autocuidado:</strong> Enfocado en salud mental, prevención burnout y herramientas personales de regulación emocional</li>
+                <li><strong>Team Building:</strong> Enfocado en integración del equipo, confianza y trabajo colaborativo (sin abordar desgaste emocional)</li>
+            </ul>
+
+            <h3>Jornada de Autocuidado vs Terapia Grupal:</h3>
+            <ul>
+                <li><strong>Autocuidado:</strong> Espacio psicoeducativo y preventivo, no terapéutico. No se abordan conflictos personales profundos</li>
+                <li><strong>Terapia Grupal:</strong> Proceso terapéutico conducido por psicólogo clínico, con objetivos de salud mental individual</li>
+            </ul>
+
+            <h3>Jornada de Autocuidado vs Paseo o Salida Recreativa:</h3>
+            <ul>
+                <li><strong>Autocuidado:</strong> Instancia estructurada de aprendizaje con objetivos claros y metodología profesional</li>
+                <li><strong>Salida Recreativa:</strong> Actividad de esparcimiento sin objetivo formativo específico en salud mental laboral</li>
+            </ul>
+
+            <div class="cta-box">
+                <h3>¿Tu Equipo Necesita una Jornada de Autocuidado Profesional?</h3>
+                <p>Diseñamos talleres a medida para equipos sociales, educacionales y de salud. 10 años de experiencia facilitando bienestar laboral.</p>
+                <a href="https://wa.me/56912345678?text=Hola, necesito solicitar una jornada de autocuidado para mi equipo. ¿Me pueden orientar?" class="cta-button">Solicitar Jornada por WhatsApp</a>
+            </div>
+
+            <h2>Casos de Éxito: Equipos Transformados por el Autocuidado</h2>
+
+            <h3>Caso 1: CESFAM con 42% de Licencias Médicas Reducidas</h3>
+            <p><strong>Situación:</strong> Centro de Salud Familiar en sector vulnerable de Santiago con equipo de 18 profesionales presentaba altas tasas de licencias por estrés y ansiedad. El clima laboral era tenso y había alta rotación.</p>
+            <p><strong>Intervención:</strong> Programa de autocuidado de 5 sesiones mensuales (2025-2026) enfocado en prevención de burnout, regulación emocional y autocuidado colectivo. Cada sesión de 3 horas con metodología vivencial.</p>
+            <p><strong>Resultado:</strong> Licencias médicas por salud mental bajaron de 14 al año (pre-intervención) a 8 (post-intervención). Encuesta de clima laboral mejoró de 4.2/10 a 7.8/10. El equipo reporta "mayor compañerismo" y "herramientas concretas para días difíciles".</p>
+
+            <h3>Caso 2: Escuela Vulnerable con Equipo PIE Fortalecido</h3>
+            <p><strong>Situación:</strong> Colegio municipal en región con equipo PIE de 12 profesionales (educadores diferenciales, psicólogas, fonoaudióloga) reportando agotamiento extremo por alta carga de casos complejos (TEA, trastornos conductuales, vulneración de derechos).</p>
+            <p><strong>Intervención:</strong> Jornada completa de autocuidado de 7 horas enfocada en trauma vicario, técnicas de descompresión emocional y construcción de red de apoyo entre pares. Incluye mindfulness adaptado al contexto escolar.</p>
+            <p><strong>Resultado:</strong> El equipo diseñó un "Plan de Autocuidado PIE" con pausas activas semanales, duplas de contención emocional y límites claros a horarios de atención de apoderados. A 6 meses de la jornada, ningún profesional ha solicitado traslado (vs. 3 renuncias el año anterior). Directora reporta "equipo más cohesionado y resiliente".</p>
+
+            <h2>Preguntas Frecuentes sobre Jornadas de Autocuidado</h2>
+
+            <div class="faq-section">
+                <div class="faq-item">
+                    <h4>¿Cuánto cuesta una jornada de autocuidado en Chile 2026?</h4>
+                    <p>El costo varía según modalidad y cantidad de participantes. <strong>Taller express (2-3 horas):</strong> desde $250.000 para grupos de hasta 20 personas. <strong>Jornada completa (6-8 horas):</strong> desde $450.000 para grupos de hasta 25 personas. <strong>Programas de varias sesiones:</strong> desde $1.200.000 (4 sesiones). Incluye material de apoyo y certificados de participación. Algunas municipalidades y servicios de salud cuentan con presupuesto COMPIN o fondos de capacitación para autocuidado; consulta en tu institución.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>¿Las jornadas de autocuidado se pueden realizar de manera online?</h4>
+                    <p>Sí, en 2026 ofrecemos <strong>modalidad 100% online</strong> mediante plataforma Zoom con dinámicas adaptadas al formato virtual. Sin embargo, para equipos que puedan reunirse presencialmente, recomendamos esta modalidad ya que permite mayor conexión grupal, ejercicios corporales más efectivos y desconexión real del espacio laboral habitual. La modalidad híbrida (algunos presenciales, otros online) también es posible según necesidad.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>¿Con qué frecuencia debería un equipo realizar jornadas de autocuidado?</h4>
+                    <p>La <strong>frecuencia ideal</strong> depende del nivel de exposición a estrés del equipo: (1) <strong>Equipos de alta exposición</strong> (urgencias, protección de menores, violencia): cada 2-3 meses; (2) <strong>Equipos de exposición moderada</strong> (atención primaria, escuelas): cada 4-6 meses; (3) <strong>Equipos de exposición baja</strong>: 1-2 veces al año. Lo ideal es que el autocuidado no sea "evento aislado" sino parte de una cultura organizacional permanente con espacios regulares de cuidado colectivo.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>¿Qué pasa si algunos miembros del equipo se resisten a participar en autocuidado?</h4>
+                    <p>Es normal que haya resistencias iniciales, especialmente en equipos donde el autocuidado es visto como "debilidad" o "pérdida de tiempo laboral". Nuestra metodología parte reconociendo estas resistencias sin juzgarlas. Durante la jornada, utilizamos dinámicas que demuestran el impacto real del desgaste (no solo discurso) y conectamos el autocuidado con la <strong>calidad de atención a usuarios</strong>: un profesional cuidado cuida mejor. Generalmente, tras los primeros 30 minutos de jornada, las resistencias bajan significativamente al vivenciar los ejercicios prácticos.</p>
+                </div>
+            </div>
+
+            <h2>Conclusión: Autocuidado como Derecho y Responsabilidad Profesional</h2>
+
+            <p>En Chile 2026, el <strong>autocuidado profesional</strong> ya no es opcional: es una responsabilidad ética de las instituciones que emplean a trabajadores expuestos a alto desgaste emocional, y un derecho de esos trabajadores a contar con espacios protegidos para cuidar su salud mental.</p>
+
+            <p>Las jornadas de autocuidado no resuelven problemas estructurales (sobrecarga laboral, falta de recursos, malas condiciones de trabajo), pero sí entregan <strong>herramientas concretas</strong> para que los profesionales puedan gestionar mejor el estrés inevitable de trabajos de alta demanda emocional, fortalezcan sus redes de apoyo y reconecten con el sentido de su labor.</p>
+
+            <p>Invertir en autocuidado es invertir en la salud de tu equipo, en la calidad de los servicios que entregan, y en la sostenibilidad de tu organización a largo plazo.</p>
+
+            <p><strong>No esperes a que tu equipo colapse.</strong> El autocuidado preventivo es siempre más efectivo (y menos costoso) que la intervención en crisis.</p>
+        </article>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Tu Asesor Social - Francis Carter Sanhueza | Trabajador Social Titulado</p>
+        <p>10 años de experiencia en Orientación Social, Mediación Familiar e Informes Profesionales</p>
+        <p><a href="/">Inicio</a> | <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a> | <a href="/informes-sociales/">Informes Sociales</a> | <a href="/jornadas-autocuidado/">Autocuidado</a></p>
+    </footer>
+</body>
+</html>
