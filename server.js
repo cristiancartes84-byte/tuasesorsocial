@@ -46,6 +46,10 @@ app.get('/jornadas-autocuidado/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'jornadas-autocuidado.html'));
 });
 
+app.get('/credencial-discapacidad/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'credencial-discapacidad.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
@@ -59,6 +63,10 @@ app.get('/robots.txt', (req, res) => {
 app.get('/subsidio-electrico', (req, res) => res.redirect(301, '/subsidio-electrico/'));
 app.get('/mediacion-familiar', (req, res) => res.redirect(301, '/mediacion-familiar/'));
 app.get('/subsidio-de-arriendo', (req, res) => res.redirect(301, '/subsidio-de-arriendo/'));
+app.get('/orientacion-socio-juridica', (req, res) => res.redirect(301, '/orientacion-socio-juridica/'));
+app.get('/informes-sociales', (req, res) => res.redirect(301, '/informes-sociales/'));
+app.get('/jornadas-autocuidado', (req, res) => res.redirect(301, '/jornadas-autocuidado/'));
+app.get('/credencial-discapacidad', (req, res) => res.redirect(301, '/credencial-discapacidad/'));
 
 // 404 handler
 app.use((req, res) => {
