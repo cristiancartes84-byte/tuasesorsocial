@@ -3,6 +3,3 @@ Allow: /
 
 # Sitemap
 Sitemap: https://tuasesorsocial.cl/sitemap.xml
-
-# Evitar indexación de assets
-Disallow: /public/assets/
