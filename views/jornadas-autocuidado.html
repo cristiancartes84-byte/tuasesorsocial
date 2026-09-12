@@ -265,6 +265,8 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .modalidad-card::before {
@@ -304,6 +306,22 @@
             font-size: 0.9rem;
             display: inline-block;
             margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .modalidad-desc {
+            color: #64748b;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .modalidad-meta {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: var(--azul-confiable);
             font-weight: 600;
         }
 
@@ -551,54 +569,45 @@
                 <div class="modalidad-card">
                     <h4>Charla Introductoria</h4>
                     <span class="duracion">1 hora</span>
+                    <p class="modalidad-desc">Presentación online para evaluar el interés de tu equipo antes de un taller completo.</p>
                     <ul>
-                        <li>Presentación general del autocuidado profesional</li>
-                        <li>Ideal para evaluar el interés del equipo antes de un taller</li>
-                        <li>Modalidad 100% online</li>
                         <li>Sin costo</li>
-                        <li>30-100 participantes</li>
+                        <li>Modalidad 100% online</li>
                     </ul>
+                    <div class="modalidad-meta">👥 30-100 participantes</div>
                 </div>
 
                 <div class="modalidad-card">
                     <h4>Taller Express</h4>
                     <span class="duracion">2-3 horas</span>
+                    <p class="modalidad-desc">Sensibilización inicial con técnicas básicas de regulación emocional y ejercicios prácticos para llevar.</p>
                     <ul>
-                        <li>Ideal para sensibilización inicial</li>
-                        <li>Introducción al autocuidado profesional</li>
-                        <li>Técnicas básicas de regulación emocional</li>
-                        <li>Ejercicios prácticos para llevar</li>
                         <li>Formato presencial u online</li>
-                        <li>15-30 participantes</li>
+                        <li>Ejercicios prácticos incluidos</li>
                     </ul>
+                    <div class="modalidad-meta">👥 15-30 participantes</div>
                 </div>
 
                 <div class="modalidad-card">
                     <h4>Jornada Completa</h4>
                     <span class="duracion">6-8 horas</span>
+                    <p class="modalidad-desc">Profundización en autocuidado integral, con diagnóstico participativo y plan personalizado para el equipo.</p>
                     <ul>
-                        <li>Profundización en autocuidado integral</li>
-                        <li>Diagnóstico participativo del equipo</li>
                         <li>Múltiples técnicas y herramientas</li>
-                        <li>Espacios de reflexión grupal</li>
-                        <li>Plan de autocuidado personalizado</li>
                         <li>Material de apoyo entregado</li>
-                        <li>12-25 participantes</li>
                     </ul>
+                    <div class="modalidad-meta">👥 12-25 participantes</div>
                 </div>
 
                 <div class="modalidad-card">
                     <h4>Programa de Autocuidado</h4>
                     <span class="duracion">4-6 sesiones</span>
+                    <p class="modalidad-desc">Intervención sostenida en el tiempo, con sesiones periódicas y seguimiento de avances del equipo.</p>
                     <ul>
-                        <li>Intervención sostenida en el tiempo</li>
-                        <li>Sesiones quincenales o mensuales</li>
-                        <li>Seguimiento de avances del equipo</li>
-                        <li>Ajustes según necesidades emergentes</li>
                         <li>Evaluación de impacto pre-post</li>
                         <li>Certificación de participación</li>
-                        <li>10-20 participantes</li>
                     </ul>
+                    <div class="modalidad-meta">👥 10-20 participantes</div>
                 </div>
             </div>
 
