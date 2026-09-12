@@ -257,17 +257,37 @@
         }
 
         .modalidad-card {
-            background: var(--gris-fondo);
+            background: white;
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 16px;
             border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
 
+        .modalidad-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--azul-confiable), var(--verde-esperanza));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
         .modalidad-card:hover {
-            border-color: var(--verde-esperanza);
+            border-color: var(--azul-confiable);
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);
+        }
+
+        .modalidad-card:hover::before {
+            transform: scaleX(1);
         }
 
         .modalidad-card h4 {
@@ -317,25 +337,34 @@
 
         .tematica-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--verde-esperanza);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 1.75rem;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             transition: all 0.3s ease;
         }
 
         .tematica-card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            transform: translateX(5px);
+            border-color: var(--verde-esperanza);
+            box-shadow: 0 15px 30px rgba(5, 150, 105, 0.15);
+            transform: translateY(-5px);
         }
 
         .tematica-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
         }
 
         .tematica-card h4 {
-            color: var(--azul-confiable);
+            color: var(--gris-oscuro);
             margin-bottom: 0.5rem;
             font-size: 1.15rem;
         }
