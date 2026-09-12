@@ -347,9 +347,10 @@
 
         .hero-badge {
             display: inline-block;
-            background: rgba(37, 99, 235, 0.2);
-            border: 2px solid var(--azul-confiable);
-            color: var(--azul-confiable);
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+            backdrop-filter: blur(10px);
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 2px;
@@ -381,10 +382,7 @@
         }
 
         .hero-title .accent {
-            background: linear-gradient(135deg, #60a5fa, #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
             display: inline;
             font-weight: 900;
         }
