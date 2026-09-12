@@ -565,7 +565,7 @@
         /* Stats Section */
         .stats {
             padding: 4rem 0;
-            background: var(--blanco);
+            background: var(--gris-claro);
         }
 
         .stats-container {
@@ -574,7 +574,7 @@
             padding: 0 2rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
+            gap: 2rem;
             text-align: center;
         }
 
@@ -582,11 +582,26 @@
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.6s ease;
+            background: var(--blanco);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
         }
 
         .stat-item.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .stat-number {
@@ -1289,14 +1304,17 @@
     <section class="stats">
         <div class="stats-container">
             <div class="stat-item">
+                <div class="stat-icon">📅</div>
                 <div class="stat-number" data-target="10">0</div>
                 <div class="stat-label">Años de Experiencia</div>
             </div>
             <div class="stat-item">
+                <div class="stat-icon">👨‍👩‍👧</div>
                 <div class="stat-number" data-target="500">0</div>
                 <div class="stat-label">Familias Atendidas</div>
             </div>
             <div class="stat-item">
+                <div class="stat-icon">💻</div>
                 <div class="stat-number">100%</div>
                 <div class="stat-label">Orientación Online</div>
             </div>
