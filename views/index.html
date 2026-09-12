@@ -280,14 +280,14 @@
             z-index: 0;
         }
 
-        .floating-icon:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-        .floating-icon:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; animation-name: floatReverse; }
-        .floating-icon:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 2s; }
-        .floating-icon:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 3s; animation-name: floatReverse; }
-        .floating-icon:nth-child(5) { top: 50%; left: 5%; animation-delay: 4s; }
-        .floating-icon:nth-child(6) { top: 60%; right: 8%; animation-delay: 5s; animation-name: floatReverse; }
-        .floating-icon:nth-child(7) { top: 35%; left: 25%; animation-delay: 1.5s; animation-name: floatReverse; }
-        .floating-icon:nth-child(8) { bottom: 40%; right: 22%; animation-delay: 2.5s; }
+        .floating-icon:nth-child(1) { top: 10%; left: 6%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 12%; left: 42%; animation-delay: 1s; animation-name: floatReverse; }
+        .floating-icon:nth-child(3) { bottom: 12%; left: 16%; animation-delay: 2s; }
+        .floating-icon:nth-child(4) { top: 8%; right: 3%; animation-delay: 3s; animation-name: floatReverse; }
+        .floating-icon:nth-child(5) { top: 50%; left: 3%; animation-delay: 4s; }
+        .floating-icon:nth-child(6) { bottom: 8%; right: 3%; animation-delay: 5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(7) { top: 35%; left: 22%; animation-delay: 1.5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(8) { bottom: 38%; left: 48%; animation-delay: 2.5s; }
 
         .hero-container {
             max-width: 1400px;
@@ -295,8 +295,38 @@
             padding: 0 4rem;
             position: relative;
             z-index: 2;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
             transition: all 0.3s ease;
+        }
+
+        .hero-left {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .hero-right {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .hero-container {
+                flex-direction: column;
+                padding: 0 2rem;
+                gap: 2rem;
+            }
+
+            .hero-right {
+                order: -1;
+            }
         }
 
         .hero-badge {
@@ -316,21 +346,22 @@
 
         .hero-title {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(1.5rem, 2.6vw, 2.1rem);
             font-weight: 900;
             color: white;
-            margin-bottom: 1.5rem;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            max-width: 320px;
             opacity: 0;
             animation: fadeInUp 1s ease 0.2s forwards;
         }
 
         .hero-title .greeting {
-            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-size: clamp(1rem, 1.6vw, 1.15rem);
             font-weight: 400;
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
         }
 
         .hero-title .accent {
@@ -345,7 +376,7 @@
         .hero-credentials {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
             margin-bottom: 2.5rem;
             opacity: 0;
@@ -355,19 +386,20 @@
         .credential-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             color: rgba(255,255,255,0.95);
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-size: clamp(0.75rem, 1.4vw, 0.95rem);
             font-weight: 500;
-            padding: 0.5rem 1rem;
+            padding: 0.45rem 0.85rem;
             background: rgba(255,255,255,0.1);
             border-radius: 25px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
+            white-space: nowrap;
         }
 
         .credential-icon {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
         .hero-intro {
@@ -383,9 +415,9 @@
 
         .hero-specialties {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-            max-width: 900px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            max-width: 760px;
             margin: 0 auto 3rem;
             opacity: 0;
             animation: fadeInUp 1s ease 0.8s forwards;
@@ -394,8 +426,8 @@
         .specialty-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
             background: rgba(255,255,255,0.1);
             border-radius: 12px;
             backdrop-filter: blur(10px);
@@ -410,13 +442,13 @@
         }
 
         .specialty-icon {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
         }
 
         .specialty-text {
             color: rgba(255,255,255,0.9);
-            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            font-size: clamp(0.82rem, 1.6vw, 0.92rem);
             font-weight: 500;
             line-height: 1.4;
         }
@@ -981,6 +1013,35 @@
             font-size: 0.9rem;
         }
 
+        .hero-photo {
+            width: min(22vw, 300px);
+            height: min(22vw, 300px);
+            aspect-ratio: 1 / 1;
+            flex-shrink: 0;
+            border-radius: 50%;
+            padding: 6px;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 900px) {
+            .hero-photo {
+                width: min(55vw, 260px);
+                height: min(55vw, 260px);
+            }
+        }
+
+        .hero-photo img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 65% 22%;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.92);
+            filter: saturate(1.05) contrast(1.02);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
@@ -1057,54 +1118,62 @@
         <div class="floating-icon">✨</div>
 
         <div class="hero-container">
-            <div class="hero-badge">Tu Asesor Social</div>
+            <div class="hero-left">
+                <div class="hero-badge">Tu Asesor Social</div>
 
-            <h1 class="hero-title">
-                <span class="greeting">Hola, soy</span>
-                <span class="accent">Francis Carter Sanhueza</span>
-            </h1>
+                <div class="hero-credentials">
+                    <div class="credential-item">
+                        <span class="credential-icon">💼</span>
+                        <span>Asistente Social</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-icon">🎓</span>
+                        <span>Licenciada en Trabajo Social</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-icon">📜</span>
+                        <span>Diplomada en Intervención Social</span>
+                    </div>
+                </div>
 
-            <div class="hero-credentials">
-                <div class="credential-item">
-                    <span class="credential-icon">💼</span>
-                    <span>Asistente Social</span>
+                <p class="hero-intro">
+                    Trabajadora Social con <strong>10 años de experiencia</strong> dedicada a ofrecer servicios de alta calidad y personalizados para apoyar a individuos y familias en Chile.
+                </p>
+
+                <div class="hero-specialties">
+                    <div class="specialty-item">
+                        <span class="specialty-icon">⚖️</span>
+                        <span class="specialty-text">Orientación Socio-Jurídica Profesional</span>
+                    </div>
+                    <div class="specialty-item">
+                        <span class="specialty-icon">🤝</span>
+                        <span class="specialty-text">Mediación Familiar Certificada</span>
+                    </div>
+                    <div class="specialty-item">
+                        <span class="specialty-icon">🏠</span>
+                        <span class="specialty-text">Gestión de Subsidios Estatales</span>
+                    </div>
+                    <div class="specialty-item">
+                        <span class="specialty-icon">📋</span>
+                        <span class="specialty-text">Informes Sociales Profesionales</span>
+                    </div>
                 </div>
-                <div class="credential-item">
-                    <span class="credential-icon">🎓</span>
-                    <span>Licenciada en Trabajo Social</span>
-                </div>
-                <div class="credential-item">
-                    <span class="credential-icon">📜</span>
-                    <span>Diplomada en Intervención Social</span>
+
+                <div class="cta-buttons">
+                    <a href="#contacto" class="btn btn-primary">Contactar Ahora</a>
+                    <a href="#servicios" class="btn btn-secondary">Ver Servicios</a>
                 </div>
             </div>
 
-            <p class="hero-intro">
-                Trabajadora Social con <strong>10 años de experiencia</strong> dedicada a ofrecer servicios de alta calidad y personalizados para apoyar a individuos y familias en Chile.
-            </p>
+            <div class="hero-right">
+                <div class="hero-photo">
+                    <img src="/assets/francis-portrait.jpg" alt="Francis Carter Sanhueza, Trabajadora Social">
+                </div>
 
-            <div class="hero-specialties">
-                <div class="specialty-item">
-                    <span class="specialty-icon">⚖️</span>
-                    <span class="specialty-text">Orientación Socio-Jurídica Profesional</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">🤝</span>
-                    <span class="specialty-text">Mediación Familiar Certificada</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">🏠</span>
-                    <span class="specialty-text">Gestión de Subsidios Estatales</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">📋</span>
-                    <span class="specialty-text">Informes Sociales Profesionales</span>
-                </div>
-            </div>
-
-            <div class="cta-buttons">
-                <a href="#contacto" class="btn btn-primary">Contactar Ahora</a>
-                <a href="#servicios" class="btn btn-secondary">Ver Servicios</a>
+                <h1 class="hero-title">
+                    <span class="greeting">Hola, soy</span>
+                    <span class="accent">Francis Carter Sanhueza</span>
+                </h1>
             </div>
         </div>
     </section>
