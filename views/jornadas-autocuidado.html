@@ -490,9 +490,61 @@
         footer {
             background: var(--gris-oscuro);
             color: white;
-            padding: 2rem;
-            text-align: center;
+            padding: 3rem 0 1.5rem;
             margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            text-align: left;
+        }
+
+        .footer-col h4 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.12);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 1.75rem;
+            }
         }
 
         footer a {
@@ -862,11 +914,31 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Tu Asesor Social - Francis Carter Sanhueza | Trabajador Social Titulado</p>
-        <p>10 años de experiencia en Orientación Social, Mediación Familiar e Informes Profesionales</p>
-        <p><a href="/">Inicio</a> | <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a> | <a href="/informes-sociales/">Informes Sociales</a> | <a href="/jornadas-autocuidado/">Autocuidado</a> | <a href="/credencial-discapacidad/">Credencial de Discapacidad</a></p>
-        <p><a href="/que-necesito/">¿Qué Necesito?</a></p>
-        <p>Sitio web creado y posicionado por <a href="https://almamedia.cl" target="_blank" rel="noopener">AlmaMedia.cl</a></p>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Tu Asesor Social</h4>
+                    <p>Francis Carter Sanhueza<br>Trabajadora Social Titulada<br>10 años de experiencia</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Servicios</h4>
+                    <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a>
+                    <a href="/informes-sociales/">Informes Sociales</a>
+                    <a href="/jornadas-autocuidado/">Jornadas de Autocuidado</a>
+                    <a href="/credencial-discapacidad/">Credencial de Discapacidad</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Enlaces</h4>
+                    <a href="/">Inicio</a>
+                    <a href="/que-necesito/">¿Qué Necesito?</a>
+                    <a href="#contacto">Contacto</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Tu Asesor Social. Todos los derechos reservados.</p>
+                <p>Sitio web creado y posicionado por <a href="https://almamedia.cl" target="_blank" rel="noopener">AlmaMedia.cl</a></p>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
