@@ -784,110 +784,76 @@
             animation-delay: 0.6s;
         }
 
-        /* Testimonials Section */
-        .testimonials {
+        /* Cómo Trabajamos Section */
+        .how-it-works {
             padding: 6rem 0;
             background: white;
         }
 
-        .testimonials-container {
+        .how-it-works-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
 
-        .testimonials-grid {
+        .how-it-works-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
             margin-top: 3rem;
         }
 
-        .testimonial-card {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            padding: 2.5rem;
+        .how-step {
+            background: var(--gris-claro);
+            padding: 2.5rem 2rem;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.15);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
             position: relative;
-            border: 2px solid rgba(5, 150, 105, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
         }
 
-        .testimonial-card:hover {
+        .how-step:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(5, 150, 105, 0.25);
-            border-color: #059669;
+            border-color: var(--azul-confiable);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
         }
 
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .testimonial-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        .how-step-number {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            font-weight: 800;
+            font-size: 1.1rem;
         }
 
-        .testimonial-info h4 {
-            color: #064e3b;
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .testimonial-location {
-            color: #047857;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .testimonial-stars {
-            display: flex;
-            gap: 0.25rem;
+        .how-step-icon {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .star {
-            color: #f59e0b;
-            font-size: 1.25rem;
+        .how-step h3 {
+            color: var(--gris-oscuro);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
         }
 
-        .testimonial-text {
-            color: #064e3b;
-            line-height: 1.7;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            text-align: justify;
+        .how-step p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
-        .testimonial-date {
-            color: #047857;
-            font-size: 0.85rem;
-            font-style: italic;
-            opacity: 0.8;
-        }
-
-        .testimonial-quote {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            font-size: 4rem;
-            color: rgba(5, 150, 105, 0.2);
-            line-height: 1;
-            font-family: Georgia, serif;
+        .how-it-works-cta {
+            text-align: center;
+            margin-top: 3rem;
         }
 
         /* Contact Section */
@@ -1382,132 +1348,44 @@
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="testimonials">
-        <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
-        <p class="section-subtitle">Más de 500 familias y personas han confiado en nuestra asesoría profesional</p>
+    <!-- Cómo Trabajamos -->
+    <section class="how-it-works">
+        <h2 class="section-title">Cómo Trabajamos</h2>
+        <p class="section-subtitle">Un proceso simple y claro, desde el primer contacto hasta resolver tu situación</p>
 
-        <div class="testimonials-container">
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">CM</div>
-                        <div class="testimonial-info">
-                            <h4>Carlos Martínez</h4>
-                            <div class="testimonial-location">Valparaíso, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Muy contento con la asesoría recibida. Claros, precisos y con un trato muy amable. Me ayudaron a obtener el subsidio habitacional que tanto necesitaba mi familia. ¡Totalmente recomendados!</p>
-                    <div class="testimonial-date">Febrero 2026</div>
+        <div class="how-it-works-container">
+            <div class="how-it-works-grid">
+                <div class="how-step">
+                    <div class="how-step-number">1</div>
+                    <div class="how-step-icon">💬</div>
+                    <h3>Escríbenos por WhatsApp</h3>
+                    <p>Cuéntanos brevemente tu situación y qué necesitas resolver.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">MG</div>
-                        <div class="testimonial-info">
-                            <h4>María González</h4>
-                            <div class="testimonial-location">Santiago, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Excelente servicio, muy profesionales. La mediación familiar me ayudó a resolver un conflicto que arrastraba hace años. El proceso fue claro, respetuoso y efectivo. Súper agradecida.</p>
-                    <div class="testimonial-date">Enero 2026</div>
+                <div class="how-step">
+                    <div class="how-step-number">2</div>
+                    <div class="how-step-icon">🔍</div>
+                    <h3>Diagnóstico Gratuito</h3>
+                    <p>Evaluamos tu caso y te orientamos sobre las opciones disponibles.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">LF</div>
-                        <div class="testimonial-info">
-                            <h4>Lucía Fernández</h4>
-                            <div class="testimonial-location">Concepción, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Es un servicio que vale mucho la pena. Las sesiones fueron claras, profesionales y muy útiles. Me orientaron sobre cómo gestionar un conflicto familiar y me brindaron herramientas concretas.</p>
-                    <div class="testimonial-date">Diciembre 2025</div>
+                <div class="how-step">
+                    <div class="how-step-number">3</div>
+                    <div class="how-step-icon">📋</div>
+                    <h3>Plan de Acción</h3>
+                    <p>Definimos juntos los pasos concretos para tu situación específica.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">JD</div>
-                        <div class="testimonial-info">
-                            <h4>Jorge Díaz</h4>
-                            <div class="testimonial-location">Antofagasta, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Buen servicio, aunque me hubiera gustado un poco más de rapidez en la respuesta inicial. Una vez que comenzamos el proceso, todo fue excelente. Los recomiendo al 100%.</p>
-                    <div class="testimonial-date">Noviembre 2025</div>
+                <div class="how-step">
+                    <div class="how-step-number">4</div>
+                    <div class="how-step-icon">🤝</div>
+                    <h3>Acompañamiento</h3>
+                    <p>Te guiamos en cada etapa hasta lograr el resultado que necesitas.</p>
                 </div>
+            </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">LP</div>
-                        <div class="testimonial-info">
-                            <h4>Lucía Pérez</h4>
-                            <div class="testimonial-location">Viña del Mar, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Increíble experiencia. El equipo es muy atento y sabe exactamente lo que hace. Me ayudaron con el informe social para mi postulación a beca y todo salió perfecto. ¡Gracias por su dedicación!</p>
-                    <div class="testimonial-date">Octubre 2025</div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">AL</div>
-                        <div class="testimonial-info">
-                            <h4>Ana López</h4>
-                            <div class="testimonial-location">Concepción, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">No puedo estar más agradecida. Me guiaron paso a paso y logramos solucionar todo en tiempo récord. El apoyo que recibí fue fundamental en un momento muy difícil de mi vida. ¡Gracias!</p>
-                    <div class="testimonial-date">Septiembre 2025</div>
-                </div>
+            <div class="how-it-works-cta">
+                <a href="#contacto" class="btn btn-primary">Escríbenos Ahora</a>
             </div>
         </div>
     </section>
