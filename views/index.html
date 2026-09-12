@@ -1054,12 +1054,32 @@
             border-radius: 50px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             white-space: nowrap;
+            z-index: 2;
+        }
+
+        .hero-photo-badge-top {
+            position: absolute;
+            top: -0.5rem;
+            left: -0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: white;
+            color: var(--verde-esperanza, #059669);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.45rem 0.9rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            z-index: 2;
         }
 
         @media (max-width: 900px) {
-            .hero-photo-badge {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.8rem;
+            .hero-photo-badge,
+            .hero-photo-badge-top {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.7rem;
             }
         }
 
@@ -1214,6 +1234,7 @@
 
             <div class="hero-right">
                 <div class="hero-photo">
+                    <div class="hero-photo-badge-top">⚡ Respuesta rápida por WhatsApp</div>
                     <img src="/assets/francis-portrait.jpg" alt="Francis Carter Sanhueza, Trabajadora Social">
                     <div class="hero-photo-badge">⭐ 10 años de experiencia</div>
                 </div>
