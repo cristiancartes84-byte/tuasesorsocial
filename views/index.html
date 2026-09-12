@@ -1028,6 +1028,7 @@
         }
 
         .hero-photo {
+            position: relative;
             width: min(22vw, 300px);
             height: min(22vw, 300px);
             aspect-ratio: 1 / 1;
@@ -1036,6 +1037,30 @@
             padding: 6px;
             background: linear-gradient(135deg, #60a5fa, #34d399);
             box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        .hero-photo-badge {
+            position: absolute;
+            bottom: -0.5rem;
+            right: -0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: white;
+            color: var(--gris-oscuro, #1e293b);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            .hero-photo-badge {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.8rem;
+            }
         }
 
         @media (max-width: 900px) {
@@ -1190,6 +1215,7 @@
             <div class="hero-right">
                 <div class="hero-photo">
                     <img src="/assets/francis-portrait.jpg" alt="Francis Carter Sanhueza, Trabajadora Social">
+                    <div class="hero-photo-badge">⭐ 10 años de experiencia</div>
                 </div>
 
                 <h1 class="hero-title">
