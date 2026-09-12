@@ -609,6 +609,53 @@
             margin-top: 0.5rem;
         }
 
+        /* Quiz Banner */
+        .quiz-banner {
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            padding: 3rem 2rem;
+        }
+
+        .quiz-banner-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .quiz-banner-text h2 {
+            color: white;
+            font-size: clamp(1.3rem, 3vw, 1.6rem);
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+        }
+
+        .quiz-banner-text p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .quiz-banner-btn {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: var(--azul-confiable);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .quiz-banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
         /* Services Section */
         .services {
             padding: 6rem 0;
@@ -1139,6 +1186,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#servicios">Servicios</a></li>
+                <li><a href="/que-necesito/">¿Qué Necesito?</a></li>
                 <li><a href="/subsidio-electrico/">Subsidio Eléctrico</a></li>
                 <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
                 <li><a href="#contacto">Contacto</a></li>
@@ -1283,6 +1331,17 @@
                 <div class="stat-number">100%</div>
                 <div class="stat-label">Orientación Online</div>
             </div>
+        </div>
+    </section>
+
+    <!-- Quiz Banner -->
+    <section class="quiz-banner">
+        <div class="quiz-banner-container">
+            <div class="quiz-banner-text">
+                <h2>¿No sabes qué servicio necesitas?</h2>
+                <p>Responde 2 preguntas rápidas y te decimos qué te conviene, más los documentos que debes reunir.</p>
+            </div>
+            <a href="/que-necesito/" class="quiz-banner-btn">Hacer el Test →</a>
         </div>
     </section>
 
@@ -1462,6 +1521,7 @@
                 <a href="/credencial-discapacidad/">Credencial de Discapacidad</a>
                 <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>
                 <a href="/subsidios-minvu/">Subsidios MINVU</a>
+                <a href="/que-necesito/">¿Qué Necesito?</a>
             </div>
             <div class="copyright">
                 © 2026 Tu Asesor Social. Todos los derechos reservados. | Francis Carter Sanhueza - Trabajadora Social
