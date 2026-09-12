@@ -1440,15 +1440,35 @@
                 </a>
             </div>
 
-            <div class="contact-form">
-                <input type="text" placeholder="Tu Nombre" required>
-                <input type="email" placeholder="Tu Email" required>
-                <input type="tel" placeholder="Tu Teléfono">
-                <textarea placeholder="¿En qué podemos ayudarte?"></textarea>
-                <button class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
-            </div>
+            <form class="contact-form" id="contactForm">
+                <input type="text" id="contactNombre" placeholder="Tu Nombre" required>
+                <input type="email" id="contactEmail" placeholder="Tu Email" required>
+                <input type="tel" id="contactTelefono" placeholder="Tu Teléfono">
+                <textarea id="contactMensaje" placeholder="¿En qué podemos ayudarte?"></textarea>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
+            </form>
         </div>
     </section>
+
+    <script>
+        // Envía la consulta del formulario de contacto por WhatsApp
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById('contactNombre').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const telefono = document.getElementById('contactTelefono').value.trim();
+            const mensaje = document.getElementById('contactMensaje').value.trim();
+
+            let texto = `Hola, soy ${nombre}.`;
+            if (mensaje) texto += ` ${mensaje}`;
+            texto += ` (Email: ${email}`;
+            if (telefono) texto += `, Teléfono: ${telefono}`;
+            texto += ')';
+
+            window.open(`https://wa.me/56937712927?text=${encodeURIComponent(texto)}`, '_blank');
+        });
+    </script>
 
     <!-- Footer -->
     <footer>
