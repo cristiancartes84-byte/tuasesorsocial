@@ -85,6 +85,27 @@
     }
     </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://tuasesorsocial.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Subsidios MINVU",
+          "item": "https://tuasesorsocial.cl/subsidios-minvu/"
+        }
+      ]
+    }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -281,6 +302,16 @@
             hyphens: auto;
             -webkit-hyphens: auto;
             }
+
+        .article-card p a {
+            color: var(--azul-confiable);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .article-card p a:hover {
+            color: var(--verde-esperanza);
+        }
 
         .highlight-box {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -624,7 +655,7 @@
             <div class="tipos-grid">
                 <div class="tipo-card">
                     <h4>DS49 - Fondo Solidario de Elección de Vivienda</h4>
-                    <p>Orientado a los hogares de mayor vulnerabilidad social (tramos más bajos del Registro Social de Hogares), para adquirir una vivienda nueva o usada, con menor exigencia de ahorro previo.</p>
+                    <p>Orientado a los hogares de mayor vulnerabilidad social (tramos más bajos del <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>), para adquirir una vivienda nueva o usada, con menor exigencia de ahorro previo.</p>
                 </div>
                 <div class="tipo-card">
                     <h4>DS1 - Sistema de Subsidio Habitacional</h4>
