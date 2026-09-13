@@ -1370,16 +1370,6 @@
                 icon.style.opacity = '0.15';
             });
         });
-
-        // Paralax suave del hero
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const heroContainer = document.querySelector('.hero-container');
-            if (scrolled < window.innerHeight) {
-                heroContainer.style.transform = `translateY(${scrolled * 0.5}px)`;
-                heroContainer.style.opacity = 1 - (scrolled / window.innerHeight);
-            }
-        });
     </script>
 
     <!-- Stats -->
