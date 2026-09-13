@@ -9,16 +9,21 @@
     <meta name="description" content="Asesoría social profesional en Chile: orientación socio-jurídica, mediación familiar certificada y gestión de subsidios. 10 años de experiencia. Atención online y presencial. Resultados garantizados.">
     <meta name="keywords" content="asesor social chile, mediación familiar, subsidio eléctrico, subsidio arriendo, asistencia social, trabajador social">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tuasesorsocial.cl/">
     <meta property="og:title" content="Tu Asesor Social | Asistencia y Consultoría Social Online">
     <meta property="og:description" content="Orientación socio-jurídica, mediación familiar y gestión de subsidios en Chile.">
+    <meta property="og:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="Tu Asesor Social | Asistencia y Consultoría Social Online">
     <meta property="twitter:description" content="Orientación socio-jurídica, mediación familiar y gestión de subsidios en Chile.">
+    <meta property="twitter:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
 
     <!-- Schema.org -->
     <script type="application/ld+json">
@@ -28,7 +33,7 @@
       "name": "Tu Asesor Social",
       "description": "Asistencia y Consultoría Social Online",
       "url": "https://tuasesorsocial.cl",
-      "telephone": "+56937712927",
+      "telephone": "+56949546000",
       "priceRange": "$$",
       "areaServed": {
         "@type": "Country",
@@ -101,6 +106,22 @@
               "@type": "Service",
               "name": "Credencial de Discapacidad",
               "url": "https://tuasesorsocial.cl/credencial-discapacidad/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Registro Social de Hogares",
+              "url": "https://tuasesorsocial.cl/registro-social-de-hogares/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Subsidios MINVU",
+              "url": "https://tuasesorsocial.cl/subsidios-minvu/"
             }
           }
         ]
@@ -280,14 +301,14 @@
             z-index: 0;
         }
 
-        .floating-icon:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-        .floating-icon:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; animation-name: floatReverse; }
-        .floating-icon:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 2s; }
-        .floating-icon:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 3s; animation-name: floatReverse; }
-        .floating-icon:nth-child(5) { top: 50%; left: 5%; animation-delay: 4s; }
-        .floating-icon:nth-child(6) { top: 60%; right: 8%; animation-delay: 5s; animation-name: floatReverse; }
-        .floating-icon:nth-child(7) { top: 35%; left: 25%; animation-delay: 1.5s; animation-name: floatReverse; }
-        .floating-icon:nth-child(8) { bottom: 40%; right: 22%; animation-delay: 2.5s; }
+        .floating-icon:nth-child(1) { top: 10%; left: 6%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 12%; left: 42%; animation-delay: 1s; animation-name: floatReverse; }
+        .floating-icon:nth-child(3) { bottom: 12%; left: 16%; animation-delay: 2s; }
+        .floating-icon:nth-child(4) { top: 8%; right: 3%; animation-delay: 3s; animation-name: floatReverse; }
+        .floating-icon:nth-child(5) { top: 50%; left: 3%; animation-delay: 4s; }
+        .floating-icon:nth-child(6) { bottom: 8%; right: 3%; animation-delay: 5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(7) { top: 35%; left: 22%; animation-delay: 1.5s; animation-name: floatReverse; }
+        .floating-icon:nth-child(8) { bottom: 38%; left: 48%; animation-delay: 2.5s; }
 
         .hero-container {
             max-width: 1400px;
@@ -295,15 +316,46 @@
             padding: 0 4rem;
             position: relative;
             z-index: 2;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
             transition: all 0.3s ease;
+        }
+
+        .hero-left {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .hero-right {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .hero-container {
+                flex-direction: column;
+                padding: 0 2rem;
+                gap: 2rem;
+            }
+
+            .hero-right {
+                order: -1;
+            }
         }
 
         .hero-badge {
             display: inline-block;
-            background: rgba(37, 99, 235, 0.2);
-            border: 2px solid var(--azul-confiable);
-            color: var(--azul-confiable);
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+            backdrop-filter: blur(10px);
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 2px;
@@ -316,28 +368,26 @@
 
         .hero-title {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(1.5rem, 2.6vw, 2.1rem);
             font-weight: 900;
             color: white;
-            margin-bottom: 1.5rem;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            max-width: 320px;
             opacity: 0;
             animation: fadeInUp 1s ease 0.2s forwards;
         }
 
         .hero-title .greeting {
-            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-size: clamp(1rem, 1.6vw, 1.15rem);
             font-weight: 400;
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
         }
 
         .hero-title .accent {
-            background: linear-gradient(135deg, #60a5fa, #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
             display: inline;
             font-weight: 900;
         }
@@ -345,7 +395,7 @@
         .hero-credentials {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
             margin-bottom: 2.5rem;
             opacity: 0;
@@ -355,19 +405,20 @@
         .credential-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             color: rgba(255,255,255,0.95);
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-size: clamp(0.75rem, 1.4vw, 0.95rem);
             font-weight: 500;
-            padding: 0.5rem 1rem;
+            padding: 0.45rem 0.85rem;
             background: rgba(255,255,255,0.1);
             border-radius: 25px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
+            white-space: nowrap;
         }
 
         .credential-icon {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
         .hero-intro {
@@ -383,9 +434,9 @@
 
         .hero-specialties {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-            max-width: 900px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            max-width: 760px;
             margin: 0 auto 3rem;
             opacity: 0;
             animation: fadeInUp 1s ease 0.8s forwards;
@@ -394,13 +445,15 @@
         .specialty-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
             background: rgba(255,255,255,0.1);
             border-radius: 12px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.15);
             transition: all 0.3s ease;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .specialty-item:hover {
@@ -410,13 +463,13 @@
         }
 
         .specialty-icon {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
         }
 
         .specialty-text {
             color: rgba(255,255,255,0.9);
-            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            font-size: clamp(0.82rem, 1.6vw, 0.92rem);
             font-weight: 500;
             line-height: 1.4;
         }
@@ -435,21 +488,6 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
-        }
-
-        @keyframes gentlePulse {
-            0%, 100% {
-                box-shadow: 0 20px 50px rgba(37, 99, 235, 0.15),
-                            0 10px 25px rgba(5, 150, 105, 0.1);
-            }
-            50% {
-                box-shadow: 0 20px 50px rgba(37, 99, 235, 0.2),
-                            0 10px 25px rgba(5, 150, 105, 0.15);
-            }
-        }
-
-        .service-card:hover {
-            animation: gentlePulse 2s ease-in-out infinite;
         }
 
         /* Efecto de brillo sutil */
@@ -517,7 +555,7 @@
         /* Stats Section */
         .stats {
             padding: 4rem 0;
-            background: var(--blanco);
+            background: var(--gris-claro);
         }
 
         .stats-container {
@@ -526,7 +564,7 @@
             padding: 0 2rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
+            gap: 2rem;
             text-align: center;
         }
 
@@ -534,11 +572,26 @@
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.6s ease;
+            background: var(--blanco);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
         }
 
         .stat-item.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .stat-number {
@@ -554,6 +607,53 @@
             font-size: 1.1rem;
             color: var(--gris-oscuro);
             margin-top: 0.5rem;
+        }
+
+        /* Quiz Banner */
+        .quiz-banner {
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            padding: 3rem 2rem;
+        }
+
+        .quiz-banner-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .quiz-banner-text h2 {
+            color: white;
+            font-size: clamp(1.3rem, 3vw, 1.6rem);
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+        }
+
+        .quiz-banner-text p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .quiz-banner-btn {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: var(--azul-confiable);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .quiz-banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
         /* Services Section */
@@ -731,110 +831,76 @@
             animation-delay: 0.6s;
         }
 
-        /* Testimonials Section */
-        .testimonials {
+        /* Cómo Trabajamos Section */
+        .how-it-works {
             padding: 6rem 0;
             background: white;
         }
 
-        .testimonials-container {
+        .how-it-works-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
 
-        .testimonials-grid {
+        .how-it-works-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
             margin-top: 3rem;
         }
 
-        .testimonial-card {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            padding: 2.5rem;
+        .how-step {
+            background: var(--gris-claro);
+            padding: 2.5rem 2rem;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
             position: relative;
-            border: 2px solid rgba(251, 191, 36, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
         }
 
-        .testimonial-card:hover {
+        .how-step:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(251, 191, 36, 0.25);
-            border-color: #fbbf24;
+            border-color: var(--azul-confiable);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
         }
 
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .testimonial-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        .how-step-number {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            font-weight: 800;
+            font-size: 1.1rem;
         }
 
-        .testimonial-info h4 {
-            color: #78350f;
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .testimonial-location {
-            color: #92400e;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .testimonial-stars {
-            display: flex;
-            gap: 0.25rem;
+        .how-step-icon {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .star {
-            color: #f59e0b;
-            font-size: 1.25rem;
+        .how-step h3 {
+            color: var(--gris-oscuro);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
         }
 
-        .testimonial-text {
-            color: #78350f;
-            line-height: 1.7;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            text-align: justify;
+        .how-step p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
-        .testimonial-date {
-            color: #92400e;
-            font-size: 0.85rem;
-            font-style: italic;
-            opacity: 0.8;
-        }
-
-        .testimonial-quote {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            font-size: 4rem;
-            color: rgba(251, 191, 36, 0.2);
-            line-height: 1;
-            font-family: Georgia, serif;
+        .how-it-works-cta {
+            text-align: center;
+            margin-top: 3rem;
         }
 
         /* Contact Section */
@@ -981,6 +1047,89 @@
             font-size: 0.9rem;
         }
 
+        .copyright a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: underline;
+        }
+
+        .copyright a:hover {
+            color: white;
+        }
+
+        .hero-photo {
+            position: relative;
+            width: min(22vw, 300px);
+            height: min(22vw, 300px);
+            aspect-ratio: 1 / 1;
+            flex-shrink: 0;
+            border-radius: 50%;
+            padding: 6px;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        .hero-photo-badge {
+            position: absolute;
+            bottom: -0.5rem;
+            right: -0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: white;
+            color: var(--gris-oscuro, #1e293b);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .hero-photo-badge-top {
+            position: absolute;
+            top: -0.5rem;
+            left: -0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: white;
+            color: var(--verde-esperanza, #059669);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.45rem 0.9rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+            .hero-photo-badge,
+            .hero-photo-badge-top {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.7rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero-photo {
+                width: min(55vw, 260px);
+                height: min(55vw, 260px);
+            }
+        }
+
+        .hero-photo img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 65% 22%;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.92);
+            filter: saturate(1.05) contrast(1.02);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
@@ -1037,6 +1186,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#servicios">Servicios</a></li>
+                <li><a href="/que-necesito/">¿Qué Necesito?</a></li>
                 <li><a href="/subsidio-electrico/">Subsidio Eléctrico</a></li>
                 <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
                 <li><a href="#contacto">Contacto</a></li>
@@ -1057,54 +1207,72 @@
         <div class="floating-icon">✨</div>
 
         <div class="hero-container">
-            <div class="hero-badge">Tu Asesor Social</div>
+            <div class="hero-left">
+                <div class="hero-badge">Tu Asesor Social</div>
 
-            <h1 class="hero-title">
-                <span class="greeting">Hola, soy</span>
-                <span class="accent">Francis Carter Sanhueza</span>
-            </h1>
+                <div class="hero-credentials">
+                    <div class="credential-item">
+                        <span class="credential-icon">💼</span>
+                        <span>Asistente Social</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-icon">🎓</span>
+                        <span>Licenciada en Trabajo Social</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-icon">📜</span>
+                        <span>Diplomada en Intervención Social</span>
+                    </div>
+                </div>
 
-            <div class="hero-credentials">
-                <div class="credential-item">
-                    <span class="credential-icon">💼</span>
-                    <span>Asistente Social</span>
+                <p class="hero-intro">
+                    Trabajadora Social con <strong>10 años de experiencia</strong> dedicada a ofrecer servicios de alta calidad y personalizados para apoyar a individuos y familias en Chile.
+                </p>
+
+                <div class="hero-specialties">
+                    <a href="/orientacion-socio-juridica/" class="specialty-item">
+                        <span class="specialty-icon">⚖️</span>
+                        <span class="specialty-text">Orientación Socio-Jurídica Profesional</span>
+                    </a>
+                    <a href="/mediacion-familiar/" class="specialty-item">
+                        <span class="specialty-icon">🤝</span>
+                        <span class="specialty-text">Mediación Familiar Certificada</span>
+                    </a>
+                    <a href="#servicios" class="specialty-item">
+                        <span class="specialty-icon">🏠</span>
+                        <span class="specialty-text">Gestión de Subsidios Estatales</span>
+                    </a>
+                    <a href="/informes-sociales/" class="specialty-item">
+                        <span class="specialty-icon">📋</span>
+                        <span class="specialty-text">Informes Sociales Profesionales</span>
+                    </a>
+                    <a href="/registro-social-de-hogares/" class="specialty-item">
+                        <span class="specialty-icon">🗂️</span>
+                        <span class="specialty-text">Registro Social de Hogares</span>
+                    </a>
+                    <a href="/subsidios-minvu/" class="specialty-item">
+                        <span class="specialty-icon">🏗️</span>
+                        <span class="specialty-text">Experto en Subsidios MINVU</span>
+                    </a>
                 </div>
-                <div class="credential-item">
-                    <span class="credential-icon">🎓</span>
-                    <span>Licenciada en Trabajo Social</span>
-                </div>
-                <div class="credential-item">
-                    <span class="credential-icon">📜</span>
-                    <span>Diplomada en Intervención Social</span>
+
+                <div class="cta-buttons">
+                    <a href="#contacto" class="btn btn-primary">Contactar Ahora</a>
+                    <a href="#servicios" class="btn btn-secondary">Ver Servicios</a>
                 </div>
             </div>
 
-            <p class="hero-intro">
-                Trabajadora Social con <strong>10 años de experiencia</strong> dedicada a ofrecer servicios de alta calidad y personalizados para apoyar a individuos y familias en Chile.
-            </p>
+            <div class="hero-right">
+                <div class="hero-photo">
+                    <div class="hero-photo-badge-top">⚡ Respuesta rápida por WhatsApp</div>
+                    <img src="/assets/francis-portrait.jpg" alt="Francis Carter Sanhueza, Trabajadora Social">
+                    <div class="hero-photo-badge">⭐ 10 años de experiencia</div>
+                </div>
 
-            <div class="hero-specialties">
-                <div class="specialty-item">
-                    <span class="specialty-icon">⚖️</span>
-                    <span class="specialty-text">Orientación Socio-Jurídica Profesional</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">🤝</span>
-                    <span class="specialty-text">Mediación Familiar Certificada</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">🏠</span>
-                    <span class="specialty-text">Gestión de Subsidios Estatales</span>
-                </div>
-                <div class="specialty-item">
-                    <span class="specialty-icon">📋</span>
-                    <span class="specialty-text">Informes Sociales Profesionales</span>
-                </div>
-            </div>
-
-            <div class="cta-buttons">
-                <a href="#contacto" class="btn btn-primary">Contactar Ahora</a>
-                <a href="#servicios" class="btn btn-secondary">Ver Servicios</a>
+                <h1 class="hero-title">
+                    <span class="greeting">Hola, soy</span>
+                    <span class="accent">Francis Carter Sanhueza</span>
+                </h1>
             </div>
         </div>
     </section>
@@ -1149,17 +1317,31 @@
     <section class="stats">
         <div class="stats-container">
             <div class="stat-item">
+                <div class="stat-icon">📅</div>
                 <div class="stat-number" data-target="10">0</div>
                 <div class="stat-label">Años de Experiencia</div>
             </div>
             <div class="stat-item">
+                <div class="stat-icon">👨‍👩‍👧</div>
                 <div class="stat-number" data-target="500">0</div>
                 <div class="stat-label">Familias Atendidas</div>
             </div>
             <div class="stat-item">
+                <div class="stat-icon">💻</div>
                 <div class="stat-number">100%</div>
                 <div class="stat-label">Orientación Online</div>
             </div>
+        </div>
+    </section>
+
+    <!-- Quiz Banner -->
+    <section class="quiz-banner">
+        <div class="quiz-banner-container">
+            <div class="quiz-banner-text">
+                <h2>¿No sabes qué servicio necesitas?</h2>
+                <p>Responde 2 preguntas rápidas y te decimos qué te conviene, más los documentos que debes reunir.</p>
+            </div>
+            <a href="/que-necesito/" class="quiz-banner-btn">Hacer el Test →</a>
         </div>
     </section>
 
@@ -1210,135 +1392,59 @@
                 <h3>Credencial de Discapacidad</h3>
                 <p>Orientación e informe social para la certificación de discapacidad y tu credencial.</p>
             </a>
+
+            <a href="/registro-social-de-hogares/" class="service-card" style="text-decoration: none; color: inherit;">
+                <div class="service-icon">🗂️</div>
+                <h3>Registro Social de Hogares</h3>
+                <p>Creación y actualización de tu RSH para acceder correctamente a subsidios y beneficios.</p>
+            </a>
+
+            <a href="/subsidios-minvu/" class="service-card" style="text-decoration: none; color: inherit;">
+                <div class="service-icon">🏗️</div>
+                <h3>Subsidios MINVU</h3>
+                <p>Asesoría experta para postular al DS49, DS52, DS19 o DS1 sin errores ni rechazos.</p>
+            </a>
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="testimonials">
-        <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
-        <p class="section-subtitle">Más de 500 familias y personas han confiado en nuestra asesoría profesional</p>
+    <!-- Cómo Trabajamos -->
+    <section class="how-it-works">
+        <h2 class="section-title">Cómo Trabajamos</h2>
+        <p class="section-subtitle">Un proceso simple y claro, desde el primer contacto hasta resolver tu situación</p>
 
-        <div class="testimonials-container">
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">CM</div>
-                        <div class="testimonial-info">
-                            <h4>Carlos Martínez</h4>
-                            <div class="testimonial-location">Valparaíso, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Muy contento con la asesoría recibida. Claros, precisos y con un trato muy amable. Me ayudaron a obtener el subsidio habitacional que tanto necesitaba mi familia. ¡Totalmente recomendados!</p>
-                    <div class="testimonial-date">Febrero 2026</div>
+        <div class="how-it-works-container">
+            <div class="how-it-works-grid">
+                <div class="how-step">
+                    <div class="how-step-number">1</div>
+                    <div class="how-step-icon">💬</div>
+                    <h3>Escríbenos por WhatsApp</h3>
+                    <p>Cuéntanos brevemente tu situación y qué necesitas resolver.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">MG</div>
-                        <div class="testimonial-info">
-                            <h4>María González</h4>
-                            <div class="testimonial-location">Santiago, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Excelente servicio, muy profesionales. La mediación familiar me ayudó a resolver un conflicto que arrastraba hace años. El proceso fue claro, respetuoso y efectivo. Súper agradecida.</p>
-                    <div class="testimonial-date">Enero 2026</div>
+                <div class="how-step">
+                    <div class="how-step-number">2</div>
+                    <div class="how-step-icon">🔍</div>
+                    <h3>Diagnóstico Gratuito</h3>
+                    <p>Evaluamos tu caso y te orientamos sobre las opciones disponibles.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">LF</div>
-                        <div class="testimonial-info">
-                            <h4>Lucía Fernández</h4>
-                            <div class="testimonial-location">Concepción, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Es un servicio que vale mucho la pena. Las sesiones fueron claras, profesionales y muy útiles. Me orientaron sobre cómo gestionar un conflicto familiar y me brindaron herramientas concretas.</p>
-                    <div class="testimonial-date">Diciembre 2025</div>
+                <div class="how-step">
+                    <div class="how-step-number">3</div>
+                    <div class="how-step-icon">📋</div>
+                    <h3>Plan de Acción</h3>
+                    <p>Definimos juntos los pasos concretos para tu situación específica.</p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">JD</div>
-                        <div class="testimonial-info">
-                            <h4>Jorge Díaz</h4>
-                            <div class="testimonial-location">Antofagasta, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Buen servicio, aunque me hubiera gustado un poco más de rapidez en la respuesta inicial. Una vez que comenzamos el proceso, todo fue excelente. Los recomiendo al 100%.</p>
-                    <div class="testimonial-date">Noviembre 2025</div>
+                <div class="how-step">
+                    <div class="how-step-number">4</div>
+                    <div class="how-step-icon">🤝</div>
+                    <h3>Acompañamiento</h3>
+                    <p>Te guiamos en cada etapa hasta lograr el resultado que necesitas.</p>
                 </div>
+            </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">LP</div>
-                        <div class="testimonial-info">
-                            <h4>Lucía Pérez</h4>
-                            <div class="testimonial-location">Viña del Mar, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">Increíble experiencia. El equipo es muy atento y sabe exactamente lo que hace. Me ayudaron con el informe social para mi postulación a beca y todo salió perfecto. ¡Gracias por su dedicación!</p>
-                    <div class="testimonial-date">Octubre 2025</div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">AL</div>
-                        <div class="testimonial-info">
-                            <h4>Ana López</h4>
-                            <div class="testimonial-location">Concepción, Chile</div>
-                        </div>
-                    </div>
-                    <div class="testimonial-stars">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <p class="testimonial-text">No puedo estar más agradecida. Me guiaron paso a paso y logramos solucionar todo en tiempo récord. El apoyo que recibí fue fundamental en un momento muy difícil de mi vida. ¡Gracias!</p>
-                    <div class="testimonial-date">Septiembre 2025</div>
-                </div>
+            <div class="how-it-works-cta">
+                <a href="#contacto" class="btn btn-primary">Escríbenos Ahora</a>
             </div>
         </div>
     </section>
@@ -1353,7 +1459,7 @@
                 <div class="contact-details">
                     <div class="contact-item">
                         <div class="contact-item-icon">📱</div>
-                        <div>+569 3771 2927</div>
+                        <div>+56 9 4954 6000</div>
                     </div>
                     <div class="contact-item">
                         <div class="contact-item-icon">📍</div>
@@ -1365,21 +1471,41 @@
                     </div>
                 </div>
 
-                <a href="https://wa.me/56937712927?text=Hola%2C%20necesito%20asesoría%20social" class="whatsapp-btn" target="_blank">
+                <a href="https://wa.me/56949546000?text=Hola%2C%20necesito%20asesoría%20social" class="whatsapp-btn" target="_blank">
                     <span>💬</span>
                     Consulta por WhatsApp
                 </a>
             </div>
 
-            <div class="contact-form">
-                <input type="text" placeholder="Tu Nombre" required>
-                <input type="email" placeholder="Tu Email" required>
-                <input type="tel" placeholder="Tu Teléfono">
-                <textarea placeholder="¿En qué podemos ayudarte?"></textarea>
-                <button class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
-            </div>
+            <form class="contact-form" id="contactForm">
+                <input type="text" id="contactNombre" placeholder="Tu Nombre" required>
+                <input type="email" id="contactEmail" placeholder="Tu Email" required>
+                <input type="tel" id="contactTelefono" placeholder="Tu Teléfono">
+                <textarea id="contactMensaje" placeholder="¿En qué podemos ayudarte?"></textarea>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
+            </form>
         </div>
     </section>
+
+    <script>
+        // Envía la consulta del formulario de contacto por WhatsApp
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById('contactNombre').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const telefono = document.getElementById('contactTelefono').value.trim();
+            const mensaje = document.getElementById('contactMensaje').value.trim();
+
+            let texto = `Hola, soy ${nombre}.`;
+            if (mensaje) texto += ` ${mensaje}`;
+            texto += ` (Email: ${email}`;
+            if (telefono) texto += `, Teléfono: ${telefono}`;
+            texto += ')';
+
+            window.open(`https://wa.me/56949546000?text=${encodeURIComponent(texto)}`, '_blank');
+        });
+    </script>
 
     <!-- Footer -->
     <footer>
@@ -1393,9 +1519,15 @@
                 <a href="/informes-sociales/">Informes Sociales</a>
                 <a href="/jornadas-autocuidado/">Jornadas de Autocuidado</a>
                 <a href="/credencial-discapacidad/">Credencial de Discapacidad</a>
+                <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>
+                <a href="/subsidios-minvu/">Subsidios MINVU</a>
+                <a href="/que-necesito/">¿Qué Necesito?</a>
             </div>
             <div class="copyright">
                 © 2026 Tu Asesor Social. Todos los derechos reservados. | Francis Carter Sanhueza - Trabajadora Social
+            </div>
+            <div class="copyright" style="margin-top: 0.5rem;">
+                Sitio web creado y posicionado por <a href="https://almamedia.cl" target="_blank" rel="noopener">AlmaMedia.cl</a>
             </div>
         </div>
     </footer>

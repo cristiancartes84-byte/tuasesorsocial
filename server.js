@@ -50,6 +50,18 @@ app.get('/credencial-discapacidad/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'credencial-discapacidad.html'));
 });
 
+app.get('/registro-social-de-hogares/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'registro-social-de-hogares.html'));
+});
+
+app.get('/subsidios-minvu/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'subsidios-minvu.html'));
+});
+
+app.get('/que-necesito/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'que-necesito.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
@@ -67,6 +79,9 @@ app.get('/orientacion-socio-juridica', (req, res) => res.redirect(301, '/orienta
 app.get('/informes-sociales', (req, res) => res.redirect(301, '/informes-sociales/'));
 app.get('/jornadas-autocuidado', (req, res) => res.redirect(301, '/jornadas-autocuidado/'));
 app.get('/credencial-discapacidad', (req, res) => res.redirect(301, '/credencial-discapacidad/'));
+app.get('/registro-social-de-hogares', (req, res) => res.redirect(301, '/registro-social-de-hogares/'));
+app.get('/subsidios-minvu', (req, res) => res.redirect(301, '/subsidios-minvu/'));
+app.get('/que-necesito', (req, res) => res.redirect(301, '/que-necesito/'));
 
 // 404 handler
 app.use((req, res) => {

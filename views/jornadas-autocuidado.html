@@ -7,16 +7,21 @@
     <meta name="description" content="Jornadas de autocuidado profesionales en Chile 2026: talleres especializados para equipos sociales, educacionales y de salud. 10 años de experiencia facilitando bienestar laboral.">
     <meta name="keywords" content="jornadas autocuidado, talleres autocuidado, burnout equipos sociales, bienestar laboral, autocuidado trabajadores chile">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
     <!-- Open Graph -->
     <meta property="og:title" content="Jornadas de Autocuidado 2026: Talleres Profesionales [Certificados]">
     <meta property="og:description" content="Jornadas de autocuidado profesionales para equipos sociales, educacionales y de salud. Prevención burnout y bienestar laboral.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tuasesorsocial.cl/jornadas-autocuidado/">
+    <meta property="og:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Jornadas de Autocuidado 2026: Talleres Profesionales [Certificados]">
     <meta name="twitter:description" content="Jornadas de autocuidado profesionales para equipos sociales, educacionales y de salud.">
+    <meta name="twitter:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
 
     <!-- Schema.org -->
     <script type="application/ld+json">
@@ -48,7 +53,7 @@
           "name": "¿Cuánto cuesta una jornada de autocuidado en Chile 2026?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "El costo varía según modalidad y cantidad de participantes. Taller express (2-3 horas): desde $250.000 para grupos de hasta 20 personas. Jornada completa (6-8 horas): desde $450.000 para grupos de hasta 25 personas. Programas de varias sesiones: desde $1.200.000 (4 sesiones). Incluye material de apoyo y certificados de participación."
+            "text": "El costo varía según modalidad y cantidad de participantes. La charla introductoria (1 hora) no tiene costo. Taller express (2-3 horas): desde $250.000 para grupos de hasta 20 personas. Jornada completa (6-8 horas): desde $450.000 para grupos de hasta 25 personas. Programas de varias sesiones: desde $1.200.000 (4 sesiones). Incluye material de apoyo y certificados de participación."
           }
         },
         {
@@ -218,7 +223,7 @@
             line-height: 1.8;
             font-size: clamp(1rem, 2vw, 1.125rem);
             font-weight: 400;
-            text-align: justify;
+            text-align: left;
             text-justify: inter-word;
         }
 
@@ -246,23 +251,45 @@
 
         .modalidades-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin: 2rem 0;
         }
 
         .modalidad-card {
-            background: var(--gris-fondo);
+            background: white;
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 16px;
             border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modalidad-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--azul-confiable), var(--verde-esperanza));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
         }
 
         .modalidad-card:hover {
-            border-color: var(--verde-esperanza);
+            border-color: var(--azul-confiable);
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);
+        }
+
+        .modalidad-card:hover::before {
+            transform: scaleX(1);
         }
 
         .modalidad-card h4 {
@@ -279,6 +306,23 @@
             font-size: 0.9rem;
             display: inline-block;
             margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .modalidad-desc {
+            color: #64748b;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .modalidad-meta {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: var(--azul-confiable);
             font-weight: 600;
         }
 
@@ -312,25 +356,33 @@
 
         .tematica-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--verde-esperanza);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            padding: 1.75rem;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             transition: all 0.3s ease;
         }
 
         .tematica-card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            transform: translateX(5px);
+            border-color: var(--verde-esperanza);
+            box-shadow: 0 15px 30px rgba(5, 150, 105, 0.15);
+            transform: translateY(-5px);
         }
 
         .tematica-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(5, 150, 105, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
         }
 
         .tematica-card h4 {
-            color: var(--azul-confiable);
+            color: var(--gris-oscuro);
             margin-bottom: 0.5rem;
             font-size: 1.15rem;
         }
@@ -438,14 +490,71 @@
         footer {
             background: var(--gris-oscuro);
             color: white;
-            padding: 2rem;
-            text-align: center;
+            padding: 3rem 0 1.5rem;
             margin-top: 4rem;
         }
 
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            text-align: left;
+        }
+
+        .footer-col h4 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.12);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 1.75rem;
+            }
+        }
+
         footer a {
-            color: var(--verde-esperanza);
+            color: rgba(255,255,255,0.85);
             text-decoration: none;
+        }
+
+        footer a:hover {
+            color: white;
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
@@ -515,44 +624,47 @@
 
             <div class="modalidades-grid">
                 <div class="modalidad-card">
+                    <h4>Charla Introductoria</h4>
+                    <span class="duracion">1 hora</span>
+                    <p class="modalidad-desc">Presentación online para evaluar el interés de tu equipo antes de un taller completo.</p>
+                    <ul>
+                        <li>Sin costo</li>
+                        <li>Modalidad 100% online</li>
+                    </ul>
+                    <div class="modalidad-meta">👥 30-100 participantes</div>
+                </div>
+
+                <div class="modalidad-card">
                     <h4>Taller Express</h4>
                     <span class="duracion">2-3 horas</span>
+                    <p class="modalidad-desc">Sensibilización inicial con técnicas básicas de regulación emocional y ejercicios prácticos para llevar.</p>
                     <ul>
-                        <li>Ideal para sensibilización inicial</li>
-                        <li>Introducción al autocuidado profesional</li>
-                        <li>Técnicas básicas de regulación emocional</li>
-                        <li>Ejercicios prácticos para llevar</li>
                         <li>Formato presencial u online</li>
-                        <li>15-30 participantes</li>
+                        <li>Ejercicios prácticos incluidos</li>
                     </ul>
+                    <div class="modalidad-meta">👥 15-30 participantes</div>
                 </div>
 
                 <div class="modalidad-card">
                     <h4>Jornada Completa</h4>
                     <span class="duracion">6-8 horas</span>
+                    <p class="modalidad-desc">Profundización en autocuidado integral, con diagnóstico participativo y plan personalizado para el equipo.</p>
                     <ul>
-                        <li>Profundización en autocuidado integral</li>
-                        <li>Diagnóstico participativo del equipo</li>
                         <li>Múltiples técnicas y herramientas</li>
-                        <li>Espacios de reflexión grupal</li>
-                        <li>Plan de autocuidado personalizado</li>
                         <li>Material de apoyo entregado</li>
-                        <li>12-25 participantes</li>
                     </ul>
+                    <div class="modalidad-meta">👥 12-25 participantes</div>
                 </div>
 
                 <div class="modalidad-card">
                     <h4>Programa de Autocuidado</h4>
                     <span class="duracion">4-6 sesiones</span>
+                    <p class="modalidad-desc">Intervención sostenida en el tiempo, con sesiones periódicas y seguimiento de avances del equipo.</p>
                     <ul>
-                        <li>Intervención sostenida en el tiempo</li>
-                        <li>Sesiones quincenales o mensuales</li>
-                        <li>Seguimiento de avances del equipo</li>
-                        <li>Ajustes según necesidades emergentes</li>
                         <li>Evaluación de impacto pre-post</li>
                         <li>Certificación de participación</li>
-                        <li>10-20 participantes</li>
                     </ul>
+                    <div class="modalidad-meta">👥 10-20 participantes</div>
                 </div>
             </div>
 
@@ -750,7 +862,7 @@
             <div class="cta-box">
                 <h3>¿Tu Equipo Necesita una Jornada de Autocuidado Profesional?</h3>
                 <p>Diseñamos talleres a medida para equipos sociales, educacionales y de salud. 10 años de experiencia facilitando bienestar laboral.</p>
-                <a href="https://wa.me/56912345678?text=Hola, necesito solicitar una jornada de autocuidado para mi equipo. ¿Me pueden orientar?" class="cta-button">Solicitar Jornada por WhatsApp</a>
+                <a href="https://wa.me/56949546000?text=Hola, necesito solicitar una jornada de autocuidado para mi equipo. ¿Me pueden orientar?" class="cta-button">Solicitar Jornada por WhatsApp</a>
             </div>
 
             <h2>Casos de Éxito: Equipos Transformados por el Autocuidado</h2>
@@ -770,7 +882,7 @@
             <div class="faq-section">
                 <div class="faq-item">
                     <h4>¿Cuánto cuesta una jornada de autocuidado en Chile 2026?</h4>
-                    <p>El costo varía según modalidad y cantidad de participantes. <strong>Taller express (2-3 horas):</strong> desde $250.000 para grupos de hasta 20 personas. <strong>Jornada completa (6-8 horas):</strong> desde $450.000 para grupos de hasta 25 personas. <strong>Programas de varias sesiones:</strong> desde $1.200.000 (4 sesiones). Incluye material de apoyo y certificados de participación. Algunas municipalidades y servicios de salud cuentan con presupuesto COMPIN o fondos de capacitación para autocuidado; consulta en tu institución.</p>
+                    <p>El costo varía según modalidad y cantidad de participantes. <strong>Charla introductoria (1 hora):</strong> sin costo. <strong>Taller express (2-3 horas):</strong> desde $250.000 para grupos de hasta 20 personas. <strong>Jornada completa (6-8 horas):</strong> desde $450.000 para grupos de hasta 25 personas. <strong>Programas de varias sesiones:</strong> desde $1.200.000 (4 sesiones). Incluye material de apoyo y certificados de participación. Algunas municipalidades y servicios de salud cuentan con presupuesto COMPIN o fondos de capacitación para autocuidado; consulta en tu institución.</p>
                 </div>
 
                 <div class="faq-item">
@@ -802,9 +914,31 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Tu Asesor Social - Francis Carter Sanhueza | Trabajador Social Titulado</p>
-        <p>10 años de experiencia en Orientación Social, Mediación Familiar e Informes Profesionales</p>
-        <p><a href="/">Inicio</a> | <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a> | <a href="/informes-sociales/">Informes Sociales</a> | <a href="/jornadas-autocuidado/">Autocuidado</a> | <a href="/credencial-discapacidad/">Credencial de Discapacidad</a></p>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Tu Asesor Social</h4>
+                    <p>Francis Carter Sanhueza<br>Trabajadora Social Titulada<br>10 años de experiencia</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Servicios</h4>
+                    <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a>
+                    <a href="/informes-sociales/">Informes Sociales</a>
+                    <a href="/jornadas-autocuidado/">Jornadas de Autocuidado</a>
+                    <a href="/credencial-discapacidad/">Credencial de Discapacidad</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Enlaces</h4>
+                    <a href="/">Inicio</a>
+                    <a href="/que-necesito/">¿Qué Necesito?</a>
+                    <a href="#contacto">Contacto</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Tu Asesor Social. Todos los derechos reservados.</p>
+                <p>Sitio web creado y posicionado por <a href="https://almamedia.cl" target="_blank" rel="noopener">AlmaMedia.cl</a></p>
+            </div>
+        </div>
     </footer>
 </body>
 </html>

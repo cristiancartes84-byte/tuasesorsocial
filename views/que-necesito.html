@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué Servicio Necesito? Test Gratuito | Tu Asesor Social</title>
+    <meta name="description" content="Responde 2 preguntas y descubre qué servicio de asesoría social necesitas (subsidios, mediación familiar, informes sociales y más), con la lista de documentos que debes reunir.">
+    <meta name="keywords" content="que subsidio me conviene, test asesoria social, documentos subsidio chile, que servicio necesito">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="¿Qué Servicio Necesito? Test Gratuito de Asesoría Social">
+    <meta property="og:description" content="Responde 2 preguntas y descubre qué servicio necesitas, con la lista de documentos que debes reunir.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tuasesorsocial.cl/que-necesito/">
+    <meta property="og:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="¿Qué Servicio Necesito? Test Gratuito de Asesoría Social">
+    <meta name="twitter:description" content="Responde 2 preguntas y descubre qué servicio necesitas, con la lista de documentos que debes reunir.">
+    <meta name="twitter:image" content="https://tuasesorsocial.cl/assets/francis-hero.jpg">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "¿Qué Servicio Necesito?",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "description": "Herramienta interactiva que orienta sobre qué servicio de asesoría social corresponde a cada situación, e indica los documentos necesarios.",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@type": "Organization",
+        "name": "Tu Asesor Social - Francis Carter Sanhueza"
+      }
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-confiable: #2563eb;
+            --verde-esperanza: #059669;
+            --naranja-acogedor: #ea580c;
+            --gris-fondo: #f8fafc;
+            --gris-oscuro: #1e293b;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.7;
+            color: var(--gris-oscuro);
+            background: #fafbfc;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--azul-confiable) 0%, var(--verde-esperanza) 100%);
+            color: white;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 24px;
+            padding: clamp(2rem, 5vw, 3rem);
+            margin: -3rem auto 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            min-height: 320px;
+        }
+
+        .quiz-progress {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-progress-dot {
+            height: 6px;
+            flex: 1;
+            background: #e5e7eb;
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-progress-dot.active {
+            background: linear-gradient(90deg, var(--azul-confiable), var(--verde-esperanza));
+        }
+
+        .quiz-step {
+            display: none;
+        }
+
+        .quiz-step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-step h2 {
+            font-size: clamp(1.3rem, 3vw, 1.75rem);
+            margin-bottom: 1.5rem;
+            color: var(--gris-oscuro);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            text-align: left;
+            width: 100%;
+            padding: 1.1rem 1.4rem;
+            background: var(--gris-fondo);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gris-oscuro);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--azul-confiable);
+            background: white;
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+        }
+
+        .quiz-option .quiz-option-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-back {
+            margin-top: 1.5rem;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .quiz-back:hover {
+            color: var(--azul-confiable);
+        }
+
+        /* Results */
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--verde-esperanza);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: clamp(1.4rem, 3.5vw, 2rem);
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--gris-oscuro);
+        }
+
+        .result-desc {
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+
+        .result-checklist-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--azul-confiable);
+        }
+
+        .checklist {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 0.1rem;
+            accent-color: var(--verde-esperanza);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checklist label {
+            cursor: pointer;
+            transition: color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .checklist input[type="checkbox"]:checked + label {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #059669;
+            color: white;
+            padding: 1rem 1.75rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: white;
+            color: var(--azul-confiable);
+            padding: 1rem 1.75rem;
+            border: 2px solid var(--azul-confiable);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: var(--azul-confiable);
+            color: white;
+        }
+
+        .quiz-restart {
+            display: block;
+            margin-top: 1.5rem;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        footer {
+            background: var(--gris-oscuro);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--verde-esperanza);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            nav ul { display: none; }
+            .quiz-option { padding: 1rem; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Tu Asesor Social</div>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/#servicios">Servicios</a></li>
+                <li><a href="/#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <h1>¿Qué Servicio Necesito?</h1>
+        <p>Responde 2 preguntas rápidas y te decimos qué te conviene, más la lista de documentos que debes reunir.</p>
+    </section>
+
+    <div class="container">
+        <div class="quiz-card">
+            <div class="quiz-progress">
+                <div class="quiz-progress-dot active" data-dot="1"></div>
+                <div class="quiz-progress-dot" data-dot="2"></div>
+            </div>
+
+            <!-- Paso 1 -->
+            <div class="quiz-step active" id="step-1">
+                <h2>¿Cuál es tu situación principal?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-next="step-vivienda">
+                        <span class="quiz-option-icon">🏠</span> Necesito ayuda con vivienda, arriendo o subsidios habitacionales
+                    </button>
+                    <button class="quiz-option" data-result="electrico">
+                        <span class="quiz-option-icon">💡</span> Necesito ayuda con el subsidio eléctrico (cuenta de luz)
+                    </button>
+                    <button class="quiz-option" data-result="rsh">
+                        <span class="quiz-option-icon">🗂️</span> No tengo mi Registro Social de Hogares al día
+                    </button>
+                    <button class="quiz-option" data-result="mediacion">
+                        <span class="quiz-option-icon">👨‍👩‍👧</span> Tengo un conflicto familiar que necesito resolver
+                    </button>
+                    <button class="quiz-option" data-result="informes">
+                        <span class="quiz-option-icon">📋</span> Necesito un informe social para un trámite
+                    </button>
+                    <button class="quiz-option" data-result="discapacidad">
+                        <span class="quiz-option-icon">🪪</span> Necesito la Credencial de Discapacidad
+                    </button>
+                    <button class="quiz-option" data-result="autocuidado">
+                        <span class="quiz-option-icon">💚</span> Represento a un equipo que necesita apoyo/autocuidado
+                    </button>
+                    <button class="quiz-option" data-result="orientacion">
+                        <span class="quiz-option-icon">⚖️</span> No estoy seguro/a, necesito orientación general
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 2: rama vivienda -->
+            <div class="quiz-step" id="step-vivienda">
+                <h2>¿Qué buscas específicamente?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-result="arriendo">
+                        <span class="quiz-option-icon">🔑</span> Quiero arrendar con ayuda del Estado
+                    </button>
+                    <button class="quiz-option" data-result="minvu">
+                        <span class="quiz-option-icon">🏗️</span> Quiero comprar o construir una vivienda
+                    </button>
+                </div>
+                <button class="quiz-back" data-back="step-1">← Volver</button>
+            </div>
+
+            <!-- Resultado -->
+            <div class="quiz-step" id="step-result">
+                <div id="result-content"></div>
+                <button class="quiz-restart" id="quiz-restart-btn">↻ Empezar de nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Tu Asesor Social - Francis Carter Sanhueza | Trabajador Social Titulado</p>
+        <p><a href="/">Inicio</a> | <a href="/subsidio-electrico/">Subsidio Eléctrico</a> | <a href="/subsidio-de-arriendo/">Subsidio de Arriendo</a> | <a href="/mediacion-familiar/">Mediación Familiar</a></p>
+        <p>Sitio web creado y posicionado por <a href="https://almamedia.cl" target="_blank" rel="noopener">AlmaMedia.cl</a></p>
+    </footer>
+
+    <script>
+        const RESULTS = {
+            electrico: {
+                badge: 'Te recomendamos',
+                title: '💡 Subsidio Eléctrico',
+                desc: 'Un beneficio que rebaja el valor de tu cuenta de luz si estás dentro del tramo de vulnerabilidad requerido.',
+                url: '/subsidio-electrico/',
+                whatsapp: 'Hola, hice el test del sitio y necesito ayuda con el Subsidio Eléctrico.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Registro Social de Hogares actualizado',
+                    'Última boleta de electricidad (para verificar tu N° de cliente)'
+                ]
+            },
+            arriendo: {
+                badge: 'Te recomendamos',
+                title: '🔑 Subsidio de Arriendo',
+                desc: 'Apoyo económico mensual del MINVU para arrendar una vivienda.',
+                url: '/subsidio-de-arriendo/',
+                whatsapp: 'Hola, hice el test del sitio y necesito ayuda con el Subsidio de Arriendo.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Registro Social de Hogares actualizado',
+                    'Certificado de ahorro (si el llamado lo exige)',
+                    'Contrato de arriendo (una vez adjudicado el subsidio)'
+                ]
+            },
+            minvu: {
+                badge: 'Te recomendamos',
+                title: '🏗️ Subsidios MINVU (DS49 / DS1 / DS19 / DS52)',
+                desc: 'Programas del Estado para comprar o construir una vivienda, según tu tramo socioeconómico.',
+                url: '/subsidios-minvu/',
+                whatsapp: 'Hola, hice el test del sitio y necesito orientación sobre subsidios MINVU para vivienda.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Registro Social de Hogares en el tramo correspondiente',
+                    'Libreta o certificado de ahorro para la vivienda',
+                    'Certificado de no propiedad de otra vivienda (si aplica)'
+                ]
+            },
+            rsh: {
+                badge: 'Te recomendamos',
+                title: '🗂️ Registro Social de Hogares',
+                desc: 'La base para acceder a la mayoría de los subsidios y beneficios del Estado en Chile.',
+                url: '/registro-social-de-hogares/',
+                whatsapp: 'Hola, hice el test del sitio y necesito orientación con mi Registro Social de Hogares.',
+                checklist: [
+                    'Cédula de identidad de todos los integrantes del hogar',
+                    'ClaveÚnica (para hacerlo en línea)',
+                    'Comprobantes de ingresos, si se solicitan'
+                ]
+            },
+            mediacion: {
+                badge: 'Te recomendamos',
+                title: '👨‍👩‍👧 Mediación Familiar',
+                desc: 'Un proceso confidencial para resolver conflictos familiares de forma pacífica, con acuerdos que pueden tener validez legal.',
+                url: '/mediacion-familiar/',
+                whatsapp: 'Hola, hice el test del sitio y necesito información sobre mediación familiar.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Documentos relacionados al conflicto, si existen (acuerdos previos, datos de contacto de la otra parte)'
+                ]
+            },
+            informes: {
+                badge: 'Te recomendamos',
+                title: '📋 Informes Sociales',
+                desc: 'Documento técnico elaborado por un trabajador social, necesario para tribunales, subsidios y otros trámites.',
+                url: '/informes-sociales/',
+                whatsapp: 'Hola, hice el test del sitio y necesito un informe social.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Liquidaciones de sueldo o certificado de ingresos (últimos 3 meses)',
+                    'Certificado de domicilio o cuenta de servicios básicos',
+                    'Registro Social de Hogares',
+                    'Documentos específicos según el motivo del informe (judicial, subsidio, salud, etc.)'
+                ]
+            },
+            discapacidad: {
+                badge: 'Te recomendamos',
+                title: '🪪 Credencial de Discapacidad',
+                desc: 'El proceso de certificación de discapacidad y la obtención de tu credencial, con el informe social que forma parte de la evaluación.',
+                url: '/credencial-discapacidad/',
+                whatsapp: 'Hola, hice el test del sitio y necesito orientación sobre la Credencial de Discapacidad.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Certificados o antecedentes médicos relacionados con tu condición de salud'
+                ]
+            },
+            autocuidado: {
+                badge: 'Te recomendamos',
+                title: '💚 Jornadas de Autocuidado',
+                desc: 'Talleres para equipos que trabajan bajo alta demanda emocional (salud, educación, servicios sociales).',
+                url: '/jornadas-autocuidado/',
+                whatsapp: 'Hola, hice el test del sitio y quiero cotizar una jornada de autocuidado para mi equipo.',
+                checklist: [
+                    'Número aproximado de participantes',
+                    'Modalidad preferida (presencial, online o híbrida)',
+                    'Fecha tentativa para la jornada'
+                ]
+            },
+            orientacion: {
+                badge: 'Te recomendamos',
+                title: '⚖️ Orientación Socio-Jurídica',
+                desc: 'Un primer diagnóstico de tu situación para entender qué camino seguir, aunque no tengas claro qué necesitas todavía.',
+                url: '/orientacion-socio-juridica/',
+                whatsapp: 'Hola, hice el test del sitio y necesito orientación, no tengo claro qué servicio necesito.',
+                checklist: [
+                    'Cédula de identidad',
+                    'Cualquier documento relacionado con tu situación (cartas, notificaciones, contratos, certificados) — no es obligatorio tenerlos para la primera sesión'
+                ]
+            }
+        };
+
+        const steps = document.querySelectorAll('.quiz-step');
+        const dots = document.querySelectorAll('.quiz-progress-dot');
+
+        function showStep(id, dotIndex) {
+            steps.forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (dotIndex) {
+                dots.forEach((d, i) => d.classList.toggle('active', i < dotIndex));
+            }
+        }
+
+        function showResult(key) {
+            const r = RESULTS[key];
+            if (!r) return;
+
+            const checklistHtml = r.checklist.map((item, i) => `
+                <li>
+                    <input type="checkbox" id="chk-${i}">
+                    <label for="chk-${i}">${item}</label>
+                </li>
+            `).join('');
+
+            document.getElementById('result-content').innerHTML = `
+                <span class="result-badge">${r.badge}</span>
+                <h2 class="result-title">${r.title}</h2>
+                <p class="result-desc">${r.desc}</p>
+                <div class="result-checklist-title">📝 Documentos que debes reunir</div>
+                <ul class="checklist">${checklistHtml}</ul>
+                <div class="result-actions">
+                    <a href="https://wa.me/56949546000?text=${encodeURIComponent(r.whatsapp)}" class="btn-whatsapp" target="_blank">💬 Consultar por WhatsApp</a>
+                    <a href="${r.url}" class="btn-outline">Ver guía completa →</a>
+                </div>
+            `;
+
+            showStep('step-result', 2);
+        }
+
+        document.querySelectorAll('.quiz-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.next) {
+                    showStep(btn.dataset.next, 2);
+                } else if (btn.dataset.result) {
+                    showResult(btn.dataset.result);
+                }
+            });
+        });
+
+        document.querySelectorAll('.quiz-back').forEach(btn => {
+            btn.addEventListener('click', () => showStep(btn.dataset.back, 1));
+        });
+
+        document.getElementById('quiz-restart-btn').addEventListener('click', () => showStep('step-1', 1));
+    </script>
+</body>
+</html>
