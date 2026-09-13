@@ -1151,54 +1151,60 @@
         .hero-cat {
             position: absolute;
             z-index: -1;
+            pointer-events: none;
+            animation: hero-cat-peek 16s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+        }
+
+        .hero-cat-emoji {
+            display: inline-block;
             font-size: clamp(1.8rem, 5vw, 2.6rem);
             line-height: 1;
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
-            animation: hero-cat-peek 16s ease-in-out infinite;
-            pointer-events: none;
+            transform-origin: 65% 90%;
+            animation: hero-cat-wiggle 1.4s ease-in-out infinite;
+        }
+
+        @keyframes hero-cat-wiggle {
+            0%, 100% { transform: rotate(-8deg) scale(1); }
+            25% { transform: rotate(3deg) scale(1.08); }
+            50% { transform: rotate(-4deg) scale(0.95); }
+            75% { transform: rotate(7deg) scale(1.05); }
         }
 
         @keyframes hero-cat-peek {
             0%, 4% {
-                top: 50%;
+                top: calc(50% - 1.3rem);
                 left: -10%;
-                transform: translateY(-50%) rotate(-8deg) scale(1);
                 opacity: 1;
             }
             14%, 28% {
-                top: 50%;
-                left: -22%;
-                transform: translateY(-50%) rotate(-8deg) scale(0.85);
+                top: calc(50% - 1.3rem);
+                left: -24%;
                 opacity: 0;
             }
             34%, 40% {
-                top: -8%;
+                top: -10%;
                 left: 60%;
-                transform: rotate(10deg) scale(1);
                 opacity: 1;
             }
             50%, 64% {
-                top: -22%;
+                top: -26%;
                 left: 60%;
-                transform: rotate(10deg) scale(0.85);
                 opacity: 0;
             }
             70%, 76% {
                 top: 80%;
                 left: 65%;
-                transform: rotate(-6deg) scale(1);
                 opacity: 1;
             }
             86%, 96% {
-                top: 96%;
+                top: 98%;
                 left: 65%;
-                transform: rotate(-6deg) scale(0.85);
                 opacity: 0;
             }
             100% {
-                top: 50%;
+                top: calc(50% - 1.3rem);
                 left: -10%;
-                transform: translateY(-50%) rotate(-8deg) scale(1);
                 opacity: 0;
             }
         }
@@ -1436,7 +1442,7 @@
 
             <div class="hero-right">
                 <div class="hero-photo">
-                    <div class="hero-cat" aria-hidden="true">🐈‍⬛</div>
+                    <div class="hero-cat" aria-hidden="true"><span class="hero-cat-emoji">🐈‍⬛</span></div>
                     <div class="hero-photo-badge-top">⚡ Respuesta rápida por WhatsApp</div>
                     <img src="/assets/francis-portrait.jpg" alt="Francis Carter Sanhueza, Trabajadora Social" width="900" height="1600" fetchpriority="high">
                     <div class="hero-photo-badge">⭐ 10 años de experiencia</div>
