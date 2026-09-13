@@ -6,6 +6,10 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Tratar "/ruta" y "/ruta/" como rutas distintas, para que las redirecciones
+// 301 sin slash final funcionen correctamente (evita contenido duplicado)
+app.set('strict routing', true);
+
 // Seguridad y compresión
 app.use(helmet({
   contentSecurityPolicy: false, // Permitir inline scripts para animaciones
