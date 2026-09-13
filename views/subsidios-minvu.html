@@ -134,10 +134,15 @@
         }
 
         header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         nav {
@@ -680,6 +685,12 @@
                 font-size: 0.95rem;
             }
 
+            .cta-button {
+                padding: 0.9rem 1.75rem;
+                font-size: 0.95rem;
+                white-space: nowrap;
+            }
+
             .tipos-grid,
             .proceso-grid {
                 grid-template-columns: 1fr;
@@ -796,7 +807,7 @@
             </div>
 
             <div class="cta-box">
-                <h3>¿Quieres Postular a un Subsidio MINVU sin Errores?</h3>
+                <h3>¿Quieres Postular a un Subsidio MINVU?</h3>
                 <p>Te oriento en la elección del programa correcto (DS49, DS52, DS19 o DS1) y revisamos juntos tu documentación antes de postular.</p>
                 <a href="https://wa.me/56949546000?text=Necesito%20asesor%C3%ADa%20para%20postular%20a%20un%20subsidio%20MINVU" class="cta-button">Consultar por WhatsApp</a>
             </div>

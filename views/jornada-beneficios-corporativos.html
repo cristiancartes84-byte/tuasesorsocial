@@ -134,10 +134,15 @@
         }
 
         header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         nav {
@@ -802,6 +807,12 @@
                 font-size: 0.95rem;
             }
 
+            .cta-button {
+                padding: 0.9rem 1.75rem;
+                font-size: 0.95rem;
+                white-space: nowrap;
+            }
+
             .modalidades-grid,
             .tematicas-grid,
             .beneficios-grid {
@@ -1036,7 +1047,7 @@
             </ul>
 
             <div class="cta-box">
-                <h3>¿Tu Empresa Quiere Organizar una Jornada de Beneficios?</h3>
+                <h3>¿Tu Empresa Quiere una Jornada de Beneficios?</h3>
                 <p>Coordino todo el proceso: selección de estands, logística y seguimiento. Cuéntame el perfil de tu equipo y armamos una propuesta.</p>
                 <a href="https://wa.me/56949546000?text=Hola, quiero información sobre la Jornada de Beneficios Corporativos para mi empresa." class="cta-button">Consultar por WhatsApp</a>
             </div>
