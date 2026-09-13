@@ -142,10 +142,15 @@
         }
 
         header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background: linear-gradient(135deg, var(--azul-confiable), var(--verde-esperanza));
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         nav {
@@ -688,6 +693,12 @@
                 font-size: 0.95rem;
             }
 
+            .cta-button {
+                padding: 0.9rem 1.75rem;
+                font-size: 0.95rem;
+                white-space: nowrap;
+            }
+
             .proceso-grid,
             .beneficios-grid {
                 grid-template-columns: 1fr;
@@ -818,7 +829,7 @@
             </div>
 
             <div class="cta-box">
-                <h3>¿Necesitas Orientación para el Informe Social de tu Certificación de Discapacidad?</h3>
+                <h3>¿Necesitas Ayuda con tu Certificación de Discapacidad?</h3>
                 <p>Te acompañamos en la preparación de la documentación y la entrevista social, y te orientamos en cada etapa del proceso hasta obtener tu credencial.</p>
                 <a href="https://wa.me/56949546000?text=Necesito%20orientaci%C3%B3n%20sobre%20el%20informe%20social%20para%20la%20credencial%20de%20discapacidad" class="cta-button">Consultar por WhatsApp</a>
             </div>
