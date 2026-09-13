@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Gestión | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f8fafc; color: #1f2937; }
+        header {
+            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { font-size: 1.2rem; }
+        header a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
+        main { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+        .empty-state {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #64748b;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Panel de Gestión — <%= usuario.nombre %></h1>
+        <a href="/admin/logout">Cerrar sesión</a>
+    </header>
+    <main>
+        <div class="empty-state">
+            <p>Todavía no hay casos registrados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">La gestión de casos (crear caso, actualizar hitos, agregar notas) se agrega en la siguiente fase.</p>
+        </div>
+    </main>
+</body>
+</html>
