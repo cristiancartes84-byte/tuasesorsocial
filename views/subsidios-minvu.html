@@ -85,6 +85,32 @@
     }
     </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://tuasesorsocial.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Subsidios MINVU",
+          "item": "https://tuasesorsocial.cl/subsidios-minvu/"
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"></noscript>
+
     <style>
         * {
             margin: 0;
@@ -99,8 +125,6 @@
             --gris-fondo: #f8fafc;
             --gris-oscuro: #1e293b;
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
         body {
             font-family: 'Montserrat', sans-serif;
@@ -281,6 +305,16 @@
             hyphens: auto;
             -webkit-hyphens: auto;
             }
+
+        .article-card p a {
+            color: var(--azul-confiable);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .article-card p a:hover {
+            color: var(--verde-esperanza);
+        }
 
         .highlight-box {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -624,7 +658,7 @@
             <div class="tipos-grid">
                 <div class="tipo-card">
                     <h4>DS49 - Fondo Solidario de Elección de Vivienda</h4>
-                    <p>Orientado a los hogares de mayor vulnerabilidad social (tramos más bajos del Registro Social de Hogares), para adquirir una vivienda nueva o usada, con menor exigencia de ahorro previo.</p>
+                    <p>Orientado a los hogares de mayor vulnerabilidad social (tramos más bajos del <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>), para adquirir una vivienda nueva o usada, con menor exigencia de ahorro previo.</p>
                 </div>
                 <div class="tipo-card">
                     <h4>DS1 - Sistema de Subsidio Habitacional</h4>

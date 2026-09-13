@@ -18,7 +18,7 @@ app.use(compression());
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: '1d' // Cache de 1 día para assets
+  maxAge: '30d' // Cache de 30 días para assets (imágenes, favicon)
 }));
 
 // Rutas SEO-friendly

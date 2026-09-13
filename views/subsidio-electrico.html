@@ -91,7 +91,29 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap"></noscript>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://tuasesorsocial.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Subsidio Eléctrico",
+          "item": "https://tuasesorsocial.cl/subsidio-electrico/"
+        }
+      ]
+    }
+    </script>
 
     <style>
         * {
@@ -272,6 +294,16 @@
             text-align: justify;
             hyphens: auto;
             -webkit-hyphens: auto;
+        }
+
+        .article-card p a {
+            color: var(--azul-confiable);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .article-card p a:hover {
+            color: var(--verde-esperanza);
         }
 
         .article-card ul, .article-card ol {
@@ -526,7 +558,7 @@
     <!-- Article Content -->
     <article class="article">
         <div class="article-card">
-            <p><strong>El Subsidio Eléctrico</strong> es una iniciativa del gobierno chileno diseñada para aliviar la carga financiera de las cuentas de electricidad en hogares vulnerables. Este beneficio está dirigido a familias dentro del 40% más vulnerable según el Registro Social de Hogares.</p>
+            <p><strong>El Subsidio Eléctrico</strong> es una iniciativa del gobierno chileno diseñada para aliviar la carga financiera de las cuentas de electricidad en hogares vulnerables. Este beneficio está dirigido a familias dentro del 40% más vulnerable según el <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>.</p>
 
             <div class="highlight-box">
                 <strong>✅ Dato importante:</strong> El subsidio eléctrico puede cubrir hasta el 50% de tu cuenta de luz, dependiendo de tu nivel de vulnerabilidad y consumo.
