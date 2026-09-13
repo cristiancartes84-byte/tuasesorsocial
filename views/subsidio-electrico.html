@@ -162,6 +162,19 @@
             font-size: 1.5rem;
         }
 
+        .logo-icon svg {
+            animation: heartbeat 1.8s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.18); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            60% { transform: scale(1); }
+        }
+
         .nav-links {
             display: flex;
             gap: 2rem;
@@ -185,6 +198,29 @@
             padding: 8rem 0 4rem;
             color: white;
             text-align: center;
+        }
+
+        
+        .hero-emoji-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            font-size: 2rem;
+            margin: 0 auto 1.25rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         .hero-article h1 {
@@ -228,10 +264,13 @@
             color: var(--azul-confiable);
         }
 
-        .article-card p {
+        .article-card > p {
             margin-bottom: 1.5rem;
             font-size: 1.1rem;
             line-height: 1.8;
+            text-align: justify;
+            hyphens: auto;
+            -webkit-hyphens: auto;
         }
 
         .article-card ul, .article-card ol {
@@ -380,6 +419,83 @@
                 display: none;
             }
         }
+
+        .faq-section {
+            margin: 3rem 0;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background: none;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--azul-confiable);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .faq-question:hover {
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .faq-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--verde-esperanza);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(135deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer > div {
+            padding: 0 1.5rem 1.25rem;
+            color: #475569;
+            line-height: 1.7;
+        }
+
+        .faq-answer p {
+            margin: 0 0 0.75rem;
+        }
+
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-answer ul,
+        .faq-answer ol {
+            margin: 0 0 0.75rem 1.25rem;
+        }
     </style>
 </head>
 <body>
@@ -387,13 +503,13 @@
     <nav>
         <div class="nav-container">
             <a href="/" class="logo">
-                <div class="logo-icon">🙌</div>
+                <div class="logo-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                 <span>Tu Asesor Social</span>
             </a>
             <ul class="nav-links">
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/subsidio-electrico/">Subsidio Eléctrico</a></li>
-                <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
+                <li><a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a></li>
                 <li><a href="/subsidio-de-arriendo/">Subsidio Arriendo</a></li>
             </ul>
         </div>
@@ -401,6 +517,7 @@
 
     <!-- Hero -->
     <section class="hero-article">
+        <div class="hero-emoji-badge">💡</div>
         <h1>Subsidio Eléctrico 2026: Guía Definitiva para Postular</h1>
         <p>Guía completa del Subsidio Eléctrico en Chile: requisitos, pasos para postular, fechas, plazos, montos y cobertura. Más del 92% de familias elegibles son aprobadas.</p>
     </section>
@@ -464,38 +581,85 @@
 
             <h2>Preguntas Frecuentes sobre el Subsidio Eléctrico 2026</h2>
 
-            <h3>¿Qué hacer si no me aparece el subsidio en mi cuenta?</h3>
-            <p>Si cumples con todos los requisitos pero el subsidio no aparece en tu cuenta de luz:</p>
-            <ol>
-                <li>Verifica tu estado en <a href="https://www.subsidioelectrico.cl" target="_blank" rel="noopener">subsidioelectrico.cl</a></li>
-                <li>Confirma que tu Registro Social de Hogares esté actualizado</li>
-                <li>Contacta a tu empresa distribuidora de electricidad</li>
-                <li>Solicita asesoría profesional gratuita (te podemos ayudar)</li>
-            </ol>
+            <div class="faq-section">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>¿Qué hacer si no me aparece el subsidio en mi cuenta?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Si cumples con todos los requisitos pero el subsidio no aparece en tu cuenta de luz:</p>
+                            <ol>
+                                <li>Verifica tu estado en <a href="https://www.subsidioelectrico.cl" target="_blank" rel="noopener">subsidioelectrico.cl</a></li>
+                                <li>Confirma que tu Registro Social de Hogares esté actualizado</li>
+                                <li>Contacta a tu empresa distribuidora de electricidad</li>
+                                <li>Solicita asesoría profesional gratuita (te podemos ayudar)</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
 
-            <h3>¿Puedo tener subsidio eléctrico y de agua al mismo tiempo?</h3>
-            <p>Sí, son beneficios independientes. Si cumples los requisitos para ambos subsidios, puedes acceder a los dos simultáneamente. El subsidio eléctrico NO afecta tu elegibilidad para otros beneficios del Estado como subsidio de agua, arriendo, o asignación familiar.</p>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>¿Puedo tener subsidio eléctrico y de agua al mismo tiempo?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Sí, son beneficios independientes. Si cumples los requisitos para ambos subsidios, puedes acceder a los dos simultáneamente. El subsidio eléctrico NO afecta tu elegibilidad para otros beneficios del Estado como subsidio de agua, arriendo, o asignación familiar.</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3>¿Qué pasa si me mudo de casa con el subsidio activo?</h3>
-            <p>El subsidio eléctrico <strong>no se transfiere automáticamente</strong> a tu nueva dirección. Debes:</p>
-            <ul>
-                <li>Actualizar tu domicilio en el Registro Social de Hogares</li>
-                <li>Esperar la próxima evaluación mensual (máximo 30 días)</li>
-                <li>El subsidio se aplicará en tu nueva dirección si sigues cumpliendo requisitos</li>
-            </ul>
-            <p>Es importante actualizar tu RSH inmediatamente después de mudarte para no perder meses de beneficio.</p>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>¿Qué pasa si me mudo de casa con el subsidio activo?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>El subsidio eléctrico <strong>no se transfiere automáticamente</strong> a tu nueva dirección. Debes:</p>
+                            <ul>
+                                <li>Actualizar tu domicilio en el Registro Social de Hogares</li>
+                                <li>Esperar la próxima evaluación mensual (máximo 30 días)</li>
+                                <li>El subsidio se aplicará en tu nueva dirección si sigues cumpliendo requisitos</li>
+                            </ul>
+                            <p>Es importante actualizar tu RSH inmediatamente después de mudarte para no perder meses de beneficio.</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3>¿El subsidio eléctrico caduca o debo renovarlo?</h3>
-            <p>No caduca mientras sigas cumpliendo los requisitos. El sistema evalúa automáticamente cada mes tu elegibilidad usando datos del Registro Social de Hogares. <strong>No necesitas renovar ni repostular</strong> - es completamente automático. Esta es una de las grandes ventajas del subsidio eléctrico versus otros beneficios estatales.</p>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>¿El subsidio eléctrico caduca o debo renovarlo?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>No caduca mientras sigas cumpliendo los requisitos. El sistema evalúa automáticamente cada mes tu elegibilidad usando datos del Registro Social de Hogares. <strong>No necesitas renovar ni repostular</strong> - es completamente automático. Esta es una de las grandes ventajas del subsidio eléctrico versus otros beneficios estatales.</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3>¿Pueden quitármelo si mejoran mis ingresos?</h3>
-            <p>Sí, si tus ingresos aumentan y sales del 40% más vulnerable del Registro Social de Hogares, perderás el beneficio. Sin embargo:</p>
-            <ul>
-                <li>La evaluación es mensual, por lo que el cambio no es inmediato</li>
-                <li>Si tus ingresos fluctúan (trabajador independiente), el subsidio puede volver cuando bajes de nuevo al 40%</li>
-                <li>Es normal y esperado - significa que tu situación económica mejoró</li>
-                <li>No te generará ninguna deuda retroactiva por los meses que lo recibiste</li>
-            </ul>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>¿Pueden quitármelo si mejoran mis ingresos?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Sí, si tus ingresos aumentan y sales del 40% más vulnerable del Registro Social de Hogares, perderás el beneficio. Sin embargo:</p>
+                            <ul>
+                                <li>La evaluación es mensual, por lo que el cambio no es inmediato</li>
+                                <li>Si tus ingresos fluctúan (trabajador independiente), el subsidio puede volver cuando bajes de nuevo al 40%</li>
+                                <li>Es normal y esperado - significa que tu situación económica mejoró</li>
+                                <li>No te generará ninguna deuda retroactiva por los meses que lo recibiste</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="cta-box">
                 <h3>¿Necesitas Ayuda para Gestionar tu Subsidio Eléctrico?</h3>
@@ -515,8 +679,8 @@
                     <p>Guía completa para obtener el subsidio de arriendo del MINVU. Requisitos y pasos actualizados.</p>
                 </a>
                 <a href="/mediacion-familiar/" class="related-card">
-                    <h3>👨‍👩‍👧 Mediación Familiar</h3>
-                    <p>Resuelve conflictos familiares de forma pacífica con mediación certificada online.</p>
+                    <h3>👨‍👩‍👧 Asesoría en Mediación Familiar</h3>
+                    <p>Orientación y preparación para tu proceso de mediación familiar, online y presencial.</p>
                 </a>
                 <a href="/" class="related-card">
                     <h3>🙌 Todos Nuestros Servicios</h3>
@@ -532,7 +696,7 @@
             <div class="footer-links">
                 <a href="/">Inicio</a>
                 <a href="/subsidio-electrico/">Subsidio Eléctrico</a>
-                <a href="/mediacion-familiar/">Mediación Familiar</a>
+                <a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a>
                 <a href="/subsidio-de-arriendo/">Subsidio de Arriendo</a>
                 <a href="/que-necesito/">¿Qué Necesito?</a>
             </div>
@@ -544,5 +708,24 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var item = btn.closest('.faq-item');
+                var answer = item.querySelector('.faq-answer');
+                var isActive = item.classList.contains('active');
+                if (isActive) {
+                    answer.style.maxHeight = null;
+                    item.classList.remove('active');
+                    btn.setAttribute('aria-expanded', 'false');
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    item.classList.add('active');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

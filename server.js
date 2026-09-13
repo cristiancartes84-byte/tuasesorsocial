@@ -62,6 +62,18 @@ app.get('/que-necesito/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'que-necesito.html'));
 });
 
+app.get('/jornada-beneficios-corporativos/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'jornada-beneficios-corporativos.html'));
+});
+
+app.get('/convivencia-escolar/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'convivencia-escolar.html'));
+});
+
+app.get('/beneficios-adulto-mayor/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'beneficios-adulto-mayor.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
@@ -82,6 +94,9 @@ app.get('/credencial-discapacidad', (req, res) => res.redirect(301, '/credencial
 app.get('/registro-social-de-hogares', (req, res) => res.redirect(301, '/registro-social-de-hogares/'));
 app.get('/subsidios-minvu', (req, res) => res.redirect(301, '/subsidios-minvu/'));
 app.get('/que-necesito', (req, res) => res.redirect(301, '/que-necesito/'));
+app.get('/jornada-beneficios-corporativos', (req, res) => res.redirect(301, '/jornada-beneficios-corporativos/'));
+app.get('/convivencia-escolar', (req, res) => res.redirect(301, '/convivencia-escolar/'));
+app.get('/beneficios-adulto-mayor', (req, res) => res.redirect(301, '/beneficios-adulto-mayor/'));
 
 // 404 handler
 app.use((req, res) => {
