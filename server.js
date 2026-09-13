@@ -1,7 +1,10 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +18,48 @@ app.use(helmet({
   contentSecurityPolicy: false, // Permitir inline scripts para animaciones
 }));
 app.use(compression());
+app.use(express.json());
+
+// Envío del formulario de contacto por correo (Gmail SMTP)
+const mailer = process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    })
+  : null;
+
+app.post('/api/contact', async (req, res) => {
+  const nombre = (req.body.nombre || '').trim();
+  const email = (req.body.email || '').trim();
+  const telefono = (req.body.telefono || '').trim();
+  const mensaje = (req.body.mensaje || '').trim();
+
+  if (!nombre || !email) {
+    return res.status(400).json({ ok: false, error: 'Nombre y email son obligatorios.' });
+  }
+
+  if (!mailer) {
+    console.error('GMAIL_USER / GMAIL_APP_PASSWORD no configurados; no se puede enviar el correo.');
+    return res.status(500).json({ ok: false, error: 'Envío de correo no configurado.' });
+  }
+
+  try {
+    await mailer.sendMail({
+      from: `"Tu Asesor Social - Web" <${process.env.GMAIL_USER}>`,
+      to: 'contacto@tuasesorsocial.cl',
+      replyTo: email,
+      subject: `Nueva consulta web de ${nombre}`,
+      text: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono || 'No indicado'}\n\nMensaje:\n${mensaje || 'Sin mensaje adicional.'}`,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Error enviando correo de contacto:', err);
+    res.status(500).json({ ok: false, error: 'No se pudo enviar el correo.' });
+  }
+});
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public'), {

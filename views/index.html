@@ -1684,27 +1684,58 @@
                 <input type="tel" id="contactTelefono" placeholder="Tu Teléfono">
                 <textarea id="contactMensaje" placeholder="¿En qué podemos ayudarte?"></textarea>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Consulta</button>
+                <p id="contactFormStatus" style="margin-top: 0.75rem; font-size: 0.9rem;"></p>
             </form>
         </div>
     </section>
 
     <script>
-        // Envía la consulta del formulario de contacto por WhatsApp
-        document.getElementById('contactForm').addEventListener('submit', (e) => {
+        // Envía la consulta del formulario de contacto por correo electrónico
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const form = e.target;
+            const statusEl = document.getElementById('contactFormStatus');
+            const submitBtn = form.querySelector('button[type="submit"]');
 
             const nombre = document.getElementById('contactNombre').value.trim();
             const email = document.getElementById('contactEmail').value.trim();
             const telefono = document.getElementById('contactTelefono').value.trim();
             const mensaje = document.getElementById('contactMensaje').value.trim();
 
-            let texto = `Hola, soy ${nombre}.`;
-            if (mensaje) texto += ` ${mensaje}`;
-            texto += ` (Email: ${email}`;
-            if (telefono) texto += `, Teléfono: ${telefono}`;
-            texto += ')';
+            submitBtn.disabled = true;
+            statusEl.style.color = '#64748b';
+            statusEl.textContent = 'Enviando...';
 
-            window.open(`https://wa.me/56949546000?text=${encodeURIComponent(texto)}`, '_blank');
+            try {
+                const resp = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, email, telefono, mensaje }),
+                });
+                const data = await resp.json();
+
+                if (resp.ok && data.ok) {
+                    statusEl.style.color = '#047857';
+                    statusEl.textContent = '¡Gracias! Recibimos tu consulta y te contactaremos a la brevedad.';
+                    form.reset();
+                } else {
+                    throw new Error(data.error || 'Error al enviar');
+                }
+            } catch (err) {
+                statusEl.style.color = '#dc2626';
+                statusEl.textContent = 'No pudimos enviar tu consulta por correo. Escríbenos por WhatsApp:';
+
+                const whatsappLink = document.createElement('a');
+                whatsappLink.href = `https://wa.me/56949546000?text=${encodeURIComponent(`Hola, soy ${nombre}. ${mensaje} (Email: ${email}${telefono ? ', Teléfono: ' + telefono : ''})`)}`;
+                whatsappLink.target = '_blank';
+                whatsappLink.textContent = ' Contactar por WhatsApp';
+                whatsappLink.style.color = '#047857';
+                whatsappLink.style.fontWeight = '600';
+                statusEl.appendChild(whatsappLink);
+            } finally {
+                submitBtn.disabled = false;
+            }
         });
     </script>
 
