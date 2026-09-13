@@ -149,6 +149,19 @@
             font-size: 1.5rem;
         }
 
+        .logo-icon svg {
+            animation: heartbeat 1.8s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.18); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            60% { transform: scale(1); }
+        }
+
         .nav-links {
             display: flex;
             gap: 2rem;
@@ -185,6 +198,29 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,96C1248,75,1344,53,1392,42.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
             background-size: cover;
             opacity: 0.3;
+        }
+
+        
+        .hero-emoji-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            font-size: 2rem;
+            margin: 0 auto 1.25rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         .hero-article h1 {
@@ -239,15 +275,17 @@
             letter-spacing: -0.01em;
         }
 
-        .article-card p {
+        .article-card > p {
             margin-bottom: 1.5rem;
             font-size: clamp(1rem, 2vw, 1.125rem);
             line-height: 1.8;
             color: #374151;
             font-weight: 400;
-            text-align: left;
+            text-align: justify;
             text-justify: inter-word;
-        }
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            }
 
         .article-card ul, .article-card ol {
             margin-bottom: 1.5rem;
@@ -411,25 +449,91 @@
             .article-card { padding: 2rem 1.5rem; }
             .nav-links { display: none; }
         }
+    
+        .faq-section {
+            margin: 3rem 0;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background: none;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--azul-confiable);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .faq-question:hover {
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .faq-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--verde-esperanza);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(135deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding: 0 1.5rem 1.25rem;
+            margin: 0;
+            color: #475569;
+            line-height: 1.7;
+        }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
             <a href="/" class="logo">
-                <div class="logo-icon">🙌</div>
+                <div class="logo-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                 <span>Tu Asesor Social</span>
             </a>
             <ul class="nav-links">
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a></li>
-                <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
+                <li><a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a></li>
                 <li><a href="/subsidio-electrico/">Subsidios</a></li>
             </ul>
         </div>
     </nav>
 
     <section class="hero-article">
+        <div class="hero-emoji-badge">⚖️</div>
         <h1>Orientación Socio-Jurídica 2026: Guía Profesional</h1>
         <p>Asesoría especializada en temas sociales y legales para individuos y familias en Chile. Orientación profesional certificada con 10 años de experiencia.</p>
     </section>
@@ -605,20 +709,45 @@
             </ul>
 
             <h2>Preguntas Frecuentes</h2>
-
-            <h3>¿Cuánto cuesta la orientación socio-jurídica?</h3>
-            <p>Ofrezco diferentes modalidades adaptadas a tu situación económica. Contáctame para conocer opciones y descuentos por situación de vulnerabilidad. La primera consulta de orientación tiene un valor preferencial.</p>
-
-            <h3>¿Necesito llevar documentos a la primera sesión?</h3>
-            <p>Si tienes documentación relacionada con tu situación (cartas, notificaciones, contratos, certificados), tráela. Pero no te preocupes si no tienes nada aún - en la primera sesión identificaremos qué necesitas reunir.</p>
-
-            <h3>¿Trabajas con abogados?</h3>
-            <p>Sí, tengo una red de abogados de confianza especializados en diferentes áreas. Si tu caso requiere representación legal, te derivo al profesional adecuado y coordinamos el trabajo conjunto para mejor resultado.</p>
-
-            <h3>¿Atiendes casos urgentes?</h3>
-            <p>Sí. Si tu situación es urgente (violencia, desalojo inminente, plazo de trámite próximo a vencer), priorizo tu atención. Indícalo al contactarme.</p>
-
-            <div class="cta-box">
+        <div class="faq-section">
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Cuánto cuesta la orientación socio-jurídica?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Ofrezco diferentes modalidades adaptadas a tu situación económica. Contáctame para conocer opciones y descuentos por situación de vulnerabilidad. La primera consulta de orientación tiene un valor preferencial.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Necesito llevar documentos a la primera sesión?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Si tienes documentación relacionada con tu situación (cartas, notificaciones, contratos, certificados), tráela. Pero no te preocupes si no tienes nada aún - en la primera sesión identificaremos qué necesitas reunir.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Trabajas con abogados?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Sí, tengo una red de abogados de confianza especializados en diferentes áreas. Si tu caso requiere representación legal, te derivo al profesional adecuado y coordinamos el trabajo conjunto para mejor resultado.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Atiendes casos urgentes?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Sí. Si tu situación es urgente (violencia, desalojo inminente, plazo de trámite próximo a vencer), priorizo tu atención. Indícalo al contactarme.</p>
+                </div>
+            </div>
+        </div>
+<div class="cta-box">
                 <h3>¿Necesitas Orientación Socio-Jurídica Profesional?</h3>
                 <p>Te ayudo a comprender tus derechos, identificar tus opciones y construir una ruta clara para resolver tu situación. Primera consulta con tarifa preferencial.</p>
                 <a href="https://wa.me/56949546000?text=Necesito%20orientación%20socio-jurídica%20profesional" class="btn" target="_blank">Consultar por WhatsApp</a>
@@ -631,7 +760,7 @@
             <div class="footer-links">
                 <a href="/">Inicio</a>
                 <a href="/orientacion-socio-juridica/">Orientación Socio-Jurídica</a>
-                <a href="/mediacion-familiar/">Mediación Familiar</a>
+                <a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a>
                 <a href="/subsidio-electrico/">Subsidios</a>
                 <a href="/credencial-discapacidad/">Credencial de Discapacidad</a>
                 <a href="/que-necesito/">¿Qué Necesito?</a>
@@ -644,5 +773,24 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var item = btn.closest('.faq-item');
+                var answer = item.querySelector('.faq-answer');
+                var isActive = item.classList.contains('active');
+                if (isActive) {
+                    answer.style.maxHeight = null;
+                    item.classList.remove('active');
+                    btn.setAttribute('aria-expanded', 'false');
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    item.classList.add('active');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

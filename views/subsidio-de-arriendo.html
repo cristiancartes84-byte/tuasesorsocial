@@ -149,6 +149,19 @@
             font-size: 1.5rem;
         }
 
+        .logo-icon svg {
+            animation: heartbeat 1.8s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.18); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            60% { transform: scale(1); }
+        }
+
         .nav-links {
             display: flex;
             gap: 2rem;
@@ -171,6 +184,29 @@
             padding: 8rem 0 4rem;
             color: white;
             text-align: center;
+        }
+
+        
+        .hero-emoji-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            font-size: 2rem;
+            margin: 0 auto 1.25rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         .hero-article h1 {
@@ -213,10 +249,13 @@
             color: var(--azul-confiable);
         }
 
-        .article-card p {
+        .article-card > p {
             margin-bottom: 1.5rem;
             font-size: 1.1rem;
             line-height: 1.8;
+            text-align: justify;
+            hyphens: auto;
+            -webkit-hyphens: auto;
         }
 
         .article-card ul, .article-card ol {
@@ -307,25 +346,91 @@
             .article-card { padding: 2rem 1.5rem; }
             .nav-links { display: none; }
         }
+    
+        .faq-section {
+            margin: 3rem 0;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background: none;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--azul-confiable);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .faq-question:hover {
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .faq-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--verde-esperanza);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(135deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding: 0 1.5rem 1.25rem;
+            margin: 0;
+            color: #475569;
+            line-height: 1.7;
+        }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
             <a href="/" class="logo">
-                <div class="logo-icon">🙌</div>
+                <div class="logo-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                 <span>Tu Asesor Social</span>
             </a>
             <ul class="nav-links">
                 <li><a href="/">Inicio</a></li>
                 <li><a href="/subsidio-electrico/">Subsidio Eléctrico</a></li>
-                <li><a href="/mediacion-familiar/">Mediación Familiar</a></li>
+                <li><a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a></li>
                 <li><a href="/subsidio-de-arriendo/">Subsidio Arriendo</a></li>
             </ul>
         </div>
     </nav>
 
     <section class="hero-article">
+        <div class="hero-emoji-badge">🏠</div>
         <h1>Subsidio de Arriendo 2026: Hasta $250.000/mes</h1>
         <p>Guía definitiva para obtener el Subsidio de Arriendo del MINVU: requisitos, pasos para postular online, montos por tramo y fechas actualizadas</p>
     </section>
@@ -409,17 +514,36 @@
             </ul>
 
             <h2>Preguntas Frecuentes</h2>
-
-            <h3>¿Cuánto dura el subsidio de arriendo?</h3>
-            <p>El subsidio tiene una duración de 12 meses, renovable si sigues cumpliendo los requisitos.</p>
-
-            <h3>¿Puedo postular si arriendo una pieza?</h3>
-            <p>Sí, siempre que tengas un contrato de arriendo legal y cumplas los demás requisitos.</p>
-
-            <h3>¿Qué pasa si me cambian el monto del arriendo?</h3>
-            <p>Debes informar al MINVU cualquier cambio en las condiciones de tu arriendo.</p>
-
-            <div class="cta-box">
+        <div class="faq-section">
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Cuánto dura el subsidio de arriendo?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>El subsidio tiene una duración de 12 meses, renovable si sigues cumpliendo los requisitos.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Puedo postular si arriendo una pieza?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Sí, siempre que tengas un contrato de arriendo legal y cumplas los demás requisitos.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <span>¿Qué pasa si me cambian el monto del arriendo?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Debes informar al MINVU cualquier cambio en las condiciones de tu arriendo.</p>
+                </div>
+            </div>
+        </div>
+<div class="cta-box">
                 <h3>¿Necesitas Ayuda para Postular al Subsidio de Arriendo?</h3>
                 <p>Te asesoramos gratuitamente en todo el proceso: revisión de requisitos, recopilación de documentos y postulación online.</p>
                 <a href="https://wa.me/56949546000?text=Necesito%20ayuda%20con%20el%20subsidio%20de%20arriendo" class="btn" target="_blank">Consultar por WhatsApp</a>
@@ -432,7 +556,7 @@
             <div class="footer-links">
                 <a href="/">Inicio</a>
                 <a href="/subsidio-electrico/">Subsidio Eléctrico</a>
-                <a href="/mediacion-familiar/">Mediación Familiar</a>
+                <a href="/mediacion-familiar/">Asesoría en Mediación Familiar</a>
                 <a href="/subsidio-de-arriendo/">Subsidio de Arriendo</a>
                 <a href="/registro-social-de-hogares/">Registro Social de Hogares</a>
                 <a href="/subsidios-minvu/">Subsidios MINVU</a>
@@ -446,5 +570,24 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var item = btn.closest('.faq-item');
+                var answer = item.querySelector('.faq-answer');
+                var isActive = item.classList.contains('active');
+                if (isActive) {
+                    answer.style.maxHeight = null;
+                    item.classList.remove('active');
+                    btn.setAttribute('aria-expanded', 'false');
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    item.classList.add('active');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
