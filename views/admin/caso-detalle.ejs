@@ -34,9 +34,9 @@
         </div>
 
         <div class="card">
-            <h2>Agregar nota</h2>
+            <h2>Agregar nota / Solicitar documentos</h2>
             <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/nota">
-                <textarea name="texto" placeholder="Escribe una nota sobre este caso..." required></textarea>
+                <textarea name="texto" placeholder="Mensaje para el cliente (opcional; puedes dejarlo vacío si solo vas a solicitar documentos)"></textarea>
                 <div class="checkbox-row">
                     <input type="checkbox" id="visible_para_cliente" name="visible_para_cliente" checked>
                     <label for="visible_para_cliente" style="margin: 0;">Visible para el cliente (le llegará un aviso por correo)</label>
@@ -46,15 +46,15 @@
                     <label for="requiere_respuesta" style="margin: 0;">Necesito que el cliente responda con un comentario</label>
                 </div>
 
-                <label for="tipo_documento">Solicitar un documento (opcional)</label>
-                <select id="tipo_documento" name="tipo_documento">
-                    <option value="">No solicitar documento</option>
-                    <% tiposDocumento.forEach(function (tipo) { %>
-                        <option value="<%= tipo.id %>"><%= tipo.label %><%= tipo.cantidad > 1 ? ' (' + tipo.cantidad + ' archivos)' : '' %></option>
-                    <% }); %>
-                </select>
+                <label>Solicitar documentos (opcional, puedes marcar varios)</label>
+                <% tiposDocumento.forEach(function (tipo) { %>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="tipo_<%= tipo.id %>" name="tipo_documento" value="<%= tipo.id %>">
+                        <label for="tipo_<%= tipo.id %>" style="margin: 0;"><%= tipo.label %><%= tipo.cantidad > 1 ? ' (' + tipo.cantidad + ' archivos)' : '' %></label>
+                    </div>
+                <% }); %>
 
-                <button type="submit" class="btn">Agregar nota</button>
+                <button type="submit" class="btn">Guardar</button>
             </form>
         </div>
 

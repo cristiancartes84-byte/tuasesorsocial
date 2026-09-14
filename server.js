@@ -293,16 +293,35 @@ app.post('/admin/casos/:id/hito', requireRole('trabajador_social'), async (req, 
 app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, res) => {
   const caso = casos.obtenerCaso(req.params.id);
   if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+
   const visibleParaCliente = req.body.visible_para_cliente === 'on';
   const requiereRespuesta = req.body.requiere_respuesta === 'on';
-  const tipoDocumento = req.body.tipo_documento ? obtenerTipoDocumento(req.body.tipo_documento) : null;
   const texto = (req.body.texto || '').trim();
-  if (texto) {
-    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente, { requiereRespuesta, tipoDocumento });
-    if (visibleParaCliente) {
-      await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
-    }
+  const tiposSeleccionados = [].concat(req.body.tipo_documento || []).filter(Boolean);
+
+  if (!texto && tiposSeleccionados.length === 0) {
+    return res.redirect(`/admin/casos/${caso.id}`);
   }
+
+  let notaId = null;
+  if (texto) {
+    notaId = casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente, {
+      requiereRespuesta,
+      tieneSolicitudDocumento: tiposSeleccionados.length > 0,
+    });
+  }
+
+  tiposSeleccionados.forEach((tipoId) => {
+    const tipo = obtenerTipoDocumento(tipoId);
+    if (tipo) {
+      casos.crearSolicitudDocumento({ casoId: caso.id, notaId, tipoDocumento: tipo });
+    }
+  });
+
+  if ((texto && visibleParaCliente) || tiposSeleccionados.length > 0) {
+    await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
+  }
+
   res.redirect(`/admin/casos/${caso.id}`);
 });
 
