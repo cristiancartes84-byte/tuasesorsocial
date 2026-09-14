@@ -30,7 +30,53 @@
                 <% notas.forEach(function (nota) { %>
                     <div class="nota-item">
                         <div class="meta"><%= nota.creado_en %></div>
-                        <div class="texto"><%= nota.texto %></div>
+                        <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Necesita tu respuesta</span><% } %>
+                        <% if (nota.requiere_documento) { %><span class="requiere-badge">Necesita que subas un documento</span><% } %>
+                        <div class="texto" style="margin-top: 0.35rem;"><%= nota.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Responder o subir un documento</h2>
+            <% if (error) { %>
+                <div class="form-error"><%= error %></div>
+            <% } %>
+            <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/responder" enctype="multipart/form-data">
+                <label for="texto">Tu comentario</label>
+                <textarea id="texto" name="texto" placeholder="Escribe tu respuesta (opcional si solo vas a subir un documento)..."></textarea>
+
+                <label for="documento">Adjuntar documento (PDF, JPG o PNG, máx. 10 MB)</label>
+                <input type="file" id="documento" name="documento" accept=".pdf,.jpg,.jpeg,.png">
+
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Tus respuestas</h2>
+            <% if (respuestas.length === 0) { %>
+                <div class="empty-state">Todavía no has enviado respuestas en esta gestión.</div>
+            <% } else { %>
+                <% respuestas.forEach(function (respuesta) { %>
+                    <div class="respuesta-item">
+                        <div class="meta"><%= respuesta.creado_en %></div>
+                        <div class="texto"><%= respuesta.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Tus documentos</h2>
+            <% if (documentos.length === 0) { %>
+                <div class="empty-state">Todavía no has subido documentos en esta gestión.</div>
+            <% } else { %>
+                <% documentos.forEach(function (doc) { %>
+                    <div class="documento-item">
+                        <div class="meta"><%= doc.creado_en %></div>
+                        <a href="/portal/documentos/<%= doc.id %>/descargar"><%= doc.nombre_original %></a>
                     </div>
                 <% }); %>
             <% } %>

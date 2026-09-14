@@ -12,6 +12,7 @@ const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
 const mailer = require('./lib/mailer');
+const { upload, rutaArchivo } = require('./lib/uploads');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -97,7 +98,66 @@ app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {
     caso,
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id, { soloVisibles: true }),
+    documentos: casos.listarDocumentos(caso.id),
+    respuestas: casos.listarRespuestas(caso.id),
+    error: null,
   });
+});
+
+app.post('/portal/casos/:id/responder', requireRole('cliente'), (req, res, next) => {
+  upload.single('documento')(req, res, (err) => {
+    if (err) {
+      const caso = casos.obtenerCaso(req.params.id);
+      return res.status(400).render('portal/caso-detalle', {
+        usuario: req.session.usuario,
+        caso,
+        historial: casos.historialHitos(caso.id),
+        notas: casos.listarNotas(caso.id, { soloVisibles: true }),
+        documentos: casos.listarDocumentos(caso.id),
+        respuestas: casos.listarRespuestas(caso.id),
+        error: err.message,
+      });
+    }
+    next();
+  });
+}, async (req, res) => {
+  const caso = casos.obtenerCaso(req.params.id);
+  if (!caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Caso no encontrado</h1>');
+  }
+
+  const texto = (req.body.texto || '').trim();
+  if (texto) {
+    casos.crearRespuestaCliente(caso.id, req.session.usuario.id, texto);
+  }
+  if (req.file) {
+    casos.crearDocumento({
+      casoId: caso.id,
+      subidoPor: req.session.usuario.id,
+      nombreOriginal: req.file.originalname,
+      nombreArchivo: req.file.filename,
+      tipoMime: req.file.mimetype,
+      tamano: req.file.size,
+    });
+  }
+
+  if (texto || req.file) {
+    for (const trabajador of casos.listarTrabajadoresSociales()) {
+      await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
+    }
+  }
+
+  res.redirect(`/portal/casos/${caso.id}`);
+});
+
+app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) => {
+  const documento = casos.obtenerDocumento(req.params.id);
+  if (!documento) return res.status(404).send('<h1>Documento no encontrado</h1>');
+  const caso = casos.obtenerCaso(documento.caso_id);
+  if (!caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Documento no encontrado</h1>');
+  }
+  res.download(rutaArchivo(documento), documento.nombre_original);
 });
 
 app.get('/portal/logout', (req, res) => {
@@ -186,6 +246,8 @@ app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
     hitos: HITOS,
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id),
+    documentos: casos.listarDocumentos(caso.id),
+    respuestas: casos.listarRespuestas(caso.id),
   });
 });
 
@@ -201,14 +263,22 @@ app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, 
   const caso = casos.obtenerCaso(req.params.id);
   if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
   const visibleParaCliente = req.body.visible_para_cliente === 'on';
+  const requiereRespuesta = req.body.requiere_respuesta === 'on';
+  const requiereDocumento = req.body.requiere_documento === 'on';
   const texto = (req.body.texto || '').trim();
   if (texto) {
-    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente);
+    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente, { requiereRespuesta, requiereDocumento });
     if (visibleParaCliente) {
       await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
     }
   }
   res.redirect(`/admin/casos/${caso.id}`);
+});
+
+app.get('/admin/documentos/:id/descargar', requireRole('trabajador_social'), (req, res) => {
+  const documento = casos.obtenerDocumento(req.params.id);
+  if (!documento) return res.status(404).send('<h1>Documento no encontrado</h1>');
+  res.download(rutaArchivo(documento), documento.nombre_original);
 });
 
 app.get('/admin/logout', (req, res) => {
@@ -326,6 +396,10 @@ app.get('/beneficios-adulto-mayor/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'beneficios-adulto-mayor.html'));
 });
 
+app.get('/gestion-de-subsidios-estatales/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'gestion-de-subsidios-estatales.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
@@ -349,6 +423,7 @@ app.get('/que-necesito', (req, res) => res.redirect(301, '/que-necesito/'));
 app.get('/jornada-beneficios-corporativos', (req, res) => res.redirect(301, '/jornada-beneficios-corporativos/'));
 app.get('/convivencia-escolar', (req, res) => res.redirect(301, '/convivencia-escolar/'));
 app.get('/beneficios-adulto-mayor', (req, res) => res.redirect(301, '/beneficios-adulto-mayor/'));
+app.get('/gestion-de-subsidios-estatales', (req, res) => res.redirect(301, '/gestion-de-subsidios-estatales/'));
 
 // 404 handler
 app.use((req, res) => {

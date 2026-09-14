@@ -41,6 +41,14 @@
                     <input type="checkbox" id="visible_para_cliente" name="visible_para_cliente" checked>
                     <label for="visible_para_cliente" style="margin: 0;">Visible para el cliente (le llegará un aviso por correo)</label>
                 </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="requiere_respuesta" name="requiere_respuesta">
+                    <label for="requiere_respuesta" style="margin: 0;">Necesito que el cliente responda con un comentario</label>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="requiere_documento" name="requiere_documento">
+                    <label for="requiere_documento" style="margin: 0;">Necesito que el cliente suba un documento</label>
+                </div>
                 <button type="submit" class="btn">Agregar nota</button>
             </form>
         </div>
@@ -56,7 +64,37 @@
                             <%= nota.autor_nombre %> — <%= nota.creado_en %>
                             <% if (!nota.visible_para_cliente) { %> · <em>solo interna</em><% } %>
                         </div>
-                        <div class="texto"><%= nota.texto %></div>
+                        <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Pidió respuesta</span><% } %>
+                        <% if (nota.requiere_documento) { %><span class="requiere-badge">Pidió documento</span><% } %>
+                        <div class="texto" style="margin-top: 0.35rem;"><%= nota.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Respuestas del cliente</h2>
+            <% if (respuestas.length === 0) { %>
+                <div class="empty-state">El cliente todavía no ha respondido en este caso.</div>
+            <% } else { %>
+                <% respuestas.forEach(function (respuesta) { %>
+                    <div class="respuesta-item">
+                        <div class="meta"><%= respuesta.usuario_nombre %> — <%= respuesta.creado_en %></div>
+                        <div class="texto"><%= respuesta.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Documentos subidos</h2>
+            <% if (documentos.length === 0) { %>
+                <div class="empty-state">Todavía no hay documentos en este caso.</div>
+            <% } else { %>
+                <% documentos.forEach(function (doc) { %>
+                    <div class="documento-item">
+                        <div class="meta"><%= doc.subido_por_nombre %> — <%= doc.creado_en %></div>
+                        <a href="/admin/documentos/<%= doc.id %>/descargar"><%= doc.nombre_original %></a>
                     </div>
                 <% }); %>
             <% } %>
