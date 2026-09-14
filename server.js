@@ -313,15 +313,26 @@ app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, 
 
   tiposSeleccionados.forEach((tipoId) => {
     const tipo = obtenerTipoDocumento(tipoId);
-    if (tipo) {
-      casos.crearSolicitudDocumento({ casoId: caso.id, notaId, tipoDocumento: tipo });
-    }
+    if (!tipo) return;
+    const detalleOtro = (req.body.tipo_otro_detalle || '').trim();
+    const tipoFinal = tipoId === 'otro' && detalleOtro ? { ...tipo, label: detalleOtro } : tipo;
+    casos.crearSolicitudDocumento({ casoId: caso.id, notaId, tipoDocumento: tipoFinal });
   });
 
   if ((texto && visibleParaCliente) || tiposSeleccionados.length > 0) {
     await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
   }
 
+  res.redirect(`/admin/casos/${caso.id}`);
+});
+
+app.post('/admin/casos/:casoId/solicitudes/:solicitudId/eliminar', requireRole('trabajador_social'), (req, res) => {
+  const caso = casos.obtenerCaso(req.params.casoId);
+  if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  const solicitud = casos.obtenerSolicitud(req.params.solicitudId);
+  if (solicitud && solicitud.caso_id === caso.id && casos.contarDocumentosDeSolicitud(solicitud.id) === 0) {
+    casos.eliminarSolicitud(solicitud.id);
+  }
   res.redirect(`/admin/casos/${caso.id}`);
 });
 

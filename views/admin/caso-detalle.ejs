@@ -54,8 +54,54 @@
                     </div>
                 <% }); %>
 
+                <div id="tipo_otro_detalle_wrap" style="display: none;">
+                    <label for="tipo_otro_detalle">¿Qué documento es?</label>
+                    <input type="text" id="tipo_otro_detalle" name="tipo_otro_detalle" placeholder="Ej: Contrato de arriendo vigente">
+                </div>
+
                 <button type="submit" class="btn">Guardar</button>
             </form>
+        </div>
+
+        <div class="card">
+            <h2>Solicitudes de documentos</h2>
+            <% if (solicitudes.length === 0) { %>
+                <div class="empty-state">Todavía no se ha solicitado ningún documento en este caso.</div>
+            <% } else { %>
+                <% solicitudes.forEach(function (solicitud) { %>
+                    <% var porcentaje = Math.round((solicitud.documentos.length / solicitud.cantidad_requerida) * 100); %>
+                    <div class="solicitud-card<%= solicitud.estado === 'completada' ? ' is-completa' : '' %>">
+                        <div class="solicitud-header">
+                            <div class="solicitud-icon"><%= solicitud.estado === 'completada' ? '✅' : '📎' %></div>
+                            <div class="solicitud-title">
+                                <strong><%= solicitud.tipo_label %></strong>
+                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                            </div>
+                            <div class="solicitud-actions">
+                                <span class="badge<%= solicitud.estado === 'completada' ? ' badge-aprobado' : '' %>">
+                                    <%= solicitud.estado === 'completada' ? 'Completa' : 'Pendiente' %>
+                                </span>
+                                <% if (solicitud.documentos.length === 0) { %>
+                                    <form method="POST" action="/admin/casos/<%= caso.id %>/solicitudes/<%= solicitud.id %>/eliminar" onsubmit="return confirm('¿Eliminar esta solicitud de documento?');">
+                                        <button type="submit" class="btn-delete">Eliminar</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="progress-track"><div class="progress-fill" style="width: <%= porcentaje %>%;"></div></div>
+                        <span class="progress-label"><%= solicitud.documentos.length %> de <%= solicitud.cantidad_requerida %> recibido(s)</span>
+
+                        <% if (solicitud.documentos.length > 0) { %>
+                            <ul class="file-list">
+                                <% solicitud.documentos.forEach(function (doc) { %>
+                                    <li class="file-chip">📄 <a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a></li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% } %>
         </div>
 
         <div class="card">
@@ -64,14 +110,22 @@
                 <div class="empty-state">Todavía no hay notas en este caso.</div>
             <% } else { %>
                 <% notas.forEach(function (nota) { %>
-                    <div class="nota-item">
-                        <div class="meta">
-                            <%= nota.autor_nombre %> — <%= nota.creado_en %>
-                            <% if (!nota.visible_para_cliente) { %> · <em>solo interna</em><% } %>
+                    <div class="nota-card<%= !nota.visible_para_cliente ? ' solo-interna' : '' %>">
+                        <div class="nota-avatar">👤</div>
+                        <div class="nota-body">
+                            <div class="nota-header">
+                                <strong><%= nota.autor_nombre %></strong>
+                                <span class="meta"><%= nota.creado_en %></span>
+                                <% if (!nota.visible_para_cliente) { %><span class="meta">· solo interna</span><% } %>
+                            </div>
+                            <% if (nota.requiere_respuesta || nota.requiere_documento) { %>
+                                <div class="nota-badges">
+                                    <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Pidió respuesta</span><% } %>
+                                    <% if (nota.requiere_documento) { %><span class="requiere-badge">Pidió documento</span><% } %>
+                                </div>
+                            <% } %>
+                            <div class="nota-bubble"><%= nota.texto %></div>
                         </div>
-                        <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Pidió respuesta</span><% } %>
-                        <% if (nota.requiere_documento) { %><span class="requiere-badge">Pidió documento</span><% } %>
-                        <div class="texto" style="margin-top: 0.35rem;"><%= nota.texto %></div>
                     </div>
                 <% }); %>
             <% } %>
@@ -83,36 +137,9 @@
                 <div class="empty-state">El cliente todavía no ha respondido en este caso.</div>
             <% } else { %>
                 <% respuestas.forEach(function (respuesta) { %>
-                    <div class="respuesta-item">
+                    <div class="respuesta-card">
                         <div class="meta"><%= respuesta.usuario_nombre %> — <%= respuesta.creado_en %></div>
                         <div class="texto"><%= respuesta.texto %></div>
-                    </div>
-                <% }); %>
-            <% } %>
-        </div>
-
-        <div class="card">
-            <h2>Solicitudes de documentos</h2>
-            <% if (solicitudes.length === 0) { %>
-                <div class="empty-state">Todavía no se ha solicitado ningún documento en este caso.</div>
-            <% } else { %>
-                <% solicitudes.forEach(function (solicitud) { %>
-                    <div class="documento-item">
-                        <div class="meta">
-                            <%= solicitud.creado_en %> ·
-                            <span class="badge<%= solicitud.estado === 'completada' ? ' badge-aprobado' : '' %>">
-                                <%= solicitud.estado === 'completada' ? 'Completa' : 'Pendiente' %>
-                            </span>
-                        </div>
-                        <strong><%= solicitud.tipo_label %></strong>
-                        (<%= solicitud.documentos.length %>/<%= solicitud.cantidad_requerida %>)
-                        <% if (solicitud.documentos.length > 0) { %>
-                            <ul>
-                                <% solicitud.documentos.forEach(function (doc) { %>
-                                    <li><a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %>: <%= doc.nombre_original %></a></li>
-                                <% }); %>
-                            </ul>
-                        <% } %>
                     </div>
                 <% }); %>
             <% } %>
@@ -128,5 +155,13 @@
             <% }); %>
         </div>
     </main>
+    <script>
+        var tipoOtroCheckbox = document.getElementById('tipo_otro');
+        if (tipoOtroCheckbox) {
+            tipoOtroCheckbox.addEventListener('change', function () {
+                document.getElementById('tipo_otro_detalle_wrap').style.display = this.checked ? 'block' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>
