@@ -240,7 +240,14 @@ app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, 
     console.log(`[aviso] No se pudo enviar el correo de bienvenida. Contraseña temporal para ${rut.normalizar(rutInput)}: ${passwordTemporal}`);
   }
 
-  res.redirect(`/admin/casos/nuevo?usuario_id=${usuarioId}`);
+  res.render('admin/clientes-creado', {
+    usuario: req.session.usuario,
+    nombre,
+    rut: rut.normalizar(rutInput),
+    passwordTemporal,
+    correoEnviado: enviado,
+    usuarioId,
+  });
 });
 
 app.get('/admin/casos/nuevo', requireRole('trabajador_social'), (req, res) => {
