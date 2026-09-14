@@ -45,10 +45,15 @@
                     <input type="checkbox" id="requiere_respuesta" name="requiere_respuesta">
                     <label for="requiere_respuesta" style="margin: 0;">Necesito que el cliente responda con un comentario</label>
                 </div>
-                <div class="checkbox-row">
-                    <input type="checkbox" id="requiere_documento" name="requiere_documento">
-                    <label for="requiere_documento" style="margin: 0;">Necesito que el cliente suba un documento</label>
-                </div>
+
+                <label for="tipo_documento">Solicitar un documento (opcional)</label>
+                <select id="tipo_documento" name="tipo_documento">
+                    <option value="">No solicitar documento</option>
+                    <% tiposDocumento.forEach(function (tipo) { %>
+                        <option value="<%= tipo.id %>"><%= tipo.label %><%= tipo.cantidad > 1 ? ' (' + tipo.cantidad + ' archivos)' : '' %></option>
+                    <% }); %>
+                </select>
+
                 <button type="submit" class="btn">Agregar nota</button>
             </form>
         </div>
@@ -87,14 +92,27 @@
         </div>
 
         <div class="card">
-            <h2>Documentos subidos</h2>
-            <% if (documentos.length === 0) { %>
-                <div class="empty-state">Todavía no hay documentos en este caso.</div>
+            <h2>Solicitudes de documentos</h2>
+            <% if (solicitudes.length === 0) { %>
+                <div class="empty-state">Todavía no se ha solicitado ningún documento en este caso.</div>
             <% } else { %>
-                <% documentos.forEach(function (doc) { %>
+                <% solicitudes.forEach(function (solicitud) { %>
                     <div class="documento-item">
-                        <div class="meta"><%= doc.subido_por_nombre %> — <%= doc.creado_en %></div>
-                        <a href="/admin/documentos/<%= doc.id %>/descargar"><%= doc.nombre_original %></a>
+                        <div class="meta">
+                            <%= solicitud.creado_en %> ·
+                            <span class="badge<%= solicitud.estado === 'completada' ? ' badge-aprobado' : '' %>">
+                                <%= solicitud.estado === 'completada' ? 'Completa' : 'Pendiente' %>
+                            </span>
+                        </div>
+                        <strong><%= solicitud.tipo_label %></strong>
+                        (<%= solicitud.documentos.length %>/<%= solicitud.cantidad_requerida %>)
+                        <% if (solicitud.documentos.length > 0) { %>
+                            <ul>
+                                <% solicitud.documentos.forEach(function (doc) { %>
+                                    <li><a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %>: <%= doc.nombre_original %></a></li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
                     </div>
                 <% }); %>
             <% } %>

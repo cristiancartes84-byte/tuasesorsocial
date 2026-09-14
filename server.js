@@ -11,6 +11,7 @@ const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crear
 const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
+const { TIPOS_DOCUMENTO, obtenerTipoDocumento } = require('./lib/documentos-catalogo');
 const mailer = require('./lib/mailer');
 const { upload, rutaArchivo } = require('./lib/uploads');
 
@@ -98,29 +99,13 @@ app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {
     caso,
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id, { soloVisibles: true }),
-    documentos: casos.listarDocumentos(caso.id),
+    solicitudes: casos.listarSolicitudesDeCaso(caso.id),
     respuestas: casos.listarRespuestas(caso.id),
-    error: null,
+    error: req.query.error || null,
   });
 });
 
-app.post('/portal/casos/:id/responder', requireRole('cliente'), (req, res, next) => {
-  upload.single('documento')(req, res, (err) => {
-    if (err) {
-      const caso = casos.obtenerCaso(req.params.id);
-      return res.status(400).render('portal/caso-detalle', {
-        usuario: req.session.usuario,
-        caso,
-        historial: casos.historialHitos(caso.id),
-        notas: casos.listarNotas(caso.id, { soloVisibles: true }),
-        documentos: casos.listarDocumentos(caso.id),
-        respuestas: casos.listarRespuestas(caso.id),
-        error: err.message,
-      });
-    }
-    next();
-  });
-}, async (req, res) => {
+app.post('/portal/casos/:id/responder', requireRole('cliente'), async (req, res) => {
   const caso = casos.obtenerCaso(req.params.id);
   if (!caso || caso.usuario_id !== req.session.usuario.id) {
     return res.status(404).send('<h1>Caso no encontrado</h1>');
@@ -129,22 +114,67 @@ app.post('/portal/casos/:id/responder', requireRole('cliente'), (req, res, next)
   const texto = (req.body.texto || '').trim();
   if (texto) {
     casos.crearRespuestaCliente(caso.id, req.session.usuario.id, texto);
-  }
-  if (req.file) {
-    casos.crearDocumento({
-      casoId: caso.id,
-      subidoPor: req.session.usuario.id,
-      nombreOriginal: req.file.originalname,
-      nombreArchivo: req.file.filename,
-      tipoMime: req.file.mimetype,
-      tamano: req.file.size,
-    });
-  }
-
-  if (texto || req.file) {
     for (const trabajador of casos.listarTrabajadoresSociales()) {
       await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
     }
+  }
+
+  res.redirect(`/portal/casos/${caso.id}`);
+});
+
+// Subida de documentos: solo permitida contra una solicitud activa creada por
+// la trabajadora social (no se puede subir un archivo "libre" sin que se haya
+// pedido explícitamente).
+app.post('/portal/casos/:casoId/solicitudes/:solicitudId/subir', requireRole('cliente'), (req, res, next) => {
+  upload.array('documentos', 10)(req, res, (err) => {
+    if (err) {
+      return res.redirect(`/portal/casos/${req.params.casoId}?error=${encodeURIComponent(err.message)}`);
+    }
+    next();
+  });
+}, async (req, res) => {
+  const caso = casos.obtenerCaso(req.params.casoId);
+  if (!caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Caso no encontrado</h1>');
+  }
+  const solicitud = casos.obtenerSolicitud(req.params.solicitudId);
+  if (!solicitud || solicitud.caso_id !== caso.id) {
+    return res.status(404).send('<h1>Solicitud no encontrada</h1>');
+  }
+  if (solicitud.estado === 'completada') {
+    return res.redirect(`/portal/casos/${caso.id}`);
+  }
+
+  const yaSubidos = casos.contarDocumentosDeSolicitud(solicitud.id);
+  const espaciosDisponibles = solicitud.cantidad_requerida - yaSubidos;
+  const archivos = req.files || [];
+
+  if (archivos.length === 0) {
+    return res.redirect(`/portal/casos/${caso.id}?error=${encodeURIComponent('Selecciona al menos un archivo.')}`);
+  }
+  if (archivos.length > espaciosDisponibles) {
+    return res.redirect(`/portal/casos/${caso.id}?error=${encodeURIComponent(`Solo faltan ${espaciosDisponibles} documento(s) para "${solicitud.tipo_label}".`)}`);
+  }
+
+  archivos.forEach((file, index) => {
+    casos.crearDocumento({
+      casoId: caso.id,
+      subidoPor: req.session.usuario.id,
+      nombreOriginal: file.originalname,
+      nombreArchivo: file.filename,
+      tipoMime: file.mimetype,
+      tamano: file.size,
+      solicitudId: solicitud.id,
+      numeroSlot: yaSubidos + index + 1,
+    });
+  });
+
+  if (yaSubidos + archivos.length >= solicitud.cantidad_requerida) {
+    casos.marcarSolicitudCompletada(solicitud.id);
+  }
+
+  for (const trabajador of casos.listarTrabajadoresSociales()) {
+    await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
   }
 
   res.redirect(`/portal/casos/${caso.id}`);
@@ -244,9 +274,10 @@ app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
     usuario: req.session.usuario,
     caso,
     hitos: HITOS,
+    tiposDocumento: TIPOS_DOCUMENTO,
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id),
-    documentos: casos.listarDocumentos(caso.id),
+    solicitudes: casos.listarSolicitudesDeCaso(caso.id),
     respuestas: casos.listarRespuestas(caso.id),
   });
 });
@@ -264,10 +295,10 @@ app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, 
   if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
   const visibleParaCliente = req.body.visible_para_cliente === 'on';
   const requiereRespuesta = req.body.requiere_respuesta === 'on';
-  const requiereDocumento = req.body.requiere_documento === 'on';
+  const tipoDocumento = req.body.tipo_documento ? obtenerTipoDocumento(req.body.tipo_documento) : null;
   const texto = (req.body.texto || '').trim();
   if (texto) {
-    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente, { requiereRespuesta, requiereDocumento });
+    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente, { requiereRespuesta, tipoDocumento });
     if (visibleParaCliente) {
       await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
     }

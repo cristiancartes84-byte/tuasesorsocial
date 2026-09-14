@@ -13,6 +13,10 @@
         <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
     </header>
     <main class="app-main">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+
         <div class="card">
             <p style="color: #64748b; font-size: 0.9rem;">Gestión iniciada el <%= caso.creado_en %></p>
             <p style="margin-top: 0.75rem;">Estado actual:
@@ -31,25 +35,47 @@
                     <div class="nota-item">
                         <div class="meta"><%= nota.creado_en %></div>
                         <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Necesita tu respuesta</span><% } %>
-                        <% if (nota.requiere_documento) { %><span class="requiere-badge">Necesita que subas un documento</span><% } %>
+                        <% if (nota.requiere_documento) { %><span class="requiere-badge">Necesita un documento</span><% } %>
                         <div class="texto" style="margin-top: 0.35rem;"><%= nota.texto %></div>
                     </div>
                 <% }); %>
             <% } %>
         </div>
 
+        <% var pendientes = solicitudes.filter(function (s) { return s.estado === 'pendiente'; }); %>
+        <% if (pendientes.length > 0) { %>
+            <% pendientes.forEach(function (solicitud) { %>
+                <% var faltan = solicitud.cantidad_requerida - solicitud.documentos.length; %>
+                <div class="card">
+                    <h2>📎 <%= solicitud.tipo_label %></h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Tu trabajadora social solicitó este documento el <%= solicitud.creado_en %>.
+                        <%= solicitud.documentos.length %> de <%= solicitud.cantidad_requerida %> subido(s).
+                    </p>
+
+                    <% if (solicitud.documentos.length > 0) { %>
+                        <ul style="margin-bottom: 1rem;">
+                            <% solicitud.documentos.forEach(function (doc) { %>
+                                <li>✓ Documento <%= doc.numero_slot %>: <a href="/portal/documentos/<%= doc.id %>/descargar"><%= doc.nombre_original %></a></li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+
+                    <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/solicitudes/<%= solicitud.id %>/subir" enctype="multipart/form-data">
+                        <label for="documentos-<%= solicitud.id %>">
+                            Sube <%= faltan %> archivo<%= faltan > 1 ? 's' : '' %> más (PDF, JPG o PNG, máx. 10 MB cada uno)
+                        </label>
+                        <input type="file" id="documentos-<%= solicitud.id %>" name="documentos" accept=".pdf,.jpg,.jpeg,.png" <%= faltan > 1 ? 'multiple' : '' %> required>
+                        <button type="submit" class="btn">Subir documento<%= faltan > 1 ? 's' : '' %></button>
+                    </form>
+                </div>
+            <% }); %>
+        <% } %>
+
         <div class="card">
-            <h2>Responder o subir un documento</h2>
-            <% if (error) { %>
-                <div class="form-error"><%= error %></div>
-            <% } %>
-            <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/responder" enctype="multipart/form-data">
-                <label for="texto">Tu comentario</label>
-                <textarea id="texto" name="texto" placeholder="Escribe tu respuesta (opcional si solo vas a subir un documento)..."></textarea>
-
-                <label for="documento">Adjuntar documento (PDF, JPG o PNG, máx. 10 MB)</label>
-                <input type="file" id="documento" name="documento" accept=".pdf,.jpg,.jpeg,.png">
-
+            <h2>Responder con un comentario</h2>
+            <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/responder">
+                <textarea name="texto" placeholder="Escribe tu respuesta..." required></textarea>
                 <button type="submit" class="btn">Enviar</button>
             </form>
         </div>
@@ -68,19 +94,23 @@
             <% } %>
         </div>
 
-        <div class="card">
-            <h2>Tus documentos</h2>
-            <% if (documentos.length === 0) { %>
-                <div class="empty-state">Todavía no has subido documentos en esta gestión.</div>
-            <% } else { %>
-                <% documentos.forEach(function (doc) { %>
+        <% var completadas = solicitudes.filter(function (s) { return s.estado === 'completada'; }); %>
+        <% if (completadas.length > 0) { %>
+            <div class="card">
+                <h2>Documentos ya entregados</h2>
+                <% completadas.forEach(function (solicitud) { %>
                     <div class="documento-item">
-                        <div class="meta"><%= doc.creado_en %></div>
-                        <a href="/portal/documentos/<%= doc.id %>/descargar"><%= doc.nombre_original %></a>
+                        <div class="meta">Solicitado el <%= solicitud.creado_en %> · <span class="badge badge-aprobado">Completo</span></div>
+                        <strong><%= solicitud.tipo_label %></strong>
+                        <ul>
+                            <% solicitud.documentos.forEach(function (doc) { %>
+                                <li><a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %>: <%= doc.nombre_original %></a></li>
+                            <% }); %>
+                        </ul>
                     </div>
                 <% }); %>
-            <% } %>
-        </div>
+            </div>
+        <% } %>
 
         <div class="card">
             <h2>Historial de tu gestión</h2>
@@ -90,6 +120,20 @@
                     <div class="meta"><%= item.creado_en %></div>
                 </div>
             <% }); %>
+        </div>
+
+        <div class="card">
+            <h2>❓ Ayuda: ¿para qué sirve cada botón?</h2>
+            <ul style="margin-left: 1.2rem; color: #475569;">
+                <li><strong>Enviar</strong> (en "Responder con un comentario"): envía un mensaje de texto a tu trabajadora social. No sube ningún archivo.</li>
+                <li><strong>Subir documento(s)</strong>: solo aparece cuando tu trabajadora social te pidió específicamente un documento. Envía el o los archivos seleccionados para esa solicitud puntual.</li>
+                <li><strong>Los enlaces con nombre de archivo</strong> (ej. "Documento 1: boleta.pdf") descargan el archivo que ya subiste, para que puedas revisarlo.</li>
+                <li><strong>Volver a mis gestiones</strong> (arriba a la derecha): te devuelve al listado de todas tus gestiones.</li>
+                <li><strong>Cerrar sesión</strong>: sale de tu cuenta del portal. Úsalo si compartes el computador con alguien más.</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #64748b;">
+                No puedes subir un documento libremente: solo puedes hacerlo cuando tu trabajadora social te lo solicita, y cada solicitud indica exactamente qué y cuántos archivos necesita.
+            </p>
         </div>
     </main>
 </body>
