@@ -5,39 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Gestión | Tu Asesor Social</title>
     <meta name="robots" content="noindex, nofollow">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f8fafc; color: #1f2937; }
-        header {
-            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 { font-size: 1.2rem; }
-        header a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
-        main { max-width: 700px; margin: 2rem auto; padding: 0 1.5rem; }
-        .empty-state {
-            background: white;
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            color: #64748b;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-    </style>
+    <%- include('../partials/app-styles') %>
 </head>
 <body>
-    <header>
+    <header class="app-header">
         <h1>Hola, <%= usuario.nombre %></h1>
         <a href="/portal/logout">Cerrar sesión</a>
     </header>
-    <main>
-        <div class="empty-state">
-            <p>Todavía no tienes una gestión registrada en el portal.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Cuando tu trabajadora social cree tu caso, verás aquí el estado de tu gestión.</p>
+    <main class="app-main">
+        <div class="card">
+            <h2>Mis gestiones</h2>
+            <% if (casos.length === 0) { %>
+                <div class="empty-state">
+                    Todavía no tienes una gestión registrada en el portal.
+                    <br>Cuando tu trabajadora social cree tu caso, lo verás aquí.
+                </div>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo de gestión</th>
+                            <th>Estado actual</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% casos.forEach(function (caso) { %>
+                            <tr class="clickable" onclick="window.location.href='/portal/casos/<%= caso.id %>'">
+                                <td><%= caso.tipo_subsidio %></td>
+                                <td>
+                                    <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                                        <%= caso.estado_actual %>
+                                    </span>
+                                </td>
+                                <td><a href="/portal/casos/<%= caso.id %>">Ver detalle &rarr;</a></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
         </div>
     </main>
 </body>

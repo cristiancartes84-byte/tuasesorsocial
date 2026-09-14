@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Caso | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Nuevo caso</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main" style="max-width: 500px;">
+        <div class="card">
+            <% if (error) { %>
+                <div class="form-error"><%= error %></div>
+            <% } %>
+            <% if (clientes.length === 0) { %>
+                <div class="empty-state">
+                    Todavía no hay clientes creados.
+                    <br><a href="/admin/clientes/nuevo" class="btn" style="margin-top: 1rem;">+ Nuevo cliente</a>
+                </div>
+            <% } else { %>
+                <form class="stacked" method="POST" action="/admin/casos/nuevo">
+                    <label for="usuario_id">Cliente</label>
+                    <select id="usuario_id" name="usuario_id" required>
+                        <option value="">Selecciona un cliente</option>
+                        <% clientes.forEach(function (cliente) { %>
+                            <option value="<%= cliente.id %>" <%= String(usuarioIdPreseleccionado) === String(cliente.id) ? 'selected' : '' %>>
+                                <%= cliente.nombre %> (<%= cliente.rut %>)
+                            </option>
+                        <% }); %>
+                    </select>
+
+                    <label for="tipo_subsidio">Tipo de gestión</label>
+                    <select id="tipo_subsidio" name="tipo_subsidio" required>
+                        <option value="">Selecciona un tipo</option>
+                        <% tipos.forEach(function (tipo) { %>
+                            <option value="<%= tipo %>"><%= tipo %></option>
+                        <% }); %>
+                    </select>
+
+                    <button type="submit" class="btn">Crear caso</button>
+                </form>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

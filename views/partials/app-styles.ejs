@@ -1,0 +1,118 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f8fafc; color: #1f2937; }
+    header.app-header {
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        padding: 1.25rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    header.app-header h1 { font-size: 1.15rem; }
+    header.app-header a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
+    main.app-main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #1f2937; }
+    .empty-state { text-align: center; color: #64748b; padding: 2rem 1rem; }
+    .btn {
+        display: inline-block;
+        padding: 0.65rem 1.25rem;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+    .toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.75rem 0.5rem; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem; }
+    th { color: #64748b; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+    tr:hover td { background: #f8fafc; }
+    tr.clickable { cursor: pointer; }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    .badge-aprobado { background: #d1fae5; color: #065f46; }
+    .badge-rechazado { background: #fee2e2; color: #b91c1c; }
+    form.stacked label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.35rem;
+        margin-top: 1rem;
+    }
+    form.stacked input,
+    form.stacked select,
+    form.stacked textarea {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-family: inherit;
+    }
+    form.stacked textarea { min-height: 90px; resize: vertical; }
+    form.stacked .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+    }
+    form.stacked .checkbox-row input { width: auto; }
+    form.stacked button { margin-top: 1.25rem; }
+    .form-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .timeline-item {
+        border-left: 3px solid #2563eb;
+        padding: 0 0 1rem 1rem;
+        margin-left: 0.4rem;
+        position: relative;
+    }
+    .timeline-item:last-child { border-color: transparent; padding-bottom: 0; }
+    .timeline-item::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #2563eb;
+        position: absolute;
+        left: -6.5px;
+        top: 2px;
+    }
+    .timeline-item .hito { font-weight: 600; }
+    .timeline-item .meta { font-size: 0.8rem; color: #64748b; margin-top: 0.15rem; }
+    .nota-item { padding: 1rem 0; border-bottom: 1px solid #e5e7eb; }
+    .nota-item:last-child { border-bottom: none; }
+    .nota-item .meta { font-size: 0.8rem; color: #64748b; margin-bottom: 0.35rem; }
+    .nota-item .texto { white-space: pre-wrap; }
+</style>

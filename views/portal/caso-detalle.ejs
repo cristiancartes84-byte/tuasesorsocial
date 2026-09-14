@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= caso.tipo_subsidio %> | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1><%= caso.tipo_subsidio %></h1>
+        <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
+    </header>
+    <main class="app-main">
+        <div class="card">
+            <p style="color: #64748b; font-size: 0.9rem;">Gestión iniciada el <%= caso.creado_en %></p>
+            <p style="margin-top: 0.75rem;">Estado actual:
+                <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                    <%= caso.estado_actual %>
+                </span>
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Notas de tu trabajadora social</h2>
+            <% if (notas.length === 0) { %>
+                <div class="empty-state">Todavía no hay notas visibles en esta gestión.</div>
+            <% } else { %>
+                <% notas.forEach(function (nota) { %>
+                    <div class="nota-item">
+                        <div class="meta"><%= nota.creado_en %></div>
+                        <div class="texto"><%= nota.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Historial de tu gestión</h2>
+            <% historial.forEach(function (item) { %>
+                <div class="timeline-item">
+                    <div class="hito"><%= item.hito %></div>
+                    <div class="meta"><%= item.creado_en %></div>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+</body>
+</html>

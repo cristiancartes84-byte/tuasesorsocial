@@ -4,11 +4,14 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
-const nodemailer = require('nodemailer');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 
-const { autenticar } = require('./lib/auth');
+const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario } = require('./lib/auth');
+const rut = require('./lib/rut');
+const casos = require('./lib/casos');
+const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
+const mailer = require('./lib/mailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -52,6 +55,16 @@ const loginLimiter = rateLimit({
   message: 'Demasiados intentos, espera unos minutos e inténtalo de nuevo.',
 });
 
+function iniciarSesion(req, usuario) {
+  req.session.usuario = {
+    id: usuario.id,
+    nombre: usuario.nombre,
+    email: usuario.email,
+    rol: usuario.rol,
+    debeCambiarPassword: !!usuario.debe_cambiar_password,
+  };
+}
+
 app.get('/portal/login', (req, res) => {
   if (req.session.usuario && req.session.usuario.rol === 'cliente') {
     return res.redirect('/portal/dashboard');
@@ -60,20 +73,31 @@ app.get('/portal/login', (req, res) => {
 });
 
 app.post('/portal/login', loginLimiter, (req, res) => {
-  const { rut, password } = req.body;
-  const usuario = autenticar(rut, password);
+  const { rut: rutInput, password } = req.body;
+  const usuario = autenticar(rutInput, password);
   if (!usuario || usuario.rol !== 'cliente') {
     return res.status(401).render('portal/login', { error: 'RUT o contraseña incorrectos.' });
   }
-  req.session.usuario = { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol };
-  res.redirect('/portal/dashboard');
+  iniciarSesion(req, usuario);
+  res.redirect(usuario.debe_cambiar_password ? '/cambiar-password' : '/portal/dashboard');
 });
 
-app.get('/portal/dashboard', (req, res) => {
-  if (!req.session.usuario || req.session.usuario.rol !== 'cliente') {
-    return res.redirect('/portal/login');
+app.get('/portal/dashboard', requireRole('cliente'), (req, res) => {
+  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
+  res.render('portal/dashboard', { usuario: req.session.usuario, casos: misCasos });
+});
+
+app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {
+  const caso = casos.obtenerCaso(req.params.id);
+  if (!caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Caso no encontrado</h1>');
   }
-  res.render('portal/dashboard', { usuario: req.session.usuario });
+  res.render('portal/caso-detalle', {
+    usuario: req.session.usuario,
+    caso,
+    historial: casos.historialHitos(caso.id),
+    notas: casos.listarNotas(caso.id, { soloVisibles: true }),
+  });
 });
 
 app.get('/portal/logout', (req, res) => {
@@ -88,37 +112,130 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.post('/admin/login', loginLimiter, (req, res) => {
-  const { rut, password } = req.body;
-  const usuario = autenticar(rut, password);
+  const { rut: rutInput, password } = req.body;
+  const usuario = autenticar(rutInput, password);
   if (!usuario || usuario.rol !== 'trabajador_social') {
     return res.status(401).render('admin/login', { error: 'RUT o contraseña incorrectos.' });
   }
-  req.session.usuario = { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol };
-  res.redirect('/admin/dashboard');
+  iniciarSesion(req, usuario);
+  res.redirect(usuario.debe_cambiar_password ? '/cambiar-password' : '/admin/dashboard');
 });
 
-app.get('/admin/dashboard', (req, res) => {
-  if (!req.session.usuario || req.session.usuario.rol !== 'trabajador_social') {
-    return res.redirect('/admin/login');
+app.get('/admin/dashboard', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/dashboard', { usuario: req.session.usuario, casos: casos.listarCasosConCliente() });
+});
+
+app.get('/admin/clientes/nuevo', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/clientes-nuevo', { usuario: req.session.usuario, error: null });
+});
+
+app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, res) => {
+  const { rut: rutInput, nombre, email } = req.body;
+
+  if (!rut.esValido(rutInput)) {
+    return res.status(400).render('admin/clientes-nuevo', { usuario: req.session.usuario, error: 'El RUT ingresado no es válido.' });
   }
-  res.render('admin/dashboard', { usuario: req.session.usuario });
+
+  const passwordTemporal = generarPasswordTemporal();
+  let usuarioId;
+  try {
+    usuarioId = crearUsuario({ rut: rutInput, password: passwordTemporal, nombre, email, rol: 'cliente' });
+  } catch (err) {
+    return res.status(400).render('admin/clientes-nuevo', { usuario: req.session.usuario, error: 'No se pudo crear el cliente (¿el RUT ya existe?).' });
+  }
+
+  const enviado = await mailer.bienvenidaCliente(email, nombre, rut.normalizar(rutInput), passwordTemporal);
+  if (!enviado) {
+    console.log(`[aviso] No se pudo enviar el correo de bienvenida. Contraseña temporal para ${rut.normalizar(rutInput)}: ${passwordTemporal}`);
+  }
+
+  res.redirect(`/admin/casos/nuevo?usuario_id=${usuarioId}`);
+});
+
+app.get('/admin/casos/nuevo', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/casos-nuevo', {
+    usuario: req.session.usuario,
+    clientes: casos.listarClientes(),
+    tipos: TIPOS_SUBSIDIO,
+    usuarioIdPreseleccionado: req.query.usuario_id || null,
+    error: null,
+  });
+});
+
+app.post('/admin/casos/nuevo', requireRole('trabajador_social'), (req, res) => {
+  const { usuario_id, tipo_subsidio } = req.body;
+  if (!usuario_id || !tipo_subsidio) {
+    return res.status(400).render('admin/casos-nuevo', {
+      usuario: req.session.usuario,
+      clientes: casos.listarClientes(),
+      tipos: TIPOS_SUBSIDIO,
+      usuarioIdPreseleccionado: null,
+      error: 'Selecciona un cliente y un tipo de gestión.',
+    });
+  }
+  const casoId = casos.crearCaso({ usuarioId: usuario_id, tipoSubsidio: tipo_subsidio, creadoPor: req.session.usuario.id });
+  res.redirect(`/admin/casos/${casoId}`);
+});
+
+app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
+  const caso = casos.obtenerCaso(req.params.id);
+  if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  res.render('admin/caso-detalle', {
+    usuario: req.session.usuario,
+    caso,
+    hitos: HITOS,
+    historial: casos.historialHitos(caso.id),
+    notas: casos.listarNotas(caso.id),
+  });
+});
+
+app.post('/admin/casos/:id/hito', requireRole('trabajador_social'), async (req, res) => {
+  const caso = casos.obtenerCaso(req.params.id);
+  if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  casos.actualizarHito(caso.id, req.body.hito, req.session.usuario.id);
+  await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
+  res.redirect(`/admin/casos/${caso.id}`);
+});
+
+app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, res) => {
+  const caso = casos.obtenerCaso(req.params.id);
+  if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  const visibleParaCliente = req.body.visible_para_cliente === 'on';
+  const texto = (req.body.texto || '').trim();
+  if (texto) {
+    casos.crearNota(caso.id, req.session.usuario.id, texto, visibleParaCliente);
+    if (visibleParaCliente) {
+      await mailer.avisarActualizacionCaso(caso.cliente_email, caso.cliente_nombre);
+    }
+  }
+  res.redirect(`/admin/casos/${caso.id}`);
 });
 
 app.get('/admin/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/admin/login'));
 });
 
-// Envío del formulario de contacto por correo (Gmail SMTP)
-const mailer = process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
-  ? nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    })
-  : null;
+// Cambio de contraseña obligatorio en el primer ingreso (cuentas con contraseña temporal)
+app.get('/cambiar-password', (req, res) => {
+  if (!req.session.usuario) return res.redirect('/');
+  res.render('cambiar-password', { usuario: req.session.usuario, error: null });
+});
 
+app.post('/cambiar-password', (req, res) => {
+  if (!req.session.usuario) return res.redirect('/');
+  const { password, confirmar } = req.body;
+  if (!password || password.length < 8) {
+    return res.status(400).render('cambiar-password', { usuario: req.session.usuario, error: 'La contraseña debe tener al menos 8 caracteres.' });
+  }
+  if (password !== confirmar) {
+    return res.status(400).render('cambiar-password', { usuario: req.session.usuario, error: 'Las contraseñas no coinciden.' });
+  }
+  cambiarPassword(req.session.usuario.id, password);
+  req.session.usuario.debeCambiarPassword = false;
+  res.redirect(req.session.usuario.rol === 'trabajador_social' ? '/admin/dashboard' : '/portal/dashboard');
+});
+
+// Envío del formulario de contacto por correo (Gmail SMTP)
 app.post('/api/contact', async (req, res) => {
   const nombre = (req.body.nombre || '').trim();
   const email = (req.body.email || '').trim();
@@ -129,24 +246,22 @@ app.post('/api/contact', async (req, res) => {
     return res.status(400).json({ ok: false, error: 'Nombre y email son obligatorios.' });
   }
 
-  if (!mailer) {
+  if (!mailer.mailer) {
     console.error('GMAIL_USER / GMAIL_APP_PASSWORD no configurados; no se puede enviar el correo.');
     return res.status(500).json({ ok: false, error: 'Envío de correo no configurado.' });
   }
 
-  try {
-    await mailer.sendMail({
-      from: `"Tu Asesor Social - Web" <${process.env.GMAIL_USER}>`,
-      to: 'contacto@tuasesorsocial.cl',
-      replyTo: email,
-      subject: `Nueva consulta web de ${nombre}`,
-      text: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono || 'No indicado'}\n\nMensaje:\n${mensaje || 'Sin mensaje adicional.'}`,
-    });
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('Error enviando correo de contacto:', err);
-    res.status(500).json({ ok: false, error: 'No se pudo enviar el correo.' });
+  const enviado = await mailer.enviar({
+    to: 'contacto@tuasesorsocial.cl',
+    replyTo: email,
+    subject: `Nueva consulta web de ${nombre}`,
+    text: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono || 'No indicado'}\n\nMensaje:\n${mensaje || 'Sin mensaje adicional.'}`,
+  });
+
+  if (!enviado) {
+    return res.status(500).json({ ok: false, error: 'No se pudo enviar el correo.' });
   }
+  res.json({ ok: true });
 });
 
 // Archivos estáticos

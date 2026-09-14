@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Cliente | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Nuevo cliente</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main" style="max-width: 500px;">
+        <div class="card">
+            <% if (error) { %>
+                <div class="form-error"><%= error %></div>
+            <% } %>
+            <form class="stacked" method="POST" action="/admin/clientes/nuevo">
+                <label for="rut">RUT del cliente</label>
+                <input type="text" id="rut" name="rut" placeholder="12345678-9" maxlength="10" required>
+
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+
+                <button type="submit" class="btn">Crear cliente y continuar</button>
+            </form>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: #64748b;">
+                Se generará una contraseña temporal y se enviará por correo al cliente junto con el enlace al portal. Se le pedirá cambiarla al ingresar por primera vez.
+            </p>
+        </div>
+    </main>
+    <%- include('../partials/rut-mask') %>
+</body>
+</html>

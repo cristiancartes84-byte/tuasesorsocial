@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= caso.cliente_nombre %> — <%= caso.tipo_subsidio %> | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1><%= caso.cliente_nombre %> (<%= caso.cliente_rut %>)</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main">
+        <div class="card">
+            <h2><%= caso.tipo_subsidio %></h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Caso creado el <%= caso.creado_en %></p>
+            <p style="margin-top: 0.75rem;">Estado actual:
+                <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                    <%= caso.estado_actual %>
+                </span>
+            </p>
+
+            <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/hito">
+                <label for="hito">Actualizar hito</label>
+                <select id="hito" name="hito" required>
+                    <% hitos.forEach(function (h) { %>
+                        <option value="<%= h %>" <%= h === caso.estado_actual ? 'selected' : '' %>><%= h %></option>
+                    <% }); %>
+                </select>
+                <button type="submit" class="btn">Guardar hito y notificar al cliente</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Agregar nota</h2>
+            <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/nota">
+                <textarea name="texto" placeholder="Escribe una nota sobre este caso..." required></textarea>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="visible_para_cliente" name="visible_para_cliente" checked>
+                    <label for="visible_para_cliente" style="margin: 0;">Visible para el cliente (le llegará un aviso por correo)</label>
+                </div>
+                <button type="submit" class="btn">Agregar nota</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Notas</h2>
+            <% if (notas.length === 0) { %>
+                <div class="empty-state">Todavía no hay notas en este caso.</div>
+            <% } else { %>
+                <% notas.forEach(function (nota) { %>
+                    <div class="nota-item">
+                        <div class="meta">
+                            <%= nota.autor_nombre %> — <%= nota.creado_en %>
+                            <% if (!nota.visible_para_cliente) { %> · <em>solo interna</em><% } %>
+                        </div>
+                        <div class="texto"><%= nota.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Historial de hitos</h2>
+            <% historial.forEach(function (item) { %>
+                <div class="timeline-item">
+                    <div class="hito"><%= item.hito %></div>
+                    <div class="meta"><%= item.creado_por_nombre %> — <%= item.creado_en %></div>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+</body>
+</html>
