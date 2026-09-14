@@ -125,6 +125,19 @@
                                 </div>
                             <% } %>
                             <div class="nota-bubble"><%= nota.texto %></div>
+
+                            <% if (nota.respuestas.length > 0) { %>
+                                <div class="nota-replies">
+                                    <% nota.respuestas.forEach(function (respuesta) { %>
+                                        <div class="nota-reply">
+                                            <div class="meta"><%= respuesta.usuario_nombre %> — <%= respuesta.creado_en %></div>
+                                            <div class="texto"><%= respuesta.texto %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } else if (nota.requiere_respuesta) { %>
+                                <p style="margin-top: 0.6rem; font-size: 0.82rem; color: #94a3b8;">Esperando respuesta del cliente.</p>
+                            <% } %>
                         </div>
                     </div>
                 <% }); %>
@@ -132,9 +145,10 @@
         </div>
 
         <div class="card">
-            <h2>Respuestas del cliente</h2>
+            <h2>Comentarios generales del cliente</h2>
+            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem;">Comentarios que no responden a una pregunta puntual (esas aparecen debajo de la nota correspondiente, arriba).</p>
             <% if (respuestas.length === 0) { %>
-                <div class="empty-state">El cliente todavía no ha respondido en este caso.</div>
+                <div class="empty-state">El cliente todavía no ha dejado un comentario general.</div>
             <% } else { %>
                 <% respuestas.forEach(function (respuesta) { %>
                     <div class="respuesta-card">

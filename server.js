@@ -100,7 +100,7 @@ app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id, { soloVisibles: true }),
     solicitudes: casos.listarSolicitudesDeCaso(caso.id),
-    respuestas: casos.listarRespuestas(caso.id),
+    respuestas: casos.listarRespuestasGenerales(caso.id),
     error: req.query.error || null,
   });
 });
@@ -112,8 +112,9 @@ app.post('/portal/casos/:id/responder', requireRole('cliente'), async (req, res)
   }
 
   const texto = (req.body.texto || '').trim();
+  const notaId = req.body.nota_id || null;
   if (texto) {
-    casos.crearRespuestaCliente(caso.id, req.session.usuario.id, texto);
+    casos.crearRespuestaCliente(caso.id, req.session.usuario.id, texto, notaId);
     for (const trabajador of casos.listarTrabajadoresSociales()) {
       await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
     }
@@ -278,7 +279,7 @@ app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
     historial: casos.historialHitos(caso.id),
     notas: casos.listarNotas(caso.id),
     solicitudes: casos.listarSolicitudesDeCaso(caso.id),
-    respuestas: casos.listarRespuestas(caso.id),
+    respuestas: casos.listarRespuestasGenerales(caso.id),
   });
 });
 

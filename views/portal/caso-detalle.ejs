@@ -45,6 +45,25 @@
                                 </div>
                             <% } %>
                             <div class="nota-bubble"><%= nota.texto %></div>
+
+                            <% if (nota.respuestas.length > 0) { %>
+                                <div class="nota-replies">
+                                    <% nota.respuestas.forEach(function (respuesta) { %>
+                                        <div class="nota-reply">
+                                            <div class="meta">Tú — <%= respuesta.creado_en %></div>
+                                            <div class="texto"><%= respuesta.texto %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (nota.requiere_respuesta) { %>
+                                <form class="nota-reply-form" method="POST" action="/portal/casos/<%= caso.id %>/responder">
+                                    <input type="hidden" name="nota_id" value="<%= nota.id %>">
+                                    <textarea name="texto" placeholder="Escribe tu respuesta a esto..." required></textarea>
+                                    <button type="submit">Enviar respuesta</button>
+                                </form>
+                            <% } %>
                         </div>
                     </div>
                 <% }); %>
@@ -94,9 +113,10 @@
         <% } %>
 
         <div class="card">
-            <h2>Responder con un comentario</h2>
+            <h2>Comentario general</h2>
+            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem;">Usa esto para un comentario que no responde a una pregunta puntual de tu trabajadora social.</p>
             <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/responder">
-                <textarea name="texto" placeholder="Escribe tu respuesta..." required></textarea>
+                <textarea name="texto" placeholder="Escribe tu comentario..." required></textarea>
                 <button type="submit" class="btn">Enviar</button>
             </form>
             <% if (respuestas.length > 0) { %>
@@ -150,7 +170,8 @@
         <div class="card">
             <h2>❓ Ayuda: ¿para qué sirve cada botón?</h2>
             <ul style="margin-left: 1.2rem; color: #475569;">
-                <li><strong>Enviar</strong> (en "Responder con un comentario"): envía un mensaje de texto a tu trabajadora social. No sube ningún archivo.</li>
+                <li><strong>Enviar respuesta</strong> (debajo de una nota que dice "Necesita tu respuesta"): responde específicamente a esa pregunta. Tu respuesta queda debajo de la pregunta correspondiente.</li>
+                <li><strong>Enviar</strong> (en "Comentario general"): envía un mensaje que no responde a una pregunta puntual.</li>
                 <li><strong>Subir documento(s)</strong>: solo aparece cuando tu trabajadora social te pidió específicamente un documento. Envía el o los archivos seleccionados para esa solicitud puntual.</li>
                 <li><strong>Los enlaces con nombre de archivo</strong> (ej. "Documento 1 — boleta.pdf") descargan el archivo que ya subiste, para que puedas revisarlo.</li>
                 <li><strong>Volver a mis gestiones</strong> (arriba a la derecha): te devuelve al listado de todas tus gestiones.</li>
