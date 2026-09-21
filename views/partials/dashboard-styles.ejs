@@ -29,26 +29,52 @@
         font-size: 1.2rem;
         margin-bottom: 2rem;
     }
-    .app-sidebar-nav { display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+    .app-sidebar-nav { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; flex: 1; }
     .app-sidebar-link {
+        position: relative;
         width: 44px;
         height: 44px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.15rem;
         color: #94a3b8;
         text-decoration: none;
         transition: all 0.2s ease;
     }
+    .app-sidebar-link svg { width: 20px; height: 20px; }
     .app-sidebar-link:hover { background: #f1f5f9; color: #475569; }
     .app-sidebar-link.active {
         background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
         color: white;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
     }
-    .app-sidebar-link.whatsapp:hover { background: #e7fbf0; color: #128c7e; }
+    .app-sidebar-link.whatsapp {
+        background: #25D366;
+        color: white;
+        box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+    }
+    .app-sidebar-link.whatsapp:hover { background: #128C7E; }
+    .app-sidebar-divider { width: 26px; height: 1px; background: #eef1f5; margin: 0.3rem 0; }
     .app-sidebar-logout { margin-top: auto; }
+    .app-sidebar-tooltip {
+        position: absolute;
+        left: calc(100% + 10px);
+        top: 50%;
+        transform: translateY(-50%);
+        background: #1f2937;
+        color: white;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease;
+        z-index: 50;
+    }
+    .app-sidebar-link:hover .app-sidebar-tooltip { opacity: 1; }
 
     .app-content { flex: 1; min-width: 0; padding: 2rem 2.5rem 3rem; max-width: 1180px; }
 
