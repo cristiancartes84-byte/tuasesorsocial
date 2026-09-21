@@ -47,6 +47,7 @@
         background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
         color: white;
     }
+    .app-sidebar-link.whatsapp:hover { background: #e7fbf0; color: #128c7e; }
     .app-sidebar-logout { margin-top: auto; }
 
     .app-content { flex: 1; min-width: 0; padding: 2rem 2.5rem 3rem; max-width: 1180px; }
@@ -55,6 +56,44 @@
     .dash-date { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem; }
     .dash-title { font-size: 1.9rem; font-weight: 800; color: #111827; margin-bottom: 0.4rem; }
     .dash-subtitle { color: #64748b; font-size: 0.95rem; }
+
+    .attention-banner {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 16px;
+        padding: 1.1rem 1.4rem;
+        margin-bottom: 1.75rem;
+    }
+    .attention-banner-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .attention-item {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0;
+        border-top: 1px solid #fef3c7;
+        font-size: 0.86rem;
+        color: #78350f;
+    }
+    .attention-item:first-of-type { border-top: none; padding-top: 0; }
+    .attention-item .dot { width: 6px; height: 6px; border-radius: 50%; background: #d97706; flex-shrink: 0; }
+    .attention-item strong { color: #92400e; }
+    .attention-item a {
+        margin-left: auto;
+        flex-shrink: 0;
+        color: #b45309;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 0.82rem;
+    }
+    .attention-item a:hover { text-decoration: underline; }
 
     .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.75rem; }
     .stat-card {

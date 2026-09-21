@@ -14,6 +14,7 @@
             <div class="app-sidebar-logo">🤝</div>
             <nav class="app-sidebar-nav">
                 <a href="/portal/dashboard" class="app-sidebar-link active" title="Inicio">🏠</a>
+                <a href="https://wa.me/56949546000?text=Hola%2C%20necesito%20ayuda%20con%20mi%20gesti%C3%B3n" target="_blank" rel="noopener" class="app-sidebar-link whatsapp" title="Contactar por WhatsApp">💬</a>
                 <a href="/cambiar-password" class="app-sidebar-link" title="Cambiar contraseña">🔑</a>
             </nav>
             <a href="/portal/logout" class="app-sidebar-link app-sidebar-logout" title="Cerrar sesión">🚪</a>
@@ -25,6 +26,23 @@
                 <div class="dash-title">Hola, <%= usuario.nombre %></div>
                 <p class="dash-subtitle">Aquí puedes revisar el estado de tus gestiones con Tu Asesor Social.</p>
             </div>
+
+            <% if (pendientes.length > 0) { %>
+                <div class="attention-banner">
+                    <div class="attention-banner-title">⚠️ Necesita tu atención (<%= pendientes.length %>)</div>
+                    <% pendientes.forEach(function (item) { %>
+                        <div class="attention-item">
+                            <span class="dot"></span>
+                            <% if (item.tipo === 'documento') { %>
+                                Falta subir <strong><%= item.texto %></strong> (<%= item.faltan %> pendiente<%= item.faltan > 1 ? 's' : '' %>) en <%= item.tipoSubsidio %>
+                            <% } else { %>
+                                Tienes una pregunta sin responder en <strong><%= item.tipoSubsidio %></strong>
+                            <% } %>
+                            <a href="/portal/casos/<%= item.casoId %>">Ver &rarr;</a>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
 
             <div class="stat-row">
                 <div class="stat-card tone-blue">

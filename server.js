@@ -108,6 +108,7 @@ app.get('/portal/dashboard', requireRole('cliente'), (req, res) => {
     casos: misCasos,
     stats: { total: misCasos.length, documentosPendientes, aprobadas },
     resumen: { enProceso, aprobadas, rechazadas, total: misCasos.length },
+    pendientes: casos.obtenerPendientesDeUsuario(req.session.usuario.id),
     fechaHoy: new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
   });
 });
