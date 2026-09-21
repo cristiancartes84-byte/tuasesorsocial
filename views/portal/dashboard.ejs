@@ -6,45 +6,110 @@
     <title>Mi Gestión | Tu Asesor Social</title>
     <meta name="robots" content="noindex, nofollow">
     <%- include('../partials/app-styles') %>
+    <%- include('../partials/dashboard-styles') %>
 </head>
 <body>
-    <header class="app-header">
-        <h1>Hola, <%= usuario.nombre %></h1>
-        <a href="/portal/logout">Cerrar sesión</a>
-    </header>
-    <main class="app-main">
-        <div class="card">
-            <h2>Mis gestiones</h2>
-            <% if (casos.length === 0) { %>
-                <div class="empty-state">
-                    Todavía no tienes una gestión registrada en el portal.
-                    <br>Cuando tu trabajadora social cree tu caso, lo verás aquí.
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="app-sidebar-logo">🤝</div>
+            <nav class="app-sidebar-nav">
+                <a href="/portal/dashboard" class="app-sidebar-link active" title="Inicio">🏠</a>
+                <a href="/cambiar-password" class="app-sidebar-link" title="Cambiar contraseña">🔑</a>
+            </nav>
+            <a href="/portal/logout" class="app-sidebar-link app-sidebar-logout" title="Cerrar sesión">🚪</a>
+        </aside>
+
+        <div class="app-content">
+            <div class="dash-header">
+                <div class="dash-date"><%= fechaHoy %></div>
+                <div class="dash-title">Hola, <%= usuario.nombre %></div>
+                <p class="dash-subtitle">Aquí puedes revisar el estado de tus gestiones con Tu Asesor Social.</p>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-card tone-blue">
+                    <div>
+                        <div class="stat-number"><%= stats.total %></div>
+                        <div class="stat-label">Gestiones activas</div>
+                    </div>
+                    <div class="stat-icon">📂</div>
                 </div>
-            <% } else { %>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tipo de gestión</th>
-                            <th>Estado actual</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="stat-card tone-orange">
+                    <div>
+                        <div class="stat-number"><%= stats.documentosPendientes %></div>
+                        <div class="stat-label">Documentos pendientes</div>
+                    </div>
+                    <div class="stat-icon">📎</div>
+                </div>
+                <div class="stat-card tone-green">
+                    <div>
+                        <div class="stat-number"><%= stats.aprobadas %></div>
+                        <div class="stat-label">Gestiones aprobadas</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+            </div>
+
+            <div class="dash-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Tus gestiones</h2>
+                        <span class="panel-count"><%= casos.length %> en total</span>
+                    </div>
+
+                    <% if (casos.length === 0) { %>
+                        <div class="empty-state">
+                            Todavía no tienes una gestión registrada en el portal.
+                            <br>Cuando tu trabajadora social cree tu caso, lo verás aquí.
+                        </div>
+                    <% } else { %>
                         <% casos.forEach(function (caso) { %>
-                            <tr class="clickable" onclick="window.location.href='/portal/casos/<%= caso.id %>'">
-                                <td><%= caso.tipo_subsidio %></td>
-                                <td>
+                            <div class="gestion-row">
+                                <div class="gestion-avatar"><%= caso.icono %></div>
+                                <div class="gestion-info">
+                                    <strong><%= caso.tipo_subsidio %></strong>
+                                    <span class="meta">Iniciada el <%= caso.creado_en %></span>
+                                </div>
+                                <div class="gestion-status">
                                     <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
                                         <%= caso.estado_actual %>
                                     </span>
-                                </td>
-                                <td><a href="/portal/casos/<%= caso.id %>">Ver detalle &rarr;</a></td>
-                            </tr>
+                                    <a href="/portal/casos/<%= caso.id %>">Ver detalle &rarr;</a>
+                                </div>
+                            </div>
                         <% }); %>
-                    </tbody>
-                </table>
-            <% } %>
+                    <% } %>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Resumen</h2>
+                    </div>
+
+                    <% if (resumen.total === 0) { %>
+                        <div class="donut-wrap">
+                            <div class="donut" style="background: conic-gradient(#e2e8f0 0% 100%);">
+                                <div class="donut-center"><span class="num">0</span><span class="label">Gestiones</span></div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <% var pctProceso = Math.round((resumen.enProceso / resumen.total) * 100); %>
+                        <% var pctAprobadas = Math.round((resumen.aprobadas / resumen.total) * 100); %>
+                        <div class="donut-wrap">
+                            <div class="donut" style="background: conic-gradient(#2563eb 0% <%= pctProceso %>%, #059669 <%= pctProceso %>% <%= pctProceso + pctAprobadas %>%, #dc2626 <%= pctProceso + pctAprobadas %>% 100%);">
+                                <div class="donut-center"><span class="num"><%= resumen.total %></span><span class="label">Gestiones</span></div>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <div class="legend">
+                        <div class="legend-item"><span class="legend-dot" style="background: #2563eb;"></span>En proceso<span class="legend-count"><%= resumen.enProceso %></span></div>
+                        <div class="legend-item"><span class="legend-dot" style="background: #059669;"></span>Aprobadas<span class="legend-count"><%= resumen.aprobadas %></span></div>
+                        <div class="legend-item"><span class="legend-dot" style="background: #dc2626;"></span>Rechazadas<span class="legend-count"><%= resumen.rechazadas %></span></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
 </body>
 </html>

@@ -12,6 +12,7 @@ const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
 const { TIPOS_DOCUMENTO, obtenerTipoDocumento } = require('./lib/documentos-catalogo');
+const { iconoParaTipo } = require('./lib/iconos');
 const mailer = require('./lib/mailer');
 const { upload, rutaArchivo } = require('./lib/uploads');
 
@@ -85,8 +86,30 @@ app.post('/portal/login', loginLimiter, (req, res) => {
 });
 
 app.get('/portal/dashboard', requireRole('cliente'), (req, res) => {
-  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
-  res.render('portal/dashboard', { usuario: req.session.usuario, casos: misCasos });
+  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id).map((caso) => ({
+    ...caso,
+    icono: iconoParaTipo(caso.tipo_subsidio),
+  }));
+
+  const ESTADOS_APROBADOS = ['Aprobado', 'Finalizado'];
+  const ESTADOS_RECHAZADOS = ['Rechazado'];
+
+  let documentosPendientes = 0;
+  misCasos.forEach((caso) => {
+    documentosPendientes += casos.listarSolicitudesDeCaso(caso.id).filter((s) => s.estado === 'pendiente').length;
+  });
+
+  const aprobadas = misCasos.filter((c) => ESTADOS_APROBADOS.includes(c.estado_actual)).length;
+  const rechazadas = misCasos.filter((c) => ESTADOS_RECHAZADOS.includes(c.estado_actual)).length;
+  const enProceso = misCasos.length - aprobadas - rechazadas;
+
+  res.render('portal/dashboard', {
+    usuario: req.session.usuario,
+    casos: misCasos,
+    stats: { total: misCasos.length, documentosPendientes, aprobadas },
+    resumen: { enProceso, aprobadas, rechazadas, total: misCasos.length },
+    fechaHoy: new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+  });
 });
 
 app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {

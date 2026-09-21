@@ -1,0 +1,162 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f4f6fa; color: #1f2937; }
+
+    .app-shell { display: flex; min-height: 100vh; }
+
+    .app-sidebar {
+        width: 76px;
+        flex-shrink: 0;
+        background: white;
+        border-right: 1px solid #eef1f5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+    .app-sidebar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    .app-sidebar-nav { display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+    .app-sidebar-link {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .app-sidebar-link:hover { background: #f1f5f9; color: #475569; }
+    .app-sidebar-link.active {
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+    }
+    .app-sidebar-logout { margin-top: auto; }
+
+    .app-content { flex: 1; min-width: 0; padding: 2rem 2.5rem 3rem; max-width: 1180px; }
+
+    .dash-header { margin-bottom: 1.75rem; }
+    .dash-date { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .dash-title { font-size: 1.9rem; font-weight: 800; color: #111827; margin-bottom: 0.4rem; }
+    .dash-subtitle { color: #64748b; font-size: 0.95rem; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.75rem; }
+    .stat-card {
+        border-radius: 18px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        background: rgba(255,255,255,0.6);
+        flex-shrink: 0;
+    }
+    .stat-card .stat-number { font-size: 1.9rem; font-weight: 800; color: #1f2937; line-height: 1; }
+    .stat-card .stat-label { font-size: 0.78rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 0.35rem; }
+    .stat-card.tone-blue { background: #eaf1ff; }
+    .stat-card.tone-orange { background: #fff3e8; }
+    .stat-card.tone-green { background: #e9fbf0; }
+
+    .dash-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 1.5rem; align-items: start; }
+
+    .panel {
+        background: white;
+        border-radius: 18px;
+        padding: 1.5rem 1.75rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+    .panel-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
+    .panel-header h2 { font-size: 1.05rem; font-weight: 700; color: #1f2937; }
+    .panel-header .panel-count { font-size: 0.8rem; color: #94a3b8; }
+
+    .gestion-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .gestion-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .gestion-row:first-child { padding-top: 0; }
+    .gestion-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #f4f6fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    .gestion-info { flex: 1; min-width: 0; }
+    .gestion-info strong { display: block; font-size: 0.94rem; color: #1f2937; }
+    .gestion-info .meta { font-size: 0.78rem; color: #94a3b8; }
+    .gestion-status { flex-shrink: 0; text-align: right; }
+    .gestion-status a {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .gestion-status a:hover { text-decoration: underline; }
+
+    .donut-wrap { display: flex; justify-content: center; margin: 0.5rem 0 1.5rem; }
+    .donut {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .donut::before {
+        content: '';
+        position: absolute;
+        inset: 20px;
+        background: white;
+        border-radius: 50%;
+    }
+    .donut-center { position: relative; text-align: center; z-index: 1; }
+    .donut-center .num { font-size: 1.6rem; font-weight: 800; color: #1f2937; display: block; }
+    .donut-center .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.03em; }
+
+    .legend { display: flex; flex-direction: column; gap: 0.65rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #475569; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-item .legend-count { margin-left: auto; font-weight: 700; color: #1f2937; }
+
+    @media (max-width: 900px) {
+        .app-content { padding: 1.5rem 1.25rem 2.5rem; }
+        .stat-row { grid-template-columns: 1fr; }
+        .dash-grid { grid-template-columns: 1fr; }
+    }
+</style>
