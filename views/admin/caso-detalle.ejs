@@ -69,7 +69,8 @@
                 <div class="empty-state">Todavía no se ha solicitado ningún documento en este caso.</div>
             <% } else { %>
                 <% solicitudes.forEach(function (solicitud) { %>
-                    <% var porcentaje = Math.round((solicitud.documentos.length / solicitud.cantidad_requerida) * 100); %>
+                    <% var validos = solicitud.documentos.filter(function (d) { return d.estado_revision !== 'rechazado'; }).length; %>
+                    <% var porcentaje = Math.round((validos / solicitud.cantidad_requerida) * 100); %>
                     <div class="solicitud-card<%= solicitud.estado === 'completada' ? ' is-completa' : '' %>">
                         <div class="solicitud-header">
                             <div class="solicitud-icon"><%= solicitud.estado === 'completada' ? '✅' : '📎' %></div>
@@ -90,12 +91,29 @@
                         </div>
 
                         <div class="progress-track"><div class="progress-fill" style="width: <%= porcentaje %>%;"></div></div>
-                        <span class="progress-label"><%= solicitud.documentos.length %> de <%= solicitud.cantidad_requerida %> recibido(s)</span>
+                        <span class="progress-label"><%= validos %> de <%= solicitud.cantidad_requerida %> recibido(s)</span>
 
                         <% if (solicitud.documentos.length > 0) { %>
                             <ul class="file-list">
                                 <% solicitud.documentos.forEach(function (doc) { %>
-                                    <li class="file-chip">📄 <a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a></li>
+                                    <li class="file-chip file-chip-review">
+                                        <span>📄 <a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                        <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? '✓ Correcto' : doc.estado_revision === 'rechazado' ? '✗ Debe actualizar' : 'Sin revisar' %></span></span>
+                                        <span class="file-chip-actions">
+                                            <% if (doc.estado_revision !== 'aprobado') { %>
+                                                <form method="POST" action="/admin/documentos/<%= doc.id %>/revision">
+                                                    <input type="hidden" name="estado" value="aprobado">
+                                                    <button type="submit" class="btn-mini btn-mini-ok">✓ Correcto</button>
+                                                </form>
+                                            <% } %>
+                                            <% if (doc.estado_revision !== 'rechazado') { %>
+                                                <form method="POST" action="/admin/documentos/<%= doc.id %>/revision">
+                                                    <input type="hidden" name="estado" value="rechazado">
+                                                    <button type="submit" class="btn-mini btn-mini-reject">✗ Debe actualizar</button>
+                                                </form>
+                                            <% } %>
+                                        </span>
+                                    </li>
                                 <% }); %>
                             </ul>
                         <% } %>
@@ -163,7 +181,14 @@
             <h2>Historial de hitos</h2>
             <% historial.forEach(function (item) { %>
                 <div class="timeline-item">
-                    <div class="hito"><%= item.hito %></div>
+                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;">
+                        <div class="hito"><%= item.hito %></div>
+                        <% if (historial.length > 1) { %>
+                            <form method="POST" action="/admin/casos/<%= caso.id %>/hitos/<%= item.id %>/eliminar" onsubmit="return confirm('¿Eliminar este hito del historial? Si es el más reciente, el estado actual del caso volverá al hito anterior.');">
+                                <button type="submit" class="btn-delete">Eliminar</button>
+                            </form>
+                        <% } %>
+                    </div>
                     <div class="meta"><%= item.creado_por_nombre %> — <%= item.creado_en %></div>
                 </div>
             <% }); %>

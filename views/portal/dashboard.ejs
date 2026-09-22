@@ -104,6 +104,7 @@
                                     <span class="meta">Iniciada el <%= caso.creado_en %></span>
                                 </div>
                                 <div class="gestion-status">
+                                    <span class="gestion-status-label">Hito actual</span>
                                     <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
                                         <%= caso.estado_actual %>
                                     </span>

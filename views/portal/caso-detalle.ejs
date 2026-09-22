@@ -75,8 +75,9 @@
             <div class="card">
                 <h2>Documentos que necesitamos de ti</h2>
                 <% pendientes.forEach(function (solicitud) { %>
-                    <% var faltan = solicitud.cantidad_requerida - solicitud.documentos.length; %>
-                    <% var porcentaje = Math.round((solicitud.documentos.length / solicitud.cantidad_requerida) * 100); %>
+                    <% var validos = solicitud.documentos.filter(function (d) { return d.estado_revision !== 'rechazado'; }).length; %>
+                    <% var faltan = solicitud.cantidad_requerida - validos; %>
+                    <% var porcentaje = Math.round((validos / solicitud.cantidad_requerida) * 100); %>
                     <div class="solicitud-card">
                         <div class="solicitud-header">
                             <div class="solicitud-icon">📎</div>
@@ -90,12 +91,15 @@
                         </div>
 
                         <div class="progress-track"><div class="progress-fill" style="width: <%= porcentaje %>%;"></div></div>
-                        <span class="progress-label"><%= solicitud.documentos.length %> de <%= solicitud.cantidad_requerida %> subido(s)</span>
+                        <span class="progress-label"><%= validos %> de <%= solicitud.cantidad_requerida %> subido(s)</span>
 
                         <% if (solicitud.documentos.length > 0) { %>
                             <ul class="file-list">
                                 <% solicitud.documentos.forEach(function (doc) { %>
-                                    <li class="file-chip">✓ <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a></li>
+                                    <li class="file-chip">
+                                        <%= doc.estado_revision === 'rechazado' ? '✗' : '✓' %> <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                        <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? 'Validado' : doc.estado_revision === 'rechazado' ? 'Debes volver a subirlo' : 'En revisión' %></span>
+                                    </li>
                                 <% }); %>
                             </ul>
                         <% } %>
@@ -149,7 +153,10 @@
                         </div>
                         <ul class="file-list">
                             <% solicitud.documentos.forEach(function (doc) { %>
-                                <li class="file-chip">✓ <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a></li>
+                                <li class="file-chip">
+                                    ✓ <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                    <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? 'Validado' : doc.estado_revision === 'rechazado' ? 'Reemplazado' : 'En revisión' %></span>
+                                </li>
                             <% }); %>
                         </ul>
                     </div>

@@ -322,6 +322,13 @@ app.post('/admin/casos/:id/hito', requireRole('trabajador_social'), async (req, 
   res.redirect(`/admin/casos/${caso.id}`);
 });
 
+app.post('/admin/casos/:casoId/hitos/:hitoId/eliminar', requireRole('trabajador_social'), (req, res) => {
+  const caso = casos.obtenerCaso(req.params.casoId);
+  if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  casos.eliminarHito(req.params.hitoId, caso.id);
+  res.redirect(`/admin/casos/${caso.id}`);
+});
+
 app.post('/admin/casos/:id/nota', requireRole('trabajador_social'), async (req, res) => {
   const caso = casos.obtenerCaso(req.params.id);
   if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
@@ -372,6 +379,14 @@ app.get('/admin/documentos/:id/descargar', requireRole('trabajador_social'), (re
   const documento = casos.obtenerDocumento(req.params.id);
   if (!documento) return res.status(404).send('<h1>Documento no encontrado</h1>');
   res.download(rutaArchivo(documento), documento.nombre_original);
+});
+
+app.post('/admin/documentos/:id/revision', requireRole('trabajador_social'), (req, res) => {
+  const documento = casos.obtenerDocumento(req.params.id);
+  if (!documento) return res.status(404).send('<h1>Documento no encontrado</h1>');
+  const estado = req.body.estado === 'aprobado' ? 'aprobado' : 'rechazado';
+  casos.actualizarEstadoDocumento(documento.id, estado);
+  res.redirect(`/admin/casos/${documento.caso_id}`);
 });
 
 app.get('/admin/logout', (req, res) => {
