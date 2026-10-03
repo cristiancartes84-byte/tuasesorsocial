@@ -34,6 +34,27 @@
         </div>
 
         <div class="card">
+            <h2>Historial de hitos</h2>
+            <% var stepperHistorial = historial.slice().reverse(); %>
+            <div class="stepper">
+                <% stepperHistorial.forEach(function (item, i) { %>
+                    <div class="stepper-item<%= i === stepperHistorial.length - 1 ? ' is-active' : '' %>">
+                        <%- include('../partials/stepper-icon', { hito: item.hito, isCurrent: i === stepperHistorial.length - 1 }) %>
+                        <div class="stepper-card">
+                            <div class="hito"><%= item.hito %></div>
+                            <div class="meta"><%= item.creado_por_nombre %> — <%= item.creado_en %></div>
+                            <% if (historial.length > 1) { %>
+                                <form class="stepper-card-actions" method="POST" action="/admin/casos/<%= caso.id %>/hitos/<%= item.id %>/eliminar" onsubmit="return confirm('¿Eliminar este hito del historial? Si es el más reciente, el estado actual del caso volverá al hito anterior.');">
+                                    <button type="submit" class="btn-delete">Eliminar</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="card">
             <h2>Agregar nota / Solicitar documentos</h2>
             <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/nota">
                 <textarea name="texto" placeholder="Mensaje para el cliente (opcional; puedes dejarlo vacío si solo vas a solicitar documentos)"></textarea>
@@ -175,23 +196,6 @@
                     </div>
                 <% }); %>
             <% } %>
-        </div>
-
-        <div class="card">
-            <h2>Historial de hitos</h2>
-            <% historial.forEach(function (item) { %>
-                <div class="timeline-item">
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;">
-                        <div class="hito"><%= item.hito %></div>
-                        <% if (historial.length > 1) { %>
-                            <form method="POST" action="/admin/casos/<%= caso.id %>/hitos/<%= item.id %>/eliminar" onsubmit="return confirm('¿Eliminar este hito del historial? Si es el más reciente, el estado actual del caso volverá al hito anterior.');">
-                                <button type="submit" class="btn-delete">Eliminar</button>
-                            </form>
-                        <% } %>
-                    </div>
-                    <div class="meta"><%= item.creado_por_nombre %> — <%= item.creado_en %></div>
-                </div>
-            <% }); %>
         </div>
     </main>
     <script>

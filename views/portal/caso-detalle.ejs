@@ -166,12 +166,18 @@
 
         <div class="card">
             <h2>Historial de tu gestión</h2>
-            <% historial.forEach(function (item) { %>
-                <div class="timeline-item">
-                    <div class="hito"><%= item.hito %></div>
-                    <div class="meta"><%= item.creado_en %></div>
-                </div>
-            <% }); %>
+            <% var stepperHistorial = historial.slice().reverse(); %>
+            <div class="stepper">
+                <% stepperHistorial.forEach(function (item, i) { %>
+                    <div class="stepper-item<%= i === stepperHistorial.length - 1 ? ' is-active' : '' %>">
+                        <%- include('../partials/stepper-icon', { hito: item.hito, isCurrent: i === stepperHistorial.length - 1 }) %>
+                        <div class="stepper-card">
+                            <div class="hito"><%= item.hito %></div>
+                            <div class="meta"><%= item.creado_en %></div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
         </div>
 
         <div class="card">

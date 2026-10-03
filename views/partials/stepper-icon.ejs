@@ -1,0 +1,38 @@
+<%
+    // El estado especial solo aplica al hito ACTUAL del caso. Los hitos
+    // anteriores ya fueron superados por uno más reciente, así que siempre
+    // se muestran como completados (check), sin animación continua.
+    var _state = 'ok';
+    if (isCurrent) {
+        if (hito === 'Documentación pendiente por parte del cliente') { _state = 'pendiente'; }
+        else if (hito === 'Documentación en revisión' || hito === 'En tramitación ante el organismo' || hito === 'Resolución en proceso') { _state = 'en-proceso'; }
+        else if (hito === 'Aprobado') { _state = 'aprobado'; }
+        else if (hito === 'Rechazado') { _state = 'rechazado'; }
+    }
+%>
+<div class="stepper-dot is-<%= _state %>">
+    <% if (_state === 'pendiente') { %>
+        <svg class="stepper-icon-hourglass" viewBox="0 0 24 24" fill="white">
+            <rect x="6" y="1.4" width="12" height="1.8" rx="0.9"/>
+            <rect x="6" y="20.8" width="12" height="1.8" rx="0.9"/>
+            <path d="M7.3 3.6h9.4c-.2 3.6-2.5 5.6-3.9 6.5-.5.3-.5.9 0 1.2 1.4.9 3.7 2.9 3.9 6.5H7.3c.2-3.6 2.5-5.6 3.9-6.5.5-.3.5-.9 0-1.2-1.4-.9-3.7-2.9-3.9-6.5Z"/>
+        </svg>
+    <% } else if (_state === 'en-proceso') { %>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <g class="stepper-icon-clock-hands">
+                <line x1="12" y1="12" x2="12" y2="7"/>
+                <line x1="12" y1="12" x2="15.3" y2="13.6"/>
+            </g>
+        </svg>
+    <% } else if (_state === 'rechazado') { %>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+    <% } else { %>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline class="stepper-check-path" points="4 12 10 18 20 6"></polyline>
+        </svg>
+    <% } %>
+</div>
