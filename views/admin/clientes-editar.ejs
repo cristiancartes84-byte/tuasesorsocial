@@ -49,6 +49,9 @@
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" value="<%= cliente.email %>" required>
 
+                <label for="telefono">Teléfono de contacto (opcional)</label>
+                <input type="tel" id="telefono" name="telefono" value="<%= cliente.telefono || '' %>" placeholder="+56 9 1234 5678">
+
                 <button type="submit" class="btn">Guardar cambios</button>
             </form>
         </div>

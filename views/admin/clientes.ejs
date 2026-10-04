@@ -34,6 +34,7 @@
                             <th>Nombre</th>
                             <th>RUT</th>
                             <th>Email</th>
+                            <th>Teléfono</th>
                             <th>Casos</th>
                             <th></th>
                         </tr>
@@ -44,6 +45,7 @@
                                 <td><%= cliente.nombre %></td>
                                 <td><%= cliente.rut %></td>
                                 <td><%= cliente.email %></td>
+                                <td><%= cliente.telefono || '—' %></td>
                                 <td><%= cliente.total_casos %></td>
                                 <td><a href="/admin/clientes/<%= cliente.id %>/editar">Editar &rarr;</a></td>
                             </tr>
