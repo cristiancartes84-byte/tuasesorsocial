@@ -36,8 +36,10 @@
 
         <div class="card">
             <h2><%= cliente.nombre %></h2>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">RUT: <%= cliente.rut %> (no se puede modificar)</p>
             <form class="stacked" method="POST" action="/admin/clientes/<%= cliente.id %>/editar">
+                <label for="rut">RUT</label>
+                <input type="text" id="rut" name="rut" value="<%= cliente.rut %>" maxlength="10" required>
+
                 <label for="nombre">Nombre completo</label>
                 <input type="text" id="nombre" name="nombre" value="<%= cliente.nombre %>" required>
 
@@ -47,6 +49,7 @@
                 <button type="submit" class="btn">Guardar cambios</button>
             </form>
         </div>
+        <%- include('../partials/rut-mask') %>
 
         <div class="card">
             <h2>Contraseña</h2>
