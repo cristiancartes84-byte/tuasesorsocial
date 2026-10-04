@@ -34,7 +34,11 @@
             <% } else { %>
                 <% notas.forEach(function (nota) { %>
                     <div class="nota-card">
-                        <div class="nota-avatar">👩‍💼</div>
+                        <% if (nota.autor_foto) { %>
+                            <img class="nota-avatar" src="/avatars/<%= nota.autor_foto %>" alt="Trabajadora social" style="object-fit: cover;">
+                        <% } else { %>
+                            <div class="nota-avatar">👩‍💼</div>
+                        <% } %>
                         <div class="nota-body">
                             <div class="nota-header">
                                 <span class="meta"><%= nota.creado_en %></span>
