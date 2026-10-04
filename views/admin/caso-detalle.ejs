@@ -151,7 +151,11 @@
             <% } else { %>
                 <% notas.forEach(function (nota) { %>
                     <div class="nota-card<%= !nota.visible_para_cliente ? ' solo-interna' : '' %>">
-                        <div class="nota-avatar">👤</div>
+                        <% if (nota.autor_foto) { %>
+                            <img class="nota-avatar" src="/avatars/<%= nota.autor_foto %>" alt="<%= nota.autor_nombre %>" style="object-fit: cover;">
+                        <% } else { %>
+                            <div class="nota-avatar">👤</div>
+                        <% } %>
                         <div class="nota-body">
                             <div class="nota-header">
                                 <strong><%= nota.autor_nombre %></strong>

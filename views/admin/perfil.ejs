@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <%- include('../partials/app-styles') %>
+    <style>
+        .avatar-preview {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Mi perfil</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main" style="max-width: 480px;">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+
+        <div class="card" style="text-align: center;">
+            <% if (cuenta.foto_perfil) { %>
+                <img class="avatar-preview" src="/avatars/<%= cuenta.foto_perfil %>" alt="Foto de perfil">
+            <% } else { %>
+                <div class="avatar-preview">👤</div>
+            <% } %>
+            <h2 style="margin-bottom: 0.25rem;"><%= cuenta.nombre %></h2>
+            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;"><%= cuenta.email %></p>
+
+            <form class="stacked" method="POST" action="/admin/perfil/foto" enctype="multipart/form-data" style="text-align: left;">
+                <label for="foto">Subir nueva foto (JPG, PNG o WEBP, máx. 3 MB)</label>
+                <input type="file" id="foto" name="foto" accept=".jpg,.jpeg,.png,.webp" required>
+                <button type="submit" class="btn">Guardar foto</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

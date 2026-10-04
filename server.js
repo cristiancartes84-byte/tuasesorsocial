@@ -7,14 +7,14 @@ const helmet = require('helmet');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 
-const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario, resetearPassword } = require('./lib/auth');
+const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario, resetearPassword, obtenerUsuarioPorId, actualizarFotoPerfil } = require('./lib/auth');
 const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
 const { TIPOS_DOCUMENTO, obtenerTipoDocumento } = require('./lib/documentos-catalogo');
 const { iconoParaTipo } = require('./lib/iconos');
 const mailer = require('./lib/mailer');
-const { upload, rutaArchivo } = require('./lib/uploads');
+const { upload, rutaArchivo, uploadFotoPerfil, PERFILES_DIR } = require('./lib/uploads');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -432,6 +432,25 @@ app.post('/admin/documentos/:id/revision', requireRole('trabajador_social'), (re
   res.redirect(`/admin/casos/${documento.caso_id}`);
 });
 
+app.get('/admin/perfil', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/perfil', { usuario: req.session.usuario, cuenta: obtenerUsuarioPorId(req.session.usuario.id), error: null });
+});
+
+app.post('/admin/perfil/foto', requireRole('trabajador_social'), (req, res, next) => {
+  uploadFotoPerfil.single('foto')(req, res, (err) => {
+    if (err) {
+      return res.status(400).render('admin/perfil', { usuario: req.session.usuario, cuenta: obtenerUsuarioPorId(req.session.usuario.id), error: err.message });
+    }
+    next();
+  });
+}, (req, res) => {
+  if (!req.file) {
+    return res.status(400).render('admin/perfil', { usuario: req.session.usuario, cuenta: obtenerUsuarioPorId(req.session.usuario.id), error: 'Selecciona una imagen.' });
+  }
+  actualizarFotoPerfil(req.session.usuario.id, req.file.filename);
+  res.redirect('/admin/perfil');
+});
+
 app.get('/admin/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/admin/login'));
 });
@@ -489,6 +508,10 @@ app.post('/api/contact', async (req, res) => {
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '30d' // Cache de 30 días para assets (imágenes, favicon)
 }));
+
+// Fotos de perfil: se sirven públicamente (no son datos sensibles), pero
+// viven en el volumen persistente de /data para no perderse en un redeploy.
+app.use('/avatars', express.static(PERFILES_DIR, { maxAge: '7d' }));
 
 // Rutas SEO-friendly
 app.get('/', (req, res) => {
