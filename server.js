@@ -300,11 +300,17 @@ app.get('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, re
 app.post('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, res) => {
   const cliente = casos.obtenerCliente(req.params.id);
   if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
-  const { nombre, email } = req.body;
-  if (!nombre || !email) {
-    return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'Nombre y email son obligatorios.', passwordTemporal: null });
+  const { nombre, email, rut: rutInput } = req.body;
+  if (!nombre || !email || !rutInput) {
+    return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'Nombre, email y RUT son obligatorios.', passwordTemporal: null });
   }
-  casos.actualizarCliente(cliente.id, { nombre, email });
+  if (!rut.esValido(rutInput)) {
+    return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'El RUT ingresado no es válido.', passwordTemporal: null });
+  }
+  const resultado = casos.actualizarCliente(cliente.id, { nombre, email, rut: rut.normalizar(rutInput) });
+  if (!resultado.ok) {
+    return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: resultado.error, passwordTemporal: null });
+  }
   res.redirect('/admin/clientes');
 });
 
