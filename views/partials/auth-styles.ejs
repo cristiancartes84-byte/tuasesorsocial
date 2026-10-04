@@ -1,0 +1,79 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Montserrat', -apple-system, sans-serif;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .auth-card h1 {
+        font-size: 1.5rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    .auth-card .subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+    .auth-card label {
+        display: block;
+        font-size: 0.85rem;
+        color: #374151;
+        margin-bottom: 0.35rem;
+        font-weight: 600;
+    }
+    .auth-card input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    .auth-card input:focus {
+        outline: none;
+        border-color: #2563eb;
+    }
+    .auth-card button {
+        width: 100%;
+        padding: 0.85rem;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .auth-card button:hover { opacity: 0.9; }
+    .auth-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+    }
+    .auth-back {
+        display: block;
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: #64748b;
+        text-decoration: none;
+    }
+</style>

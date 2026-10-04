@@ -1,0 +1,403 @@
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f8fafc; color: #1f2937; }
+    header.app-header {
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        padding: 1.25rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    header.app-header h1 { font-size: 1.15rem; }
+    header.app-header a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
+    main.app-main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #1f2937; }
+    .empty-state { text-align: center; color: #64748b; padding: 2rem 1rem; }
+    .btn {
+        display: inline-block;
+        padding: 0.65rem 1.25rem;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+    .toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.75rem 0.5rem; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem; }
+    th { color: #64748b; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+    tr:hover td { background: #f8fafc; }
+    tr.clickable { cursor: pointer; }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    .badge-aprobado { background: #d1fae5; color: #065f46; }
+    .badge-rechazado { background: #fee2e2; color: #b91c1c; }
+    form.stacked label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.35rem;
+        margin-top: 1rem;
+    }
+    form.stacked input,
+    form.stacked select,
+    form.stacked textarea {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-family: inherit;
+    }
+    form.stacked textarea { min-height: 90px; resize: vertical; }
+    form.stacked .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+    }
+    form.stacked .checkbox-row input { width: auto; }
+    form.stacked button { margin-top: 1.25rem; }
+    .form-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    /* Historial de hitos: stepper con checkmarks (panel admin y portal cliente) */
+    .stepper {
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+        padding: 0.5rem 0.5rem 0.75rem;
+        position: relative;
+    }
+    .stepper::before {
+        content: '';
+        position: absolute;
+        top: calc(0.5rem + 17px);
+        left: 1.25rem;
+        right: 1.25rem;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 0;
+    }
+    .stepper-item {
+        flex: 0 0 190px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    .stepper-dot {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.65rem;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 4px #fff;
+        position: relative;
+        animation: stepper-pop 0.45s ease;
+    }
+    .stepper-dot svg { width: 15px; height: 15px; position: relative; z-index: 1; }
+
+    /* Estado: ok (por defecto) — el check se dibuja al aparecer */
+    .stepper-check-path {
+        stroke-dasharray: 24;
+        stroke-dashoffset: 24;
+        animation: stepper-draw 0.4s 0.25s ease forwards;
+    }
+
+    /* Estado: pendiente — reloj de arena que se voltea (esperando al cliente) */
+    .stepper-dot.is-pendiente { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .stepper-icon-hourglass { animation: stepper-flip 3s ease-in-out infinite; transform-origin: center; }
+
+    /* Estado: en proceso — reloj con manecillas girando (se está trabajando en el caso) */
+    .stepper-dot.is-en-proceso { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+    .stepper-icon-clock-hands { animation: stepper-spin 2.4s linear infinite; transform-origin: 12px 12px; }
+
+    /* Estado: aprobado — check de éxito */
+    .stepper-dot.is-aprobado { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+
+    /* Estado: rechazado — X de alerta */
+    .stepper-dot.is-rechazado { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+
+    /* El hito ACTUAL siempre tiene un pulso continuo, sea cual sea su estado,
+       para que se note que es el punto vivo del caso (no uno ya superado). */
+    .stepper-item.is-active .stepper-dot::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid #2563eb;
+        animation: stepper-ping 1.8s ease-out infinite;
+    }
+    .stepper-item.is-active .stepper-dot.is-pendiente::after { border-color: #f59e0b; }
+    .stepper-item.is-active .stepper-dot.is-en-proceso::after { border-color: #6366f1; }
+    .stepper-item.is-active .stepper-dot.is-aprobado::after { border-color: #10b981; }
+    .stepper-item.is-active .stepper-dot.is-rechazado::after { border-color: #ef4444; }
+
+    @keyframes stepper-draw { to { stroke-dashoffset: 0; } }
+    @keyframes stepper-spin { to { transform: rotate(360deg); } }
+    @keyframes stepper-flip {
+        0%, 35% { transform: rotate(0deg); }
+        50%, 85% { transform: rotate(180deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes stepper-pop {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.15); opacity: 1; }
+        100% { transform: scale(1); }
+    }
+    @keyframes stepper-ping {
+        0% { transform: scale(0.95); opacity: 0.55; }
+        60% { opacity: 0.12; }
+        100% { transform: scale(1.35); opacity: 0; }
+    }
+    .stepper-card {
+        border-radius: 12px;
+        padding: 0.5rem 0.65rem 0.7rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .stepper-item.is-active .stepper-card {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        box-shadow: 0 2px 10px rgba(37, 99, 235, 0.1);
+    }
+    .stepper-card .hito { font-weight: 600; font-size: 0.9rem; line-height: 1.3; }
+    .stepper-card .meta { font-size: 0.75rem; color: #64748b; margin-top: 0.35rem; }
+    .stepper-card-actions { margin-top: 0.4rem; }
+    .requiere-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: #fef3c7;
+        color: #92400e;
+        margin-right: 0.35rem;
+    }
+
+    /* Notas: tarjeta tipo mensaje, con acento de color y encabezado claro */
+    .nota-card {
+        display: flex;
+        gap: 0.85rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+    .nota-card:last-child { border-bottom: none; padding-bottom: 0; }
+    .nota-card:first-child { padding-top: 0; }
+    .nota-avatar {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+    .nota-body { flex: 1; min-width: 0; }
+    .nota-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.35rem;
+    }
+    .nota-header strong { font-size: 0.9rem; color: #1f2937; }
+    .nota-header .meta { font-size: 0.78rem; color: #94a3b8; }
+    .nota-badges { margin-bottom: 0.5rem; }
+    .nota-bubble {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        color: #334155;
+        white-space: pre-wrap;
+        line-height: 1.55;
+    }
+    .nota-card.solo-interna .nota-bubble { background: #fffbeb; }
+
+    /* Respuestas anidadas debajo de la nota que las originó */
+    .nota-replies { margin-top: 0.75rem; padding-left: 1rem; border-left: 2px solid #dbeafe; }
+    .nota-reply { margin-bottom: 0.6rem; }
+    .nota-reply:last-child { margin-bottom: 0; }
+    .nota-reply .meta { font-size: 0.76rem; color: #94a3b8; margin-bottom: 0.2rem; }
+    .nota-reply .texto {
+        background: #eff6ff;
+        border-radius: 10px;
+        padding: 0.65rem 0.9rem;
+        color: #1e3a5f;
+        white-space: pre-wrap;
+        line-height: 1.5;
+        font-size: 0.92rem;
+    }
+    .nota-reply-form { margin-top: 0.75rem; padding-left: 1rem; }
+    .nota-reply-form textarea {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        min-height: 60px;
+        resize: vertical;
+    }
+    .nota-reply-form button {
+        margin-top: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Solicitudes de documentos: tarjeta con icono, progreso y archivos */
+    .solicitud-card {
+        border: 1px solid #e9edf3;
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
+        margin-bottom: 1rem;
+    }
+    .solicitud-card:last-child { margin-bottom: 0; }
+    .solicitud-card.is-completa { background: #f6fdf9; border-color: #cdeede; }
+    .solicitud-header { display: flex; align-items: flex-start; gap: 0.85rem; }
+    .solicitud-icon {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(5,150,105,0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+    .solicitud-title { flex: 1; min-width: 0; }
+    .solicitud-title strong { display: block; font-size: 0.98rem; color: #1f2937; }
+    .solicitud-title .meta { font-size: 0.78rem; color: #94a3b8; }
+    .solicitud-actions { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+    .progress-track {
+        height: 7px;
+        background: #eef2f7;
+        border-radius: 100px;
+        overflow: hidden;
+        margin: 0.9rem 0 0.35rem;
+    }
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #2563eb, #059669);
+        border-radius: 100px;
+        transition: width 0.3s ease;
+    }
+    .progress-label { font-size: 0.78rem; color: #64748b; }
+    .file-list { list-style: none; margin: 0.75rem 0 0; padding: 0; }
+    .file-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.7rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        margin-bottom: 0.4rem;
+        font-size: 0.85rem;
+    }
+    .file-chip:last-child { margin-bottom: 0; }
+    .file-chip a { color: #1e293b; text-decoration: none; font-weight: 500; }
+    .file-chip a:hover { color: #2563eb; text-decoration: underline; }
+    .btn-delete {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.78rem;
+        cursor: pointer;
+        padding: 0.3rem 0.5rem;
+        border-radius: 6px;
+    }
+    .btn-delete:hover { background: #fef2f2; color: #b91c1c; }
+
+    /* Revisión de documentos por la trabajadora social */
+    .file-chip-review { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+    .file-chip-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .doc-status-badge {
+        display: inline-block;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 100px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    .doc-status-badge.aprobado { background: #d1fae5; color: #065f46; }
+    .doc-status-badge.rechazado { background: #fee2e2; color: #b91c1c; }
+    .btn-mini {
+        border: 1.5px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-mini-ok { color: #065f46; border-color: #a7f3d0; }
+    .btn-mini-ok:hover { background: #d1fae5; }
+    .btn-mini-reject { color: #b91c1c; border-color: #fecaca; }
+    .btn-mini-reject:hover { background: #fee2e2; }
+
+    /* Respuestas del cliente */
+    .respuesta-card {
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+    .respuesta-card:last-child { border-bottom: none; }
+    .respuesta-card .meta { font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.3rem; }
+    .respuesta-card .texto {
+        background: #eff6ff;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        color: #1e3a5f;
+        white-space: pre-wrap;
+        line-height: 1.5;
+    }
+</style>

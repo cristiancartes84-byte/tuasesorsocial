@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Gestión | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Panel de Gestión — <%= usuario.nombre %></h1>
+        <a href="/admin/logout">Cerrar sesión</a>
+    </header>
+    <main class="app-main">
+        <div class="toolbar">
+            <a href="/admin/clientes/nuevo" class="btn">+ Nuevo cliente</a>
+            <a href="/admin/casos/nuevo" class="btn btn-secondary">+ Nuevo caso</a>
+        </div>
+
+        <div class="card">
+            <h2>Casos</h2>
+            <% if (casos.length === 0) { %>
+                <div class="empty-state">Todavía no hay casos registrados.</div>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>RUT</th>
+                            <th>Tipo de gestión</th>
+                            <th>Estado actual</th>
+                            <th>Creado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% casos.forEach(function (caso) { %>
+                            <tr class="clickable" onclick="window.location.href='/admin/casos/<%= caso.id %>'">
+                                <td><%= caso.cliente_nombre %></td>
+                                <td><%= caso.cliente_rut %></td>
+                                <td><%= caso.tipo_subsidio %></td>
+                                <td>
+                                    <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                                        <%= caso.estado_actual %>
+                                    </span>
+                                </td>
+                                <td><%= caso.creado_en %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= caso.cliente_nombre %> — <%= caso.tipo_subsidio %> | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1><%= caso.cliente_nombre %> (<%= caso.cliente_rut %>)</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main">
+        <div class="card">
+            <h2><%= caso.tipo_subsidio %></h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Caso creado el <%= caso.creado_en %></p>
+            <p style="margin-top: 0.75rem;">Estado actual:
+                <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                    <%= caso.estado_actual %>
+                </span>
+            </p>
+
+            <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/hito">
+                <label for="hito">Actualizar hito</label>
+                <select id="hito" name="hito" required>
+                    <% hitos.forEach(function (h) { %>
+                        <option value="<%= h %>" <%= h === caso.estado_actual ? 'selected' : '' %>><%= h %></option>
+                    <% }); %>
+                </select>
+                <button type="submit" class="btn">Guardar hito y notificar al cliente</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Historial de hitos</h2>
+            <% var stepperHistorial = historial.slice().reverse(); %>
+            <div class="stepper">
+                <% stepperHistorial.forEach(function (item, i) { %>
+                    <div class="stepper-item<%= i === stepperHistorial.length - 1 ? ' is-active' : '' %>">
+                        <%- include('../partials/stepper-icon', { hito: item.hito, isCurrent: i === stepperHistorial.length - 1 }) %>
+                        <div class="stepper-card">
+                            <div class="hito"><%= item.hito %></div>
+                            <div class="meta"><%= item.creado_por_nombre %> — <%= item.creado_en %></div>
+                            <% if (historial.length > 1) { %>
+                                <form class="stepper-card-actions" method="POST" action="/admin/casos/<%= caso.id %>/hitos/<%= item.id %>/eliminar" onsubmit="return confirm('¿Eliminar este hito del historial? Si es el más reciente, el estado actual del caso volverá al hito anterior.');">
+                                    <button type="submit" class="btn-delete">Eliminar</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Agregar nota / Solicitar documentos</h2>
+            <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/nota">
+                <textarea name="texto" placeholder="Mensaje para el cliente (opcional; puedes dejarlo vacío si solo vas a solicitar documentos)"></textarea>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="visible_para_cliente" name="visible_para_cliente" checked>
+                    <label for="visible_para_cliente" style="margin: 0;">Visible para el cliente (le llegará un aviso por correo)</label>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="requiere_respuesta" name="requiere_respuesta">
+                    <label for="requiere_respuesta" style="margin: 0;">Necesito que el cliente responda con un comentario</label>
+                </div>
+
+                <label>Solicitar documentos (opcional, puedes marcar varios)</label>
+                <% tiposDocumento.forEach(function (tipo) { %>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="tipo_<%= tipo.id %>" name="tipo_documento" value="<%= tipo.id %>">
+                        <label for="tipo_<%= tipo.id %>" style="margin: 0;"><%= tipo.label %><%= tipo.cantidad > 1 ? ' (' + tipo.cantidad + ' archivos)' : '' %></label>
+                    </div>
+                <% }); %>
+
+                <div id="tipo_otro_detalle_wrap" style="display: none;">
+                    <label for="tipo_otro_detalle">¿Qué documento es?</label>
+                    <input type="text" id="tipo_otro_detalle" name="tipo_otro_detalle" placeholder="Ej: Contrato de arriendo vigente">
+                </div>
+
+                <button type="submit" class="btn">Guardar</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Solicitudes de documentos</h2>
+            <% if (solicitudes.length === 0) { %>
+                <div class="empty-state">Todavía no se ha solicitado ningún documento en este caso.</div>
+            <% } else { %>
+                <% solicitudes.forEach(function (solicitud) { %>
+                    <% var validos = solicitud.documentos.filter(function (d) { return d.estado_revision !== 'rechazado'; }).length; %>
+                    <% var porcentaje = Math.round((validos / solicitud.cantidad_requerida) * 100); %>
+                    <div class="solicitud-card<%= solicitud.estado === 'completada' ? ' is-completa' : '' %>">
+                        <div class="solicitud-header">
+                            <div class="solicitud-icon"><%= solicitud.estado === 'completada' ? '✅' : '📎' %></div>
+                            <div class="solicitud-title">
+                                <strong><%= solicitud.tipo_label %></strong>
+                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                            </div>
+                            <div class="solicitud-actions">
+                                <span class="badge<%= solicitud.estado === 'completada' ? ' badge-aprobado' : '' %>">
+                                    <%= solicitud.estado === 'completada' ? 'Completa' : 'Pendiente' %>
+                                </span>
+                                <% if (solicitud.documentos.length === 0) { %>
+                                    <form method="POST" action="/admin/casos/<%= caso.id %>/solicitudes/<%= solicitud.id %>/eliminar" onsubmit="return confirm('¿Eliminar esta solicitud de documento?');">
+                                        <button type="submit" class="btn-delete">Eliminar</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="progress-track"><div class="progress-fill" style="width: <%= porcentaje %>%;"></div></div>
+                        <span class="progress-label"><%= validos %> de <%= solicitud.cantidad_requerida %> recibido(s)</span>
+
+                        <% if (solicitud.documentos.length > 0) { %>
+                            <ul class="file-list">
+                                <% solicitud.documentos.forEach(function (doc) { %>
+                                    <li class="file-chip file-chip-review">
+                                        <span>📄 <a href="/admin/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                        <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? '✓ Correcto' : doc.estado_revision === 'rechazado' ? '✗ Debe actualizar' : 'Sin revisar' %></span></span>
+                                        <span class="file-chip-actions">
+                                            <% if (doc.estado_revision !== 'aprobado') { %>
+                                                <form method="POST" action="/admin/documentos/<%= doc.id %>/revision">
+                                                    <input type="hidden" name="estado" value="aprobado">
+                                                    <button type="submit" class="btn-mini btn-mini-ok">✓ Correcto</button>
+                                                </form>
+                                            <% } %>
+                                            <% if (doc.estado_revision !== 'rechazado') { %>
+                                                <form method="POST" action="/admin/documentos/<%= doc.id %>/revision">
+                                                    <input type="hidden" name="estado" value="rechazado">
+                                                    <button type="submit" class="btn-mini btn-mini-reject">✗ Debe actualizar</button>
+                                                </form>
+                                            <% } %>
+                                        </span>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Notas</h2>
+            <% if (notas.length === 0) { %>
+                <div class="empty-state">Todavía no hay notas en este caso.</div>
+            <% } else { %>
+                <% notas.forEach(function (nota) { %>
+                    <div class="nota-card<%= !nota.visible_para_cliente ? ' solo-interna' : '' %>">
+                        <div class="nota-avatar">👤</div>
+                        <div class="nota-body">
+                            <div class="nota-header">
+                                <strong><%= nota.autor_nombre %></strong>
+                                <span class="meta"><%= nota.creado_en %></span>
+                                <% if (!nota.visible_para_cliente) { %><span class="meta">· solo interna</span><% } %>
+                            </div>
+                            <% if (nota.requiere_respuesta || nota.requiere_documento) { %>
+                                <div class="nota-badges">
+                                    <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Pidió respuesta</span><% } %>
+                                    <% if (nota.requiere_documento) { %><span class="requiere-badge">Pidió documento</span><% } %>
+                                </div>
+                            <% } %>
+                            <div class="nota-bubble"><%= nota.texto %></div>
+
+                            <% if (nota.respuestas.length > 0) { %>
+                                <div class="nota-replies">
+                                    <% nota.respuestas.forEach(function (respuesta) { %>
+                                        <div class="nota-reply">
+                                            <div class="meta"><%= respuesta.usuario_nombre %> — <%= respuesta.creado_en %></div>
+                                            <div class="texto"><%= respuesta.texto %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } else if (nota.requiere_respuesta) { %>
+                                <p style="margin-top: 0.6rem; font-size: 0.82rem; color: #94a3b8;">Esperando respuesta del cliente.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Comentarios generales del cliente</h2>
+            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem;">Comentarios que no responden a una pregunta puntual (esas aparecen debajo de la nota correspondiente, arriba).</p>
+            <% if (respuestas.length === 0) { %>
+                <div class="empty-state">El cliente todavía no ha dejado un comentario general.</div>
+            <% } else { %>
+                <% respuestas.forEach(function (respuesta) { %>
+                    <div class="respuesta-card">
+                        <div class="meta"><%= respuesta.usuario_nombre %> — <%= respuesta.creado_en %></div>
+                        <div class="texto"><%= respuesta.texto %></div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+    </main>
+    <script>
+        var tipoOtroCheckbox = document.getElementById('tipo_otro');
+        if (tipoOtroCheckbox) {
+            tipoOtroCheckbox.addEventListener('change', function () {
+                document.getElementById('tipo_otro_detalle_wrap').style.display = this.checked ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

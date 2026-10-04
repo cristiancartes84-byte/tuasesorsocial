@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= caso.tipo_subsidio %> | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1><%= caso.tipo_subsidio %></h1>
+        <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
+    </header>
+    <main class="app-main">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+
+        <div class="card">
+            <p style="color: #64748b; font-size: 0.9rem;">Gestión iniciada el <%= caso.creado_en %></p>
+            <p style="margin-top: 0.75rem;">Estado actual:
+                <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
+                    <%= caso.estado_actual %>
+                </span>
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Notas de tu trabajadora social</h2>
+            <% if (notas.length === 0) { %>
+                <div class="empty-state">Todavía no hay notas visibles en esta gestión.</div>
+            <% } else { %>
+                <% notas.forEach(function (nota) { %>
+                    <div class="nota-card">
+                        <div class="nota-avatar">👩‍💼</div>
+                        <div class="nota-body">
+                            <div class="nota-header">
+                                <span class="meta"><%= nota.creado_en %></span>
+                            </div>
+                            <% if (nota.requiere_respuesta || nota.requiere_documento) { %>
+                                <div class="nota-badges">
+                                    <% if (nota.requiere_respuesta) { %><span class="requiere-badge">Necesita tu respuesta</span><% } %>
+                                    <% if (nota.requiere_documento) { %><span class="requiere-badge">Necesita un documento</span><% } %>
+                                </div>
+                            <% } %>
+                            <div class="nota-bubble"><%= nota.texto %></div>
+
+                            <% if (nota.respuestas.length > 0) { %>
+                                <div class="nota-replies">
+                                    <% nota.respuestas.forEach(function (respuesta) { %>
+                                        <div class="nota-reply">
+                                            <div class="meta">Tú — <%= respuesta.creado_en %></div>
+                                            <div class="texto"><%= respuesta.texto %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (nota.requiere_respuesta) { %>
+                                <form class="nota-reply-form" method="POST" action="/portal/casos/<%= caso.id %>/responder">
+                                    <input type="hidden" name="nota_id" value="<%= nota.id %>">
+                                    <textarea name="texto" placeholder="Escribe tu respuesta a esto..." required></textarea>
+                                    <button type="submit">Enviar respuesta</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <% var pendientes = solicitudes.filter(function (s) { return s.estado === 'pendiente'; }); %>
+        <% if (pendientes.length > 0) { %>
+            <div class="card">
+                <h2>Documentos que necesitamos de ti</h2>
+                <% pendientes.forEach(function (solicitud) { %>
+                    <% var validos = solicitud.documentos.filter(function (d) { return d.estado_revision !== 'rechazado'; }).length; %>
+                    <% var faltan = solicitud.cantidad_requerida - validos; %>
+                    <% var porcentaje = Math.round((validos / solicitud.cantidad_requerida) * 100); %>
+                    <div class="solicitud-card">
+                        <div class="solicitud-header">
+                            <div class="solicitud-icon">📎</div>
+                            <div class="solicitud-title">
+                                <strong><%= solicitud.tipo_label %></strong>
+                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                            </div>
+                            <div class="solicitud-actions">
+                                <span class="badge">Pendiente</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-track"><div class="progress-fill" style="width: <%= porcentaje %>%;"></div></div>
+                        <span class="progress-label"><%= validos %> de <%= solicitud.cantidad_requerida %> subido(s)</span>
+
+                        <% if (solicitud.documentos.length > 0) { %>
+                            <ul class="file-list">
+                                <% solicitud.documentos.forEach(function (doc) { %>
+                                    <li class="file-chip">
+                                        <%= doc.estado_revision === 'rechazado' ? '✗' : '✓' %> <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                        <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? 'Validado' : doc.estado_revision === 'rechazado' ? 'Debes volver a subirlo' : 'En revisión' %></span>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
+
+                        <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/solicitudes/<%= solicitud.id %>/subir" enctype="multipart/form-data">
+                            <label for="documentos-<%= solicitud.id %>">
+                                Sube <%= faltan %> archivo<%= faltan > 1 ? 's' : '' %> más (PDF, JPG o PNG, máx. 10 MB cada uno)
+                            </label>
+                            <input type="file" id="documentos-<%= solicitud.id %>" name="documentos" accept=".pdf,.jpg,.jpeg,.png" <%= faltan > 1 ? 'multiple' : '' %> required>
+                            <button type="submit" class="btn">Subir documento<%= faltan > 1 ? 's' : '' %></button>
+                        </form>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <div class="card">
+            <h2>Comentario general</h2>
+            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem;">Usa esto para un comentario que no responde a una pregunta puntual de tu trabajadora social.</p>
+            <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/responder">
+                <textarea name="texto" placeholder="Escribe tu comentario..." required></textarea>
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+            <% if (respuestas.length > 0) { %>
+                <div style="margin-top: 1.25rem;">
+                    <% respuestas.forEach(function (respuesta) { %>
+                        <div class="respuesta-card">
+                            <div class="meta"><%= respuesta.creado_en %></div>
+                            <div class="texto"><%= respuesta.texto %></div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+
+        <% var completadas = solicitudes.filter(function (s) { return s.estado === 'completada'; }); %>
+        <% if (completadas.length > 0) { %>
+            <div class="card">
+                <h2>Documentos ya entregados</h2>
+                <% completadas.forEach(function (solicitud) { %>
+                    <div class="solicitud-card is-completa">
+                        <div class="solicitud-header">
+                            <div class="solicitud-icon">✅</div>
+                            <div class="solicitud-title">
+                                <strong><%= solicitud.tipo_label %></strong>
+                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                            </div>
+                            <div class="solicitud-actions">
+                                <span class="badge badge-aprobado">Completo</span>
+                            </div>
+                        </div>
+                        <ul class="file-list">
+                            <% solicitud.documentos.forEach(function (doc) { %>
+                                <li class="file-chip">
+                                    ✓ <a href="/portal/documentos/<%= doc.id %>/descargar">Documento <%= doc.numero_slot %> — <%= doc.nombre_original %></a>
+                                    <span class="doc-status-badge <%= doc.estado_revision %>"><%= doc.estado_revision === 'aprobado' ? 'Validado' : doc.estado_revision === 'rechazado' ? 'Reemplazado' : 'En revisión' %></span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <div class="card">
+            <h2>Historial de tu gestión</h2>
+            <% var stepperHistorial = historial.slice().reverse(); %>
+            <div class="stepper">
+                <% stepperHistorial.forEach(function (item, i) { %>
+                    <div class="stepper-item<%= i === stepperHistorial.length - 1 ? ' is-active' : '' %>">
+                        <%- include('../partials/stepper-icon', { hito: item.hito, isCurrent: i === stepperHistorial.length - 1 }) %>
+                        <div class="stepper-card">
+                            <div class="hito"><%= item.hito %></div>
+                            <div class="meta"><%= item.creado_en %></div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>❓ Ayuda: ¿para qué sirve cada botón?</h2>
+            <ul style="margin-left: 1.2rem; color: #475569;">
+                <li><strong>Enviar respuesta</strong> (debajo de una nota que dice "Necesita tu respuesta"): responde específicamente a esa pregunta. Tu respuesta queda debajo de la pregunta correspondiente.</li>
+                <li><strong>Enviar</strong> (en "Comentario general"): envía un mensaje que no responde a una pregunta puntual.</li>
+                <li><strong>Subir documento(s)</strong>: solo aparece cuando tu trabajadora social te pidió específicamente un documento. Envía el o los archivos seleccionados para esa solicitud puntual.</li>
+                <li><strong>Los enlaces con nombre de archivo</strong> (ej. "Documento 1 — boleta.pdf") descargan el archivo que ya subiste, para que puedas revisarlo.</li>
+                <li><strong>Volver a mis gestiones</strong> (arriba a la derecha): te devuelve al listado de todas tus gestiones.</li>
+                <li><strong>Cerrar sesión</strong>: sale de tu cuenta del portal. Úsalo si compartes el computador con alguien más.</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #64748b;">
+                No puedes subir un documento libremente: solo puedes hacerlo cuando tu trabajadora social te lo solicita, y cada solicitud indica exactamente qué y cuántos archivos necesita.
+            </p>
+        </div>
+    </main>
+</body>
+</html>

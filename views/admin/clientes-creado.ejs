@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente Creado | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Cliente creado</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main" style="max-width: 560px;">
+        <div class="card">
+            <h2>✅ <%= nombre %></h2>
+
+            <% if (correoEnviado) { %>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Se envió un correo de bienvenida con estas credenciales. Si no le llega, puedes entregárselas manualmente:
+                </p>
+            <% } else { %>
+                <div class="form-error">
+                    No se pudo enviar el correo de bienvenida (revisa la configuración de correo). Entrega estas credenciales al cliente manualmente:
+                </div>
+            <% } %>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.25rem;">RUT de usuario</p>
+                <p style="font-size: 1.15rem; font-weight: 700; font-family: monospace; margin-bottom: 1rem;"><%= rut %></p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.25rem;">Contraseña temporal</p>
+                <p style="font-size: 1.15rem; font-weight: 700; font-family: monospace;"><%= passwordTemporal %></p>
+            </div>
+
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem;">
+                Se le pedirá cambiar esta contraseña la primera vez que ingrese a
+                <a href="/portal/login">tuasesorsocial.cl/portal/login</a>.
+            </p>
+
+            <a href="/admin/casos/nuevo?usuario_id=<%= usuarioId %>" class="btn">Continuar: crear su caso &rarr;</a>
+        </div>
+    </main>
+</body>
+</html>

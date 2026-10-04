@@ -1,0 +1,18 @@
+<script>
+    (function () {
+        var rutInput = document.getElementById('rut');
+        if (!rutInput) return;
+
+        rutInput.addEventListener('input', function (e) {
+            var valor = e.target.value.replace(/[^0-9kK]/g, '').toUpperCase();
+            valor = valor.slice(0, 9); // máximo 8 dígitos del cuerpo + 1 dígito verificador (0-9 o K)
+            if (valor.length > 1) {
+                var cuerpo = valor.slice(0, -1);
+                var dv = valor.slice(-1);
+                e.target.value = cuerpo + '-' + dv;
+            } else {
+                e.target.value = valor;
+            }
+        });
+    })();
+</script>
