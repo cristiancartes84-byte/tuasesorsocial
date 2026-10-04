@@ -12,7 +12,11 @@
     <header class="app-header">
         <div class="app-header-title">
             <h1><%= caso.cliente_nombre %> (<%= caso.cliente_rut %>)</h1>
-            <span class="app-header-subtitle"><%= caso.tipo_subsidio %></span>
+            <span class="app-header-subtitle">
+                <%= caso.tipo_subsidio %> &middot;
+                <span class="presence-dot<%= clienteEnLinea ? ' online' : '' %>"></span>
+                <%= clienteEnLinea ? 'Cliente en línea' : 'Cliente desconectado' %>
+            </span>
         </div>
         <div class="admin-topbar-right">
             <a href="/admin/dashboard">&larr; Volver al panel</a>

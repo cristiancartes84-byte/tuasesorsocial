@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 
-const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario, resetearPassword, obtenerUsuarioPorId, actualizarFotoPerfil } = require('./lib/auth');
+const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario, resetearPassword, obtenerUsuarioPorId, actualizarFotoPerfil, registrarActividad, estaEnLinea, obtenerTrabajadorSocial } = require('./lib/auth');
 const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
@@ -49,6 +49,24 @@ app.use(session({
   },
 }));
 
+// Marca la actividad reciente del usuario logueado (base del estado "en línea"
+// que se muestra en las tarjetas de perfil). Se limita a cada 20s por sesión
+// para no escribir en la base en cada request de una misma carga de página.
+app.use((req, res, next) => {
+  if (req.session && req.session.usuario) {
+    const ahora = Date.now();
+    if (!req.session.ultimaActividadTs || ahora - req.session.ultimaActividadTs > 20000) {
+      registrarActividad(req.session.usuario.id);
+      req.session.ultimaActividadTs = ahora;
+    }
+  }
+  next();
+});
+
+app.post('/api/heartbeat', (req, res) => {
+  res.sendStatus(204);
+});
+
 // Datos para la barra superior del panel (campana de notificaciones, tarjeta
 // de perfil con QR): se calculan una vez por request, disponibles en todas
 // las vistas admin/* sin repetir la consulta en cada ruta.
@@ -57,6 +75,22 @@ app.use('/admin', async (req, res, next) => {
     res.locals.notificacionesAdmin = casos.contarNotificacionesAdmin();
     res.locals.cuentaActual = obtenerUsuarioPorId(req.session.usuario.id);
     res.locals.qrSitio = await obtenerQrSitio();
+  }
+  next();
+});
+
+// Tarjeta con los datos de la trabajadora social (foto, nombre y si está en
+// línea) visible para el cliente en el portal.
+app.use('/portal', (req, res, next) => {
+  if (req.session.usuario && req.session.usuario.rol === 'cliente') {
+    const trabajadorSocial = obtenerTrabajadorSocial();
+    if (trabajadorSocial) {
+      res.locals.trabajadorSocial = {
+        nombre: trabajadorSocial.nombre,
+        foto_perfil: trabajadorSocial.foto_perfil,
+        enLinea: estaEnLinea(trabajadorSocial.ultima_actividad),
+      };
+    }
   }
   next();
 });
@@ -368,6 +402,7 @@ app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
   res.render('admin/caso-detalle', {
     usuario: req.session.usuario,
     caso,
+    clienteEnLinea: estaEnLinea(caso.cliente_ultima_actividad),
     hitos: HITOS,
     tiposDocumento: TIPOS_DOCUMENTO,
     historial: casos.historialHitos(caso.id),
