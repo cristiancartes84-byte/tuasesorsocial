@@ -15,6 +15,7 @@ const { TIPOS_DOCUMENTO, obtenerTipoDocumento } = require('./lib/documentos-cata
 const { iconoParaTipo } = require('./lib/iconos');
 const mailer = require('./lib/mailer');
 const { upload, rutaArchivo, uploadFotoPerfil, PERFILES_DIR } = require('./lib/uploads');
+const { obtenerQrSitio } = require('./lib/qr');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +48,18 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 8, // 8 horas
   },
 }));
+
+// Datos para la barra superior del panel (campana de notificaciones, tarjeta
+// de perfil con QR): se calculan una vez por request, disponibles en todas
+// las vistas admin/* sin repetir la consulta en cada ruta.
+app.use('/admin', async (req, res, next) => {
+  if (req.session.usuario && req.session.usuario.rol === 'trabajador_social') {
+    res.locals.notificacionesAdmin = casos.contarNotificacionesAdmin();
+    res.locals.cuentaActual = obtenerUsuarioPorId(req.session.usuario.id);
+    res.locals.qrSitio = await obtenerQrSitio();
+  }
+  next();
+});
 
 // --- Portal de clientes y panel de trabajador social ---
 
@@ -345,6 +358,7 @@ app.post('/admin/casos/nuevo', requireRole('trabajador_social'), (req, res) => {
 app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
   const caso = casos.obtenerCaso(req.params.id);
   if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+  casos.marcarRespuestasComoVistas(caso.id);
   res.render('admin/caso-detalle', {
     usuario: req.session.usuario,
     caso,

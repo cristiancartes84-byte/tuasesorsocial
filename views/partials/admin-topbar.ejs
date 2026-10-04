@@ -1,0 +1,67 @@
+<div class="bell-wrap">
+    <button class="bell-btn<%= notificacionesAdmin.total > 0 ? ' has-alerts' : '' %>" id="bellToggle" type="button" aria-label="Notificaciones">
+        <span class="bell-icon">🔔</span>
+        <% if (notificacionesAdmin.total > 0) { %><span class="bell-badge"><%= notificacionesAdmin.total %></span><% } %>
+    </button>
+    <div class="bell-dropdown" id="bellDropdown">
+        <h3>Notificaciones</h3>
+        <% if (notificacionesAdmin.items.length === 0) { %>
+            <p class="empty">No hay nada pendiente de revisar.</p>
+        <% } else { %>
+            <% notificacionesAdmin.items.forEach(function (item) { %>
+                <a href="/admin/casos/<%= item.casoId %>" class="bell-item">
+                    <strong><%= item.clienteNombre %> — <%= item.tipoSubsidio %></strong>
+                    <span><%= item.detalle %></span>
+                </a>
+            <% }); %>
+        <% } %>
+    </div>
+</div>
+
+<div class="user-card-wrap">
+    <button class="user-chip" id="userToggle" type="button">
+        <% if (cuentaActual.foto_perfil) { %>
+            <img class="user-chip-avatar" src="/avatars/<%= cuentaActual.foto_perfil %>" alt="">
+        <% } else { %>
+            <span class="user-chip-avatar">👤</span>
+        <% } %>
+        <span class="user-chip-name"><%= cuentaActual.nombre.split(' ')[0] %></span>
+    </button>
+    <div class="user-card" id="userCard">
+        <div class="user-card-photo-wrap">
+            <% if (cuentaActual.foto_perfil) { %>
+                <img class="user-card-photo" src="/avatars/<%= cuentaActual.foto_perfil %>" alt="">
+            <% } else { %>
+                <div class="user-card-photo">👤</div>
+            <% } %>
+            <span class="user-card-online-dot" title="En línea"></span>
+        </div>
+        <h3><%= cuentaActual.nombre %></h3>
+        <p class="user-card-status">● En línea</p>
+        <img class="user-card-qr" src="<%= qrSitio %>" alt="Código QR de tuasesorsocial.cl">
+        <p class="user-card-qr-caption">Comparte Tu Asesor Social con tus clientes</p>
+        <a href="/admin/perfil" class="user-card-link">Editar mi perfil</a>
+        <a href="/admin/logout" class="user-card-logout">Cerrar sesión</a>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function setup(toggleId, dropdownId) {
+            var toggle = document.getElementById(toggleId);
+            var dropdown = document.getElementById(dropdownId);
+            if (!toggle || !dropdown) return;
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.bell-dropdown.open, .user-card.open').forEach(function (el) { el.classList.remove('open'); });
+                if (!isOpen) dropdown.classList.add('open');
+            });
+        }
+        setup('bellToggle', 'bellDropdown');
+        setup('userToggle', 'userCard');
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.bell-dropdown.open, .user-card.open').forEach(function (el) { el.classList.remove('open'); });
+        });
+    })();
+</script>

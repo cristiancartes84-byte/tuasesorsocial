@@ -11,7 +11,10 @@
 <body>
     <header class="app-header">
         <h1>Editar cliente</h1>
-        <a href="/admin/clientes">&larr; Volver a clientes</a>
+        <div class="admin-topbar-right">
+            <a href="/admin/clientes">&larr; Volver a clientes</a>
+            <%- include('../partials/admin-topbar') %>
+        </div>
     </header>
     <main class="app-main" style="max-width: 560px;">
         <% if (error) { %>

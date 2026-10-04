@@ -10,8 +10,10 @@
 </head>
 <body>
     <header class="app-header">
-        <h1>Panel de Gestión — <%= usuario.nombre %></h1>
-        <a href="/admin/logout">Cerrar sesión</a>
+        <h1>Panel de Gestión</h1>
+        <div class="admin-topbar-right">
+            <%- include('../partials/admin-topbar') %>
+        </div>
     </header>
     <main class="app-main">
         <div class="toolbar">
