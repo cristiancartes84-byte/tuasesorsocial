@@ -519,15 +519,27 @@ app.get('/cambiar-password', (req, res) => {
 
 app.post('/cambiar-password', (req, res) => {
   if (!req.session.usuario) return res.redirect('/');
+  // El modal de cambio voluntario de contraseña (ej. desde la tarjeta de
+  // cuenta del cliente) envía JSON vía fetch, para no sacar al usuario de
+  // su panel; el formulario de cambio obligatorio del primer ingreso sigue
+  // siendo un POST normal que renderiza la página completa.
+  const esAjax = req.is('application/json');
   const { password, confirmar } = req.body;
+
+  const responderError = (mensaje) => {
+    if (esAjax) return res.status(400).json({ ok: false, error: mensaje });
+    return res.status(400).render('cambiar-password', { usuario: req.session.usuario, error: mensaje });
+  };
+
   if (!password || password.length < 8) {
-    return res.status(400).render('cambiar-password', { usuario: req.session.usuario, error: 'La contraseña debe tener al menos 8 caracteres.' });
+    return responderError('La contraseña debe tener al menos 8 caracteres.');
   }
   if (password !== confirmar) {
-    return res.status(400).render('cambiar-password', { usuario: req.session.usuario, error: 'Las contraseñas no coinciden.' });
+    return responderError('Las contraseñas no coinciden.');
   }
   cambiarPassword(req.session.usuario.id, password);
   req.session.usuario.debeCambiarPassword = false;
+  if (esAjax) return res.json({ ok: true });
   res.redirect(req.session.usuario.rol === 'trabajador_social' ? '/admin/dashboard' : '/portal/dashboard');
 });
 
