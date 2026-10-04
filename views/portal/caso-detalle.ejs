@@ -10,7 +10,10 @@
 </head>
 <body>
     <header class="app-header">
-        <h1><%= caso.tipo_subsidio %></h1>
+        <div class="app-header-title">
+            <%- include('../partials/brand-mark') %>
+            <h1><%= caso.tipo_subsidio %></h1>
+        </div>
         <div class="admin-topbar-right">
             <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
             <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
