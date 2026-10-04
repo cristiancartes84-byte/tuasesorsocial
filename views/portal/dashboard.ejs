@@ -25,7 +25,7 @@
                     <span class="app-sidebar-tooltip">Contactar por WhatsApp</span>
                 </a>
                 <div class="app-sidebar-divider"></div>
-                <a href="/cambiar-password" class="app-sidebar-link">
+                <a href="/cambiar-password" class="app-sidebar-link" data-abrir-cambiar-password>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5 19 4M19 4l2 2M16 7l2 2"/></svg>
                     <span class="app-sidebar-tooltip">Cambiar contraseña</span>
                 </a>
@@ -152,5 +152,6 @@
             </div>
         </div>
     </div>
+    <%- include('../partials/modal-cambiar-password') %>
 </body>
 </html>
