@@ -110,6 +110,7 @@ function iniciarSesion(req, usuario) {
     id: usuario.id,
     nombre: usuario.nombre,
     email: usuario.email,
+    rut: usuario.rut,
     rol: usuario.rol,
     debeCambiarPassword: !!usuario.debe_cambiar_password,
   };

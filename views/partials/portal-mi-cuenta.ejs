@@ -1,0 +1,30 @@
+<div class="user-card-wrap">
+    <button class="user-chip user-chip-light" id="miCuentaToggle" type="button">
+        <span class="user-chip-avatar">👤</span>
+        <span class="user-chip-name"><%= usuario.nombre.split(' ')[0] %></span>
+    </button>
+    <div class="user-card" id="miCuentaCard">
+        <div class="user-card-photo-wrap">
+            <div class="user-card-photo">👤</div>
+        </div>
+        <h3><%= usuario.nombre %></h3>
+        <p class="user-card-rut">RUT: <%= usuario.rut %></p>
+        <a href="/cambiar-password" class="user-card-link">Cambiar contraseña</a>
+        <a href="/portal/logout" class="user-card-logout">Cerrar sesión</a>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var toggle = document.getElementById('miCuentaToggle');
+        var card = document.getElementById('miCuentaCard');
+        if (!toggle || !card) return;
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            card.classList.toggle('open');
+        });
+        document.addEventListener('click', function () {
+            card.classList.remove('open');
+        });
+    })();
+</script>
