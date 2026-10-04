@@ -43,7 +43,10 @@
                     <div class="dash-title">Hola, <%= usuario.nombre %></div>
                     <p class="dash-subtitle">Aquí puedes revisar el estado de tus gestiones con Tu Asesor Social.</p>
                 </div>
-                <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
+                <div class="dash-header-actions">
+                    <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
+                    <%- include('../partials/portal-mi-cuenta') %>
+                </div>
             </div>
 
             <% if (pendientes.length > 0) { %>

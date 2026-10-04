@@ -1,5 +1,5 @@
 <div class="user-card-wrap">
-    <button class="user-chip user-chip-light" id="userToggle" type="button">
+    <button class="user-chip user-chip-light" id="asesorToggle" type="button">
         <% if (trabajadorSocial.foto_perfil) { %>
             <img class="user-chip-avatar" src="/avatars/<%= trabajadorSocial.foto_perfil %>" alt="">
         <% } else { %>
@@ -7,7 +7,7 @@
         <% } %>
         <span class="user-chip-name"><%= trabajadorSocial.nombre.split(' ')[0] %></span>
     </button>
-    <div class="user-card" id="userCard">
+    <div class="user-card" id="asesorCard">
         <div class="user-card-photo-wrap">
             <% if (trabajadorSocial.foto_perfil) { %>
                 <img class="user-card-photo" src="/avatars/<%= trabajadorSocial.foto_perfil %>" alt="">
@@ -20,14 +20,13 @@
         <p class="user-card-status<%= trabajadorSocial.enLinea ? '' : ' offline' %>">
             <%= trabajadorSocial.enLinea ? '● En línea' : '○ Desconectada' %>
         </p>
-        <a href="/portal/logout" class="user-card-logout">Cerrar sesión</a>
     </div>
 </div>
 
 <script>
     (function () {
-        var toggle = document.getElementById('userToggle');
-        var card = document.getElementById('userCard');
+        var toggle = document.getElementById('asesorToggle');
+        var card = document.getElementById('asesorCard');
         if (!toggle || !card) return;
         toggle.addEventListener('click', function (e) {
             e.stopPropagation();
