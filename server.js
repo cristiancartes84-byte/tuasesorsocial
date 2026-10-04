@@ -385,8 +385,20 @@ app.post('/admin/clientes/:id/eliminar', requireRole('trabajador_social'), (req,
       cliente,
       error: 'No se puede eliminar: este cliente ya tiene casos asociados.',
       passwordTemporal: null,
+      bloqueadoPorCasos: true,
     });
   }
+  res.redirect('/admin/clientes');
+});
+
+// Borrado en cascada: elimina al cliente junto con todos sus casos,
+// historial, notas y documentos. Irreversible -- se usa cuando el
+// borrado normal queda bloqueado por tener casos asociados y, aun así,
+// se confirma explícitamente que se quiere perder ese historial.
+app.post('/admin/clientes/:id/eliminar-forzado', requireRole('trabajador_social'), (req, res) => {
+  const cliente = casos.obtenerCliente(req.params.id);
+  if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
+  casos.eliminarClienteForzado(cliente.id);
   res.redirect('/admin/clientes');
 });
 

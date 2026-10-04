@@ -75,6 +75,17 @@
             <form method="POST" action="/admin/clientes/<%= cliente.id %>/eliminar" onsubmit="return confirm('¿Eliminar este cliente? Esta acción no se puede deshacer.');">
                 <button type="submit" class="btn-destructive">Eliminar cliente</button>
             </form>
+
+            <% if (typeof bloqueadoPorCasos !== 'undefined' && bloqueadoPorCasos) { %>
+                <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #fee2e2;">
+                    <p style="color: #b91c1c; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem;">
+                        Este cliente tiene casos asociados. Si de todas formas quieres eliminarlo, se borrarán también sus casos, notas, historial y documentos registrados. Esta acción es irreversible.
+                    </p>
+                    <form method="POST" action="/admin/clientes/<%= cliente.id %>/eliminar-forzado" onsubmit="return confirm('¿Eliminar a este cliente Y TODOS sus casos, notas y documentos? No se puede deshacer.');">
+                        <button type="submit" class="btn-destructive">Eliminar cliente y todos sus casos</button>
+                    </form>
+                </div>
+            <% } %>
         </div>
     </main>
 </body>
