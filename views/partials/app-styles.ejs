@@ -12,6 +12,8 @@
         gap: 0.75rem;
     }
     header.app-header h1 { font-size: 1.15rem; }
+    .app-header-title { display: flex; flex-direction: column; gap: 0.15rem; }
+    .app-header-subtitle { font-size: 0.85rem; font-weight: 500; opacity: 0.85; }
     /* Excluye los desplegables (campana, tarjeta de usuario): son overlays
        con su propio fondo claro, no deben heredar el texto blanco del header. */
     header.app-header a:not(.bell-dropdown a, .user-card a) { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
