@@ -64,4 +64,12 @@
             document.querySelectorAll('.bell-dropdown.open, .user-card.open').forEach(function (el) { el.classList.remove('open'); });
         });
     })();
+
+    (function () {
+        function latir() {
+            fetch('/api/heartbeat', { method: 'POST' }).catch(function () {});
+        }
+        latir();
+        setInterval(latir, 30000);
+    })();
 </script>

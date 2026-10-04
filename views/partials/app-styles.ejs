@@ -13,7 +13,9 @@
     }
     header.app-header h1 { font-size: 1.15rem; }
     .app-header-title { display: flex; flex-direction: column; gap: 0.15rem; }
-    .app-header-subtitle { font-size: 0.85rem; font-weight: 500; opacity: 0.85; }
+    .app-header-subtitle { font-size: 0.85rem; font-weight: 500; opacity: 0.85; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .presence-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+    .presence-dot.online { background: #22c55e; }
     /* Excluye los desplegables (campana, tarjeta de usuario): son overlays
        con su propio fondo claro, no deben heredar el texto blanco del header. */
     header.app-header a:not(.bell-dropdown a, .user-card a) { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; }
@@ -498,6 +500,11 @@
         color: white;
     }
     .user-chip:hover { background: rgba(255,255,255,0.28); }
+    /* Variante para usarse sobre fondo claro (ej. el dashboard del portal,
+       fuera del header con gradiente). */
+    .user-chip.user-chip-light { background: white; color: #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    .user-chip.user-chip-light:hover { background: #f8fafc; }
+    .user-chip.user-chip-light .user-chip-avatar { background: #e2e8f0; }
     .user-chip-avatar {
         width: 28px;
         height: 28px;
@@ -536,8 +543,10 @@
         background: #22c55e;
         border: 3px solid white;
     }
+    .user-card-online-dot.offline { background: #94a3b8; }
     .user-card h3 { font-size: 1.05rem; color: #1f2937; margin-bottom: 0.2rem; }
     .user-card-status { font-size: 0.8rem; color: #16a34a; font-weight: 600; margin-bottom: 1rem; }
+    .user-card-status.offline { color: #64748b; }
     .user-card-qr { width: 140px; height: 140px; margin: 0 auto 0.5rem; display: block; border-radius: 8px; }
     .user-card-qr-caption { font-size: 0.75rem; color: #94a3b8; margin-bottom: 1.1rem; }
     .user-card-link, .user-card-logout {

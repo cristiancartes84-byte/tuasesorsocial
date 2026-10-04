@@ -11,7 +11,10 @@
 <body>
     <header class="app-header">
         <h1><%= caso.tipo_subsidio %></h1>
-        <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
+        <div class="admin-topbar-right">
+            <a href="/portal/dashboard">&larr; Volver a mis gestiones</a>
+            <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
+        </div>
     </header>
     <main class="app-main">
         <% if (error) { %>

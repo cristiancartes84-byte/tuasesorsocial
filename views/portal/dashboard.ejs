@@ -37,10 +37,13 @@
         </aside>
 
         <div class="app-content">
-            <div class="dash-header">
-                <div class="dash-date"><%= fechaHoy %></div>
-                <div class="dash-title">Hola, <%= usuario.nombre %></div>
-                <p class="dash-subtitle">Aquí puedes revisar el estado de tus gestiones con Tu Asesor Social.</p>
+            <div class="dash-header-row">
+                <div class="dash-header">
+                    <div class="dash-date"><%= fechaHoy %></div>
+                    <div class="dash-title">Hola, <%= usuario.nombre %></div>
+                    <p class="dash-subtitle">Aquí puedes revisar el estado de tus gestiones con Tu Asesor Social.</p>
+                </div>
+                <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
             </div>
 
             <% if (pendientes.length > 0) { %>
