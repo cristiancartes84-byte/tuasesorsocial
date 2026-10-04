@@ -11,7 +11,10 @@
 <body>
     <header class="app-header">
         <h1>Nuevo cliente</h1>
-        <a href="/admin/dashboard">&larr; Volver al panel</a>
+        <div class="admin-topbar-right">
+            <a href="/admin/dashboard">&larr; Volver al panel</a>
+            <%- include('../partials/admin-topbar') %>
+        </div>
     </header>
     <main class="app-main" style="max-width: 500px;">
         <div class="card">

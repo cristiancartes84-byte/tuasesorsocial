@@ -413,4 +413,141 @@
         white-space: pre-wrap;
         line-height: 1.5;
     }
+
+    /* Barra superior del panel: campana de notificaciones + tarjeta de usuario */
+    .admin-topbar-right { display: flex; align-items: center; gap: 0.85rem; }
+
+    .bell-wrap, .user-card-wrap { position: relative; }
+
+    .bell-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.18);
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+    }
+    .bell-btn:hover { background: rgba(255,255,255,0.28); }
+    .bell-btn.has-alerts .bell-icon { display: inline-block; animation: bell-shake 1.8s ease-in-out infinite; }
+    @keyframes bell-shake {
+        0%, 100% { transform: rotate(0); }
+        5% { transform: rotate(14deg); }
+        10% { transform: rotate(-12deg); }
+        15% { transform: rotate(10deg); }
+        20% { transform: rotate(-8deg); }
+        25% { transform: rotate(0); }
+    }
+    .bell-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 700;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        border: 2px solid #2563eb;
+    }
+
+    .bell-dropdown, .user-card {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 10px 35px rgba(15,23,42,0.18);
+        z-index: 100;
+        display: none;
+    }
+    .bell-dropdown.open, .user-card.open { display: block; }
+
+    .bell-dropdown { width: 300px; max-height: 360px; overflow-y: auto; padding: 1rem; }
+    .bell-dropdown h3 { font-size: 0.9rem; color: #1f2937; margin-bottom: 0.75rem; }
+    .bell-dropdown .empty { font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 1rem 0; }
+    .bell-item { display: block; padding: 0.6rem 0.5rem; border-radius: 8px; text-decoration: none; color: #1f2937; margin-bottom: 0.2rem; }
+    .bell-item:hover { background: #f1f5f9; }
+    .bell-item strong { display: block; font-size: 0.85rem; }
+    .bell-item span { display: block; font-size: 0.78rem; color: #64748b; margin-top: 0.1rem; }
+
+    .user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.18);
+        border: none;
+        border-radius: 100px;
+        padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+        cursor: pointer;
+        color: white;
+    }
+    .user-chip:hover { background: rgba(255,255,255,0.28); }
+    .user-chip-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.3);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    .user-chip-name { font-size: 0.85rem; font-weight: 600; }
+
+    .user-card { width: 260px; padding: 1.5rem; text-align: center; }
+    .user-card-photo-wrap { position: relative; display: inline-block; margin-bottom: 0.85rem; }
+    .user-card-photo {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        color: white;
+        font-size: 1.8rem;
+    }
+    .user-card-online-dot {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #22c55e;
+        border: 3px solid white;
+    }
+    .user-card h3 { font-size: 1.05rem; color: #1f2937; margin-bottom: 0.2rem; }
+    .user-card-status { font-size: 0.8rem; color: #16a34a; font-weight: 600; margin-bottom: 1rem; }
+    .user-card-qr { width: 140px; height: 140px; margin: 0 auto 0.5rem; display: block; border-radius: 8px; }
+    .user-card-qr-caption { font-size: 0.75rem; color: #94a3b8; margin-bottom: 1.1rem; }
+    .user-card-link, .user-card-logout {
+        display: block;
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    .user-card-link { background: #eff6ff; color: #2563eb; }
+    .user-card-logout { background: #fef2f2; color: #b91c1c; }
 </style>
