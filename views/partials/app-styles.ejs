@@ -590,12 +590,32 @@
     .modal-card label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 0.3rem; margin-top: 0.85rem; }
     .modal-card input {
         width: 100%;
-        padding: 0.6rem 0.75rem;
+        padding: 0.6rem 2.5rem 0.6rem 0.75rem;
         border: 1px solid #e2e8f0;
         border-radius: 8px;
         font-size: 0.95rem;
         font-family: inherit;
     }
+    .modal-card .field-hint { font-size: 0.78rem; color: #94a3b8; margin-top: -0.15rem; margin-bottom: 0.3rem; }
+    .modal-card .password-field { position: relative; }
+    .modal-card .password-toggle {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0.2rem;
+    }
+    .modal-card .password-toggle svg { width: 17px; height: 17px; }
+    /* El atributo "hidden" nativo no es confiable sobre <svg> inline en
+       algunos navegadores -- se fuerza explicitamente aqui. */
+    .modal-card .password-toggle svg[hidden] { display: none; }
+    .modal-card .password-toggle:hover { color: #475569; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1.25rem; }
     .user-card-qr { width: 140px; height: 140px; margin: 0 auto 0.5rem; display: block; border-radius: 8px; }
     .user-card-qr-caption { font-size: 0.75rem; color: #94a3b8; margin-bottom: 1.1rem; }
