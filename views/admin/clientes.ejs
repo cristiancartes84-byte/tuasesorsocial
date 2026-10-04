@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Clientes</h1>
+        <a href="/admin/dashboard">&larr; Volver al panel</a>
+    </header>
+    <main class="app-main">
+        <div class="toolbar">
+            <a href="/admin/clientes/nuevo" class="btn">+ Nuevo cliente</a>
+        </div>
+
+        <div class="card">
+            <% if (clientes.length === 0) { %>
+                <div class="empty-state">Todavía no hay clientes registrados.</div>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>RUT</th>
+                            <th>Email</th>
+                            <th>Casos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% clientes.forEach(function (cliente) { %>
+                            <tr>
+                                <td><%= cliente.nombre %></td>
+                                <td><%= cliente.rut %></td>
+                                <td><%= cliente.email %></td>
+                                <td><%= cliente.total_casos %></td>
+                                <td><a href="/admin/clientes/<%= cliente.id %>/editar">Editar &rarr;</a></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

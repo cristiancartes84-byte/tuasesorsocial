@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 
-const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario } = require('./lib/auth');
+const { autenticar, requireRole, generarPasswordTemporal, cambiarPassword, crearUsuario, resetearPassword } = require('./lib/auth');
 const rut = require('./lib/rut');
 const casos = require('./lib/casos');
 const { HITOS, TIPOS_SUBSIDIO } = require('./lib/hitos');
@@ -272,6 +272,49 @@ app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, 
     correoEnviado: enviado,
     usuarioId,
   });
+});
+
+app.get('/admin/clientes', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/clientes', { usuario: req.session.usuario, clientes: casos.listarClientesConCasos() });
+});
+
+app.get('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, res) => {
+  const cliente = casos.obtenerCliente(req.params.id);
+  if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
+  res.render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: null, passwordTemporal: null });
+});
+
+app.post('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, res) => {
+  const cliente = casos.obtenerCliente(req.params.id);
+  if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
+  const { nombre, email } = req.body;
+  if (!nombre || !email) {
+    return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'Nombre y email son obligatorios.', passwordTemporal: null });
+  }
+  casos.actualizarCliente(cliente.id, { nombre, email });
+  res.redirect('/admin/clientes');
+});
+
+app.post('/admin/clientes/:id/resetear-password', requireRole('trabajador_social'), (req, res) => {
+  const cliente = casos.obtenerCliente(req.params.id);
+  if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
+  const passwordTemporal = resetearPassword(cliente.id);
+  res.render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: null, passwordTemporal });
+});
+
+app.post('/admin/clientes/:id/eliminar', requireRole('trabajador_social'), (req, res) => {
+  const cliente = casos.obtenerCliente(req.params.id);
+  if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
+  const eliminado = casos.eliminarCliente(cliente.id);
+  if (!eliminado) {
+    return res.status(400).render('admin/clientes-editar', {
+      usuario: req.session.usuario,
+      cliente,
+      error: 'No se puede eliminar: este cliente ya tiene casos asociados.',
+      passwordTemporal: null,
+    });
+  }
+  res.redirect('/admin/clientes');
 });
 
 app.get('/admin/casos/nuevo', requireRole('trabajador_social'), (req, res) => {

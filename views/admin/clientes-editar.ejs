@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= cliente.nombre %> | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Editar cliente</h1>
+        <a href="/admin/clientes">&larr; Volver a clientes</a>
+    </header>
+    <main class="app-main" style="max-width: 560px;">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+
+        <% if (passwordTemporal) { %>
+            <div class="card">
+                <h2>✅ Contraseña reseteada</h2>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Entrégale esta contraseña temporal al cliente. Se le pedirá cambiarla la próxima vez que ingrese.
+                </p>
+                <div style="background: #f8fafc; border-radius: 12px; padding: 1.25rem;">
+                    <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.25rem;">Contraseña temporal</p>
+                    <p style="font-size: 1.15rem; font-weight: 700; font-family: monospace;"><%= passwordTemporal %></p>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="card">
+            <h2><%= cliente.nombre %></h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">RUT: <%= cliente.rut %> (no se puede modificar)</p>
+            <form class="stacked" method="POST" action="/admin/clientes/<%= cliente.id %>/editar">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" value="<%= cliente.nombre %>" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<%= cliente.email %>" required>
+
+                <button type="submit" class="btn">Guardar cambios</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Contraseña</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                Si el cliente olvidó su contraseña, genera una nueva temporal.
+            </p>
+            <form method="POST" action="/admin/clientes/<%= cliente.id %>/resetear-password" onsubmit="return confirm('¿Generar una nueva contraseña temporal para este cliente?');">
+                <button type="submit" class="btn btn-secondary">Resetear contraseña</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Eliminar cliente</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                Solo se puede eliminar si todavía no tiene ningún caso asociado.
+            </p>
+            <form method="POST" action="/admin/clientes/<%= cliente.id %>/eliminar" onsubmit="return confirm('¿Eliminar este cliente? Esta acción no se puede deshacer.');">
+                <button type="submit" class="btn-delete" style="border: 1.5px solid #fecaca; padding: 0.65rem 1.25rem;">Eliminar cliente</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
