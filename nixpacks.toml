@@ -1,6 +1,0 @@
-# better-sqlite3 es un módulo nativo que se compila con node-gyp durante
-# `npm ci`, y eso requiere Python y herramientas de compilación que la
-# imagen base de Nixpacks no incluye por defecto.
-[phases.setup]
-nixPkgs = ["python3"]
-aptPkgs = ["build-essential"]
