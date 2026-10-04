@@ -60,7 +60,7 @@
                 Solo se puede eliminar si todavía no tiene ningún caso asociado.
             </p>
             <form method="POST" action="/admin/clientes/<%= cliente.id %>/eliminar" onsubmit="return confirm('¿Eliminar este cliente? Esta acción no se puede deshacer.');">
-                <button type="submit" class="btn-delete" style="border: 1.5px solid #fecaca; padding: 0.65rem 1.25rem;">Eliminar cliente</button>
+                <button type="submit" class="btn-destructive">Eliminar cliente</button>
             </form>
         </div>
     </main>
