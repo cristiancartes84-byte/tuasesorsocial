@@ -42,10 +42,17 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-cambiar-en-produccion',
   resave: false,
   saveUninitialized: false,
+  // rolling: la expiracion de la cookie se renueva en cada request, no solo
+  // al iniciar sesion. Sin esto, maxAge se fija una sola vez al login y la
+  // sesion vence a las 8h exactas sin importar que se haya seguido usando
+  // el panel activamente -- causaba que cualquier click, tras esas 8h,
+  // mandara de vuelta al login aunque la topbar siguiera mostrando el
+  // nombre (esa parte de la pagina ya estaba renderizada antes de vencer).
+  rolling: true,
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 1000 * 60 * 60 * 8, // 8 horas
+    maxAge: 1000 * 60 * 60 * 8, // 8 horas de inactividad
   },
 }));
 
@@ -116,6 +123,18 @@ function iniciarSesion(req, usuario) {
   };
 }
 
+// Si la sesion vencio mientras el usuario navegaba (ej. un link en una
+// pestana abierta hace rato), requireRole() guarda la URL a la que
+// intentaba llegar en session.redirigirDespuesLogin. Al volver a loguearse
+// se le devuelve ahi en vez de siempre al dashboard -- salvo que deba
+// cambiar la contrasena primero, lo cual tiene prioridad.
+function destinoTrasLogin(req, usuario, dashboardPorDefecto) {
+  if (usuario.debe_cambiar_password) return '/cambiar-password';
+  const destino = req.session.redirigirDespuesLogin;
+  delete req.session.redirigirDespuesLogin;
+  return destino || dashboardPorDefecto;
+}
+
 app.get('/portal/login', (req, res) => {
   if (req.session.usuario && req.session.usuario.rol === 'cliente') {
     return res.redirect('/portal/dashboard');
@@ -130,7 +149,7 @@ app.post('/portal/login', loginLimiter, (req, res) => {
     return res.status(401).render('portal/login', { error: 'RUT o contraseña incorrectos.' });
   }
   iniciarSesion(req, usuario);
-  res.redirect(usuario.debe_cambiar_password ? '/cambiar-password' : '/portal/dashboard');
+  res.redirect(destinoTrasLogin(req, usuario, '/portal/dashboard'));
 });
 
 app.get('/portal/dashboard', requireRole('cliente'), (req, res) => {
@@ -281,7 +300,7 @@ app.post('/admin/login', loginLimiter, (req, res) => {
     return res.status(401).render('admin/login', { error: 'RUT o contraseña incorrectos.' });
   }
   iniciarSesion(req, usuario);
-  res.redirect(usuario.debe_cambiar_password ? '/cambiar-password' : '/admin/dashboard');
+  res.redirect(destinoTrasLogin(req, usuario, '/admin/dashboard'));
 });
 
 app.get('/admin/dashboard', requireRole('trabajador_social'), (req, res) => {
@@ -293,7 +312,7 @@ app.get('/admin/clientes/nuevo', requireRole('trabajador_social'), (req, res) =>
 });
 
 app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, res) => {
-  const { rut: rutInput, nombre, email } = req.body;
+  const { rut: rutInput, nombre, email, telefono } = req.body;
 
   if (!rut.esValido(rutInput)) {
     return res.status(400).render('admin/clientes-nuevo', { usuario: req.session.usuario, error: 'El RUT ingresado no es válido.' });
@@ -302,7 +321,7 @@ app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, 
   const passwordTemporal = generarPasswordTemporal();
   let usuarioId;
   try {
-    usuarioId = crearUsuario({ rut: rutInput, password: passwordTemporal, nombre, email, rol: 'cliente' });
+    usuarioId = crearUsuario({ rut: rutInput, password: passwordTemporal, nombre, email, telefono, rol: 'cliente' });
   } catch (err) {
     return res.status(400).render('admin/clientes-nuevo', { usuario: req.session.usuario, error: 'No se pudo crear el cliente (¿el RUT ya existe?).' });
   }
@@ -335,14 +354,14 @@ app.get('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, re
 app.post('/admin/clientes/:id/editar', requireRole('trabajador_social'), (req, res) => {
   const cliente = casos.obtenerCliente(req.params.id);
   if (!cliente) return res.status(404).send('<h1>Cliente no encontrado</h1>');
-  const { nombre, email, rut: rutInput } = req.body;
+  const { nombre, email, telefono, rut: rutInput } = req.body;
   if (!nombre || !email || !rutInput) {
     return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'Nombre, email y RUT son obligatorios.', passwordTemporal: null });
   }
   if (!rut.esValido(rutInput)) {
     return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: 'El RUT ingresado no es válido.', passwordTemporal: null });
   }
-  const resultado = casos.actualizarCliente(cliente.id, { nombre, email, rut: rut.normalizar(rutInput) });
+  const resultado = casos.actualizarCliente(cliente.id, { nombre, email, telefono, rut: rut.normalizar(rutInput) });
   if (!resultado.ok) {
     return res.status(400).render('admin/clientes-editar', { usuario: req.session.usuario, cliente, error: resultado.error, passwordTemporal: null });
   }
