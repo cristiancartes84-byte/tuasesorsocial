@@ -56,6 +56,29 @@ app.use(session({
   },
 }));
 
+// Admin (/admin) y portal (/portal) comparten la misma cookie de sesión del
+// navegador. Sin esto, tener ambos logueados a la vez (ej. Francis en una
+// pestaña y un cliente en otra) rompía: iniciar sesión en una pestaña pisaba
+// la sesión de la otra, y al volver a esa pestaña y refrescar, el rol ya no
+// coincidía y mandaba de vuelta al login ("cada vez que actualizo me pide
+// loguearme"). iniciarSesion() guarda la identidad reemplazada en
+// session.otraSesion; aquí, según el prefijo de la URL, se restaura
+// automáticamente la identidad correcta antes de que nada más la lea.
+app.use((req, res, next) => {
+  if (req.session) {
+    const rolEsperado = req.path.startsWith('/admin') ? 'trabajador_social'
+      : req.path.startsWith('/portal') ? 'cliente'
+      : null;
+    if (rolEsperado && req.session.usuario && req.session.usuario.rol !== rolEsperado
+        && req.session.otraSesion && req.session.otraSesion.rol === rolEsperado) {
+      const temp = req.session.usuario;
+      req.session.usuario = req.session.otraSesion;
+      req.session.otraSesion = temp;
+    }
+  }
+  next();
+});
+
 // Marca la actividad reciente del usuario logueado (base del estado "en línea"
 // que se muestra en las tarjetas de perfil). Se limita a cada 20s por sesión
 // para no escribir en la base en cada request de una misma carga de página.
@@ -113,6 +136,12 @@ const loginLimiter = rateLimit({
 });
 
 function iniciarSesion(req, usuario) {
+  // Si ya había una sesión activa de OTRO rol en este mismo navegador (ej.
+  // admin en una pestaña, portal en otra), se guarda aparte en vez de
+  // perderla -- ver el middleware de restauración más arriba.
+  if (req.session.usuario && req.session.usuario.rol !== usuario.rol) {
+    req.session.otraSesion = req.session.usuario;
+  }
   req.session.usuario = {
     id: usuario.id,
     nombre: usuario.nombre,
@@ -283,6 +312,13 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
 });
 
 app.get('/portal/logout', (req, res) => {
+  // Si hay otra sesión (de admin) guardada en este mismo navegador, se
+  // restaura en vez de destruir toda la sesión y perderla también.
+  if (req.session.usuario && req.session.usuario.rol === 'cliente' && req.session.otraSesion) {
+    req.session.usuario = req.session.otraSesion;
+    delete req.session.otraSesion;
+    return res.redirect('/portal/login');
+  }
   req.session.destroy(() => res.redirect('/portal/login'));
 });
 
@@ -539,6 +575,13 @@ app.post('/admin/perfil/foto', requireRole('trabajador_social'), (req, res, next
 });
 
 app.get('/admin/logout', (req, res) => {
+  // Si hay otra sesión (de un cliente) guardada en este mismo navegador, se
+  // restaura en vez de destruir toda la sesión y perderla también.
+  if (req.session.usuario && req.session.usuario.rol === 'trabajador_social' && req.session.otraSesion) {
+    req.session.usuario = req.session.otraSesion;
+    delete req.session.otraSesion;
+    return res.redirect('/admin/login');
+  }
   req.session.destroy(() => res.redirect('/admin/login'));
 });
 
