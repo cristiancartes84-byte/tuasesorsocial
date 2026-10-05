@@ -26,7 +26,7 @@
         <% } %>
 
         <div class="card">
-            <p style="color: #64748b; font-size: 0.9rem;">Gestión iniciada el <%= caso.creado_en %></p>
+            <p style="color: #64748b; font-size: 0.9rem;">Gestión iniciada el <%= formatearFecha(caso.creado_en) %></p>
             <p style="margin-top: 0.75rem;">Estado actual:
                 <span class="badge<%= caso.estado_actual === 'Aprobado' ? ' badge-aprobado' : caso.estado_actual === 'Rechazado' ? ' badge-rechazado' : '' %>">
                     <%= caso.estado_actual %>
@@ -48,7 +48,7 @@
                         <% } %>
                         <div class="nota-body">
                             <div class="nota-header">
-                                <span class="meta"><%= nota.creado_en %></span>
+                                <span class="meta"><%= formatearFecha(nota.creado_en) %></span>
                             </div>
                             <% if (nota.requiere_respuesta || nota.requiere_documento) { %>
                                 <div class="nota-badges">
@@ -62,7 +62,7 @@
                                 <div class="nota-replies">
                                     <% nota.respuestas.forEach(function (respuesta) { %>
                                         <div class="nota-reply">
-                                            <div class="meta">Tú — <%= respuesta.creado_en %></div>
+                                            <div class="meta">Tú — <%= formatearFecha(respuesta.creado_en) %></div>
                                             <div class="texto"><%= respuesta.texto %></div>
                                         </div>
                                     <% }); %>
@@ -95,7 +95,7 @@
                             <div class="solicitud-icon">📎</div>
                             <div class="solicitud-title">
                                 <strong><%= solicitud.tipo_label %></strong>
-                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                                <span class="meta">Solicitado el <%= formatearFecha(solicitud.creado_en) %></span>
                             </div>
                             <div class="solicitud-actions">
                                 <span class="badge">Pendiente</span>
@@ -139,7 +139,7 @@
                 <div style="margin-top: 1.25rem;">
                     <% respuestas.forEach(function (respuesta) { %>
                         <div class="respuesta-card">
-                            <div class="meta"><%= respuesta.creado_en %></div>
+                            <div class="meta"><%= formatearFecha(respuesta.creado_en) %></div>
                             <div class="texto"><%= respuesta.texto %></div>
                         </div>
                     <% }); %>
@@ -157,7 +157,7 @@
                             <div class="solicitud-icon">✅</div>
                             <div class="solicitud-title">
                                 <strong><%= solicitud.tipo_label %></strong>
-                                <span class="meta">Solicitado el <%= solicitud.creado_en %></span>
+                                <span class="meta">Solicitado el <%= formatearFecha(solicitud.creado_en) %></span>
                             </div>
                             <div class="solicitud-actions">
                                 <span class="badge badge-aprobado">Completo</span>
@@ -185,7 +185,7 @@
                         <%- include('../partials/stepper-icon', { hito: item.hito, isCurrent: i === stepperHistorial.length - 1 }) %>
                         <div class="stepper-card">
                             <div class="hito"><%= item.hito %></div>
-                            <div class="meta"><%= item.creado_en %></div>
+                            <div class="meta"><%= formatearFecha(item.creado_en) %></div>
                         </div>
                     </div>
                 <% }); %>

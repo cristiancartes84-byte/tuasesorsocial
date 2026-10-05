@@ -16,9 +16,14 @@ const { iconoParaTipo } = require('./lib/iconos');
 const mailer = require('./lib/mailer');
 const { upload, rutaArchivo, uploadFotoPerfil, PERFILES_DIR } = require('./lib/uploads');
 const { obtenerQrSitio } = require('./lib/qr');
+const { formatearFecha, fechaHoyLarga } = require('./lib/fechas');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Disponible en todas las vistas EJS sin pasarlo en cada render (ver
+// lib/fechas.js): muestra las fechas guardadas en UTC en hora de Santiago.
+app.locals.formatearFecha = formatearFecha;
 
 // Detrás de Traefik/Coolify: necesario para que las cookies "secure" funcionen
 app.set('trust proxy', 1);
@@ -205,7 +210,7 @@ app.get('/portal/dashboard', requireRole('cliente'), (req, res) => {
     stats: { total: misCasos.length, documentosPendientes, aprobadas },
     resumen: { enProceso, aprobadas, rechazadas, total: misCasos.length },
     pendientes: casos.obtenerPendientesDeUsuario(req.session.usuario.id),
-    fechaHoy: new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+    fechaHoy: fechaHoyLarga(),
   });
 });
 
