@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <%- include('../partials/app-styles') %>
+    <%- include('../partials/dashboard-styles') %>
+</head>
+<body>
+    <div class="app-shell">
+        <%- include('../partials/portal-sidebar', { activo: 'agenda' }) %>
+
+        <div class="app-content">
+            <div class="dash-header-row">
+                <div class="dash-header">
+                    <%- include('../partials/brand-mark', { dark: true }) %>
+                    <div class="dash-title">Agenda</div>
+                    <p class="dash-subtitle">Reserva una hora con tu trabajadora social o revisa tus horas ya agendadas.</p>
+                </div>
+                <div class="dash-header-actions">
+                    <% if (trabajadorSocial) { %><%- include('../partials/portal-topbar') %><% } %>
+                    <%- include('../partials/portal-mi-cuenta') %>
+                </div>
+            </div>
+
+            <% if (reservado) { %>
+                <div class="success-banner">✅ Tu hora quedó confirmada. Te enviamos un correo con los detalles.</div>
+            <% } %>
+            <% if (error) { %>
+                <div class="form-error"><%= error %></div>
+            <% } %>
+
+            <% if (misCasos.length === 0) { %>
+                <div class="panel">
+                    <div class="empty-state">
+                        Todavía no tienes una gestión registrada en el portal.
+                        <br>Cuando tu trabajadora social cree tu caso, podrás agendar una sesión aquí.
+                    </div>
+                </div>
+            <% } else { %>
+                <% if (misCitas.length > 0) { %>
+                    <div class="panel" style="margin-bottom: 1.5rem;">
+                        <div class="panel-header">
+                            <h2>Tus próximas horas</h2>
+                        </div>
+                        <% misCitas.forEach(function (cita) { %>
+                            <div class="cita-row">
+                                <div class="cita-info">
+                                    <strong><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %></strong>
+                                    <span><%= cita.tipo_subsidio || 'Gestión' %> · <%= cita.duracion_minutos %> min</span>
+                                </div>
+                                <form method="POST" action="/portal/agenda/<%= cita.id %>/cancelar" onsubmit="return confirm('¿Cancelar esta hora agendada?');">
+                                    <button type="submit" class="btn-delete">Cancelar</button>
+                                </form>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Agendar una nueva hora</h2>
+                    </div>
+
+                    <% if (misCasos.length > 1) { %>
+                        <div class="caso-selector">
+                            <% misCasos.forEach(function (c) { %>
+                                <a href="/portal/agenda?caso_id=<%= c.id %>" class="caso-pill<%= c.id === casoSeleccionado.id ? ' active' : '' %>"><%= c.tipo_subsidio %></a>
+                            <% }); %>
+                        </div>
+                    <% } %>
+
+                    <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1.25rem;">
+                        Para <strong><%= casoSeleccionado.tipo_subsidio %></strong>, cada sesión dura aproximadamente <strong><%= duracion %> minutos</strong>. Elige un horario disponible (hora de Santiago de Chile):
+                    </p>
+
+                    <% if (diasConSlots.length === 0) { %>
+                        <div class="empty-state">
+                            Tu trabajadora social todavía no tiene horarios disponibles publicados. Contáctala por WhatsApp si necesitas agendar.
+                        </div>
+                    <% } else { %>
+                        <% diasConSlots.forEach(function (dia) { %>
+                            <div class="agenda-dia">
+                                <div class="agenda-dia-titulo"><%= formatearDiaLargo(dia.fecha) %></div>
+                                <div class="agenda-slots">
+                                    <% dia.slots.forEach(function (slot) { %>
+                                        <form method="POST" action="/portal/agenda/reservar">
+                                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
+                                            <input type="hidden" name="inicio" value="<%= slot.inicio.toISOString() %>">
+                                            <button type="submit" class="slot-btn"><%= formatearHora(slot.inicio) %></button>
+                                        </form>
+                                    <% }); %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <%- include('../partials/modal-cambiar-password') %>
+</body>
+</html>

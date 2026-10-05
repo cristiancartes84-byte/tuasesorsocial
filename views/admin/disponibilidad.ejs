@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header-title">
+            <%- include('../partials/brand-mark') %>
+            <h1>Mi disponibilidad</h1>
+        </div>
+        <div class="admin-topbar-right">
+            <a href="/admin/dashboard">&larr; Volver al panel</a>
+            <%- include('../partials/admin-topbar') %>
+        </div>
+    </header>
+    <main class="app-main" style="max-width: 640px;">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+
+        <div class="card">
+            <h2>Bloques de horario semanal</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                Define los días y horarios en que estás disponible para agendar sesiones. Los clientes podrán reservar dentro de estos bloques, en horas de Santiago de Chile.
+            </p>
+            <% if (bloques.length === 0) { %>
+                <div class="empty-state">Todavía no has agregado ningún bloque de disponibilidad.</div>
+            <% } else { %>
+                <% var dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Día</th>
+                            <th>Desde</th>
+                            <th>Hasta</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bloques.forEach(function (bloque) { %>
+                            <tr>
+                                <td><%= dias[bloque.dia_semana] %></td>
+                                <td><%= bloque.hora_inicio %></td>
+                                <td><%= bloque.hora_fin %></td>
+                                <td>
+                                    <form method="POST" action="/admin/disponibilidad/<%= bloque.id %>/eliminar" onsubmit="return confirm('¿Eliminar este bloque de disponibilidad?');" style="display: inline;">
+                                        <button type="submit" class="btn-delete">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Agregar bloque</h2>
+            <form class="stacked" method="POST" action="/admin/disponibilidad">
+                <label for="dia_semana">Día</label>
+                <select id="dia_semana" name="dia_semana" required>
+                    <option value="1">Lunes</option>
+                    <option value="2">Martes</option>
+                    <option value="3">Miércoles</option>
+                    <option value="4">Jueves</option>
+                    <option value="5">Viernes</option>
+                    <option value="6">Sábado</option>
+                    <option value="0">Domingo</option>
+                </select>
+
+                <label for="hora_inicio">Desde</label>
+                <input type="time" id="hora_inicio" name="hora_inicio" required>
+
+                <label for="hora_fin">Hasta</label>
+                <input type="time" id="hora_fin" name="hora_fin" required>
+
+                <button type="submit" class="btn">Agregar bloque</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Duración de las sesiones</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">
+                Se calcula automáticamente según el tipo de gestión del cliente: <strong>2 horas</strong> para Informes Sociales, <strong>45 minutos</strong> para el resto. Los horarios disponibles se generan en bloques de esa duración dentro de cada rango definido arriba.
+            </p>
+        </div>
+    </main>
+</body>
+</html>
