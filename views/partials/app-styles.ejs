@@ -646,4 +646,58 @@
        no se pisaría y dejaría estos botones con texto blanco invisible. */
     .user-card .user-card-link { background: #eff6ff; color: #2563eb; }
     .user-card .user-card-logout { background: #fef2f2; color: #b91c1c; }
+
+    .caso-selector { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .caso-pill {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        color: #475569;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: white;
+    }
+    .caso-pill.active { background: linear-gradient(135deg, #2563eb 0%, #059669 100%); color: white; border-color: transparent; }
+
+    .agenda-dia { margin-bottom: 1.5rem; }
+    .agenda-dia:last-child { margin-bottom: 0; }
+    .agenda-dia-titulo { font-weight: 700; margin-bottom: 0.6rem; text-transform: capitalize; color: #1f2937; font-size: 0.95rem; }
+    .agenda-slots { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .slot-btn {
+        padding: 0.55rem 1rem;
+        border-radius: 10px;
+        border: 1.5px solid #dbeafe;
+        background: #f8fafc;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #2563eb;
+        font-family: inherit;
+    }
+    .slot-btn:hover { background: #eff6ff; border-color: #2563eb; }
+
+    .cita-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        flex-wrap: wrap;
+    }
+    .cita-row:last-child { border-bottom: none; }
+    .cita-info strong { display: block; color: #1f2937; }
+    .cita-info span { font-size: 0.82rem; color: #64748b; }
+
+    .success-banner {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #047857;
+        padding: 0.9rem 1.1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
 </style>

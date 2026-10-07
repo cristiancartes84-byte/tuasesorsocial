@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citas agendadas | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header-title">
+            <%- include('../partials/brand-mark') %>
+            <h1>Citas agendadas</h1>
+        </div>
+        <div class="admin-topbar-right">
+            <a href="/admin/dashboard">&larr; Volver al panel</a>
+            <%- include('../partials/admin-topbar') %>
+        </div>
+    </header>
+    <main class="app-main">
+        <div class="toolbar">
+            <a href="/admin/disponibilidad" class="btn btn-secondary">Mi disponibilidad</a>
+        </div>
+
+        <div class="card">
+            <% if (citas.length === 0) { %>
+                <div class="empty-state">No tienes citas agendadas próximamente.</div>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>RUT</th>
+                            <th>Gestión</th>
+                            <th>Fecha y hora</th>
+                            <th>Duración</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% citas.forEach(function (cita) { %>
+                            <tr>
+                                <td><%= cita.cliente_nombre %></td>
+                                <td><%= cita.cliente_rut %></td>
+                                <td><%= cita.tipo_subsidio || '—' %></td>
+                                <td><%= formatearFecha(cita.fecha_inicio) %></td>
+                                <td><%= cita.duracion_minutos %> min</td>
+                                <td>
+                                    <form method="POST" action="/admin/citas/<%= cita.id %>/cancelar" onsubmit="return confirm('¿Cancelar esta cita?');" style="display: inline;">
+                                        <button type="submit" class="btn-delete">Cancelar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

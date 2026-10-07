@@ -16,7 +16,8 @@ const { iconoParaTipo } = require('./lib/iconos');
 const mailer = require('./lib/mailer');
 const { upload, rutaArchivo, uploadFotoPerfil, PERFILES_DIR } = require('./lib/uploads');
 const { obtenerQrSitio } = require('./lib/qr');
-const { formatearFecha, fechaHoyLarga } = require('./lib/fechas');
+const { formatearFecha, fechaHoyLarga, formatearDiaLargo, formatearHora, construirFechaSantiago } = require('./lib/fechas');
+const agenda = require('./lib/agenda');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,8 @@ const PORT = process.env.PORT || 3000;
 // Disponible en todas las vistas EJS sin pasarlo en cada render (ver
 // lib/fechas.js): muestra las fechas guardadas en UTC en hora de Santiago.
 app.locals.formatearFecha = formatearFecha;
+app.locals.formatearHora = formatearHora;
+app.locals.formatearDiaLargo = formatearDiaLargo;
 
 // Detrás de Traefik/Coolify: necesario para que las cookies "secure" funcionen
 app.set('trust proxy', 1);
@@ -316,6 +319,106 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
   res.download(rutaArchivo(documento), documento.nombre_original);
 });
 
+app.get('/portal/agenda', requireRole('cliente'), (req, res) => {
+  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
+  const misCitas = agenda.listarCitasDeUsuario(req.session.usuario.id);
+
+  if (misCasos.length === 0) {
+    return res.render('portal/agenda', {
+      usuario: req.session.usuario,
+      misCasos: [],
+      casoSeleccionado: null,
+      duracion: null,
+      diasConSlots: [],
+      misCitas,
+      error: null,
+      reservado: false,
+    });
+  }
+
+  const casoIdQuery = parseInt(req.query.caso_id, 10);
+  const casoSeleccionado = misCasos.find((c) => c.id === casoIdQuery) || misCasos[0];
+  const duracion = agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio);
+  const diasConSlots = agenda.generarSlotsDisponibles(duracion);
+
+  res.render('portal/agenda', {
+    usuario: req.session.usuario,
+    misCasos,
+    casoSeleccionado,
+    duracion,
+    diasConSlots,
+    misCitas,
+    error: null,
+    reservado: req.query.reservado === '1',
+  });
+});
+
+app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => {
+  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
+  const casoSeleccionado = misCasos.find((c) => c.id === parseInt(req.body.caso_id, 10));
+  const inicioSolicitado = req.body.inicio;
+
+  const renderError = (mensaje) => {
+    const duracion = casoSeleccionado ? agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio) : null;
+    return res.status(400).render('portal/agenda', {
+      usuario: req.session.usuario,
+      misCasos,
+      casoSeleccionado: casoSeleccionado || misCasos[0] || null,
+      duracion,
+      diasConSlots: duracion ? agenda.generarSlotsDisponibles(duracion) : [],
+      misCitas: agenda.listarCitasDeUsuario(req.session.usuario.id),
+      error: mensaje,
+      reservado: false,
+    });
+  };
+
+  if (!casoSeleccionado) {
+    return renderError('Selecciona una gestión válida para agendar.');
+  }
+
+  const duracion = agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio);
+  const diasConSlots = agenda.generarSlotsDisponibles(duracion);
+  let slotValido = null;
+  for (const dia of diasConSlots) {
+    const encontrado = dia.slots.find((s) => s.inicio.toISOString() === inicioSolicitado);
+    if (encontrado) { slotValido = encontrado; break; }
+  }
+
+  if (!slotValido) {
+    return renderError('Ese horario ya no está disponible, elige otro.');
+  }
+
+  const resultado = agenda.crearCita({
+    usuarioId: req.session.usuario.id,
+    casoId: casoSeleccionado.id,
+    inicio: slotValido.inicio,
+    fin: slotValido.fin,
+    duracionMinutos: duracion,
+  });
+
+  if (!resultado.ok) {
+    return renderError(resultado.error);
+  }
+
+  const fechaFmt = formatearDiaLargo(slotValido.inicio);
+  const horaFmt = formatearHora(slotValido.inicio);
+  await mailer.confirmarCitaCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
+  for (const trabajador of casos.listarTrabajadoresSociales()) {
+    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
+  }
+
+  res.redirect('/portal/agenda?reservado=1');
+});
+
+app.post('/portal/agenda/:id/cancelar', requireRole('cliente'), (req, res) => {
+  const cita = agenda.obtenerCita(req.params.id);
+  if (!cita || cita.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Hora no encontrada</h1>');
+  }
+  agenda.cancelarCita(cita.id);
+  res.redirect('/portal/agenda');
+});
+
 app.get('/portal/logout', (req, res) => {
   // Si hay otra sesión (de admin) guardada en este mismo navegador, se
   // restaura en vez de destruir toda la sesión y perderla también.
@@ -577,6 +680,37 @@ app.post('/admin/perfil/foto', requireRole('trabajador_social'), (req, res, next
   }
   actualizarFotoPerfil(req.session.usuario.id, req.file.filename);
   res.redirect('/admin/perfil');
+});
+
+app.get('/admin/disponibilidad', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/disponibilidad', { usuario: req.session.usuario, bloques: agenda.obtenerDisponibilidad(), error: null });
+});
+
+app.post('/admin/disponibilidad', requireRole('trabajador_social'), (req, res) => {
+  const diaSemana = parseInt(req.body.dia_semana, 10);
+  const { hora_inicio: horaInicio, hora_fin: horaFin } = req.body;
+  if (Number.isNaN(diaSemana) || diaSemana < 0 || diaSemana > 6 || !horaInicio || !horaFin) {
+    return res.status(400).render('admin/disponibilidad', { usuario: req.session.usuario, bloques: agenda.obtenerDisponibilidad(), error: 'Completa el día y el rango de horario.' });
+  }
+  if (horaInicio >= horaFin) {
+    return res.status(400).render('admin/disponibilidad', { usuario: req.session.usuario, bloques: agenda.obtenerDisponibilidad(), error: 'La hora de inicio debe ser anterior a la hora de término.' });
+  }
+  agenda.agregarBloqueDisponibilidad({ diaSemana, horaInicio, horaFin });
+  res.redirect('/admin/disponibilidad');
+});
+
+app.post('/admin/disponibilidad/:id/eliminar', requireRole('trabajador_social'), (req, res) => {
+  agenda.eliminarBloqueDisponibilidad(req.params.id);
+  res.redirect('/admin/disponibilidad');
+});
+
+app.get('/admin/citas', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/citas', { usuario: req.session.usuario, citas: agenda.listarCitasFuturasAdmin() });
+});
+
+app.post('/admin/citas/:id/cancelar', requireRole('trabajador_social'), (req, res) => {
+  agenda.cancelarCita(req.params.id);
+  res.redirect('/admin/citas');
 });
 
 app.get('/admin/logout', (req, res) => {
