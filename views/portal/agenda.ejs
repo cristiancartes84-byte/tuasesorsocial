@@ -191,21 +191,23 @@
                         <h2>Agendar una nueva hora</h2>
                     </div>
 
-                    <label class="srv-label" for="servicioSel">¿Qué servicio necesitas?</label>
-                    <select id="servicioSel" class="srv-select" onchange="location.href='/portal/agenda?servicio=' + encodeURIComponent(this.value)">
-                        <% servicios.forEach(function (sv) { %>
-                            <option value="<%= sv %>"<%= sv === servicioSeleccionado ? ' selected' : '' %>><%= sv %></option>
-                        <% }); %>
-                    </select>
                     <% if (reservaHabilitada) { %>
+                        <label class="srv-label" for="servicioSel">¿Qué servicio necesitas?</label>
+                        <select id="servicioSel" class="srv-select" onchange="location.href='/portal/agenda?servicio=' + encodeURIComponent(this.value)">
+                            <% servicios.forEach(function (sv) { %>
+                                <option value="<%= sv %>"<%= sv === servicioSeleccionado ? ' selected' : '' %>><%= sv %></option>
+                            <% }); %>
+                        </select>
                         <p class="srv-info">
-                            Sesión de <strong><%= duracion %> minutos</strong> · valor <strong><%= formatearPesos(montos.total) %></strong> · para reservar abonas el <strong>50% (<%= formatearPesos(montos.reserva) %>)</strong> por transferencia. Elige un día y una hora (hora de Santiago de Chile):
+                            Sesión de <strong><%= duracion %> minutos</strong><% if (montos.total > 0) { %> · valor <strong><%= formatearPesos(montos.total) %></strong><% } %>
+                            <% if (montos.requiereAbono) { %> · para reservar abonas el <strong>50% (<%= formatearPesos(montos.reserva) %>)</strong> por transferencia<% } else { %> · <strong>sin abono previo</strong>: la hora queda confirmada al reservar<% } %>.
+                            Elige un día y una hora (hora de Santiago de Chile):
                         </p>
                     <% } %>
 
                     <% if (!reservaHabilitada) { %>
-                        <div class="aviso-cierre" style="margin-top: 1rem;">
-                            La reserva en línea de este servicio todavía no está habilitada. Escríbele a tu trabajadora social por WhatsApp para coordinar tu hora.
+                        <div class="aviso-cierre">
+                            La reserva en línea todavía no está habilitada. Escríbele a tu trabajadora social por WhatsApp para coordinar tu hora.
                         </div>
                     <% } else if (diasConSlots.length === 0) { %>
                         <div class="empty-state">
@@ -253,17 +255,25 @@
                                     <div class="resumen-fecha" id="resFecha"></div>
                                     <div class="resumen-det" id="resDet"></div>
                                 </div>
-                                <span class="resumen-badge">Abono 50%: <%= formatearPesos(montos.reserva) %></span>
+                                <% if (montos.requiereAbono) { %>
+                                    <span class="resumen-badge">Abono 50%: <%= formatearPesos(montos.reserva) %></span>
+                                <% } else { %>
+                                    <span class="resumen-badge" style="background: #d1fae5; color: #065f46;">Sin abono previo</span>
+                                <% } %>
                             </div>
                             <div class="reserva-form" style="margin-top: 0; padding-top: 0; border-top: none;">
                                 <label for="detalle">Cuéntanos tus dudas o qué quieres lograr con la asesoría <span style="font-weight: 500; color: #94a3b8;">(opcional)</span></label>
                                 <textarea id="detalle" name="detalle" maxlength="500" placeholder="Ej: quiero postular al subsidio y no sé qué documentos necesito."><%= detalle %></textarea>
                                 <p class="reserva-ayuda">Así ella puede preparar la sesión. Máximo 500 caracteres.</p>
 
-                                <div class="abono-aviso">
-                                    💳 Al pulsar <strong>Reservar</strong> te mostraremos los datos para transferir el abono de <strong><%= formatearPesos(montos.reserva) %></strong> (50% de <%= formatearPesos(montos.total) %>). Tu hora quedará <strong>pendiente por <%= minutosRetencion %> minutos</strong>; cuando tu trabajadora social confirme que recibió la transferencia, la hora queda confirmada y tomada para ti.
-                                </div>
-                                <button type="submit" class="btn-reservar">Reservar y ver datos de transferencia</button>
+                                <% if (montos.requiereAbono) { %>
+                                    <div class="abono-aviso">
+                                        💳 Al pulsar <strong>Reservar</strong> te mostraremos los datos para transferir el abono de <strong><%= formatearPesos(montos.reserva) %></strong> (50% de <%= formatearPesos(montos.total) %>). Tu hora quedará <strong>pendiente por <%= minutosRetencion %> minutos</strong>; cuando tu trabajadora social confirme que recibió la transferencia, la hora queda confirmada y tomada para ti.
+                                    </div>
+                                    <button type="submit" class="btn-reservar">Reservar y ver datos de transferencia</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn-reservar">Reservar hora</button>
+                                <% } %>
                             </div>
                         </form>
 
