@@ -142,6 +142,14 @@ app.use('/portal', (req, res, next) => {
         enLinea: estaEnLinea(trabajadorSocial.ultima_actividad),
       };
     }
+    // Invitación a reservar: solo si la agenda en línea está habilitada.
+    const reservable = agenda.obtenerServicios().some((sv) => agenda.reservaHabilitada(sv.nombre));
+    const horas = reservable ? agenda.listarCitasDeUsuario(req.session.usuario.id) : [];
+    const porPagar = horas.find((c) => c.estado === 'pendiente_pago' && c.pago_estado === 'pendiente');
+    res.locals.agendaCta = !reservable ? { tipo: 'ninguno' }
+      : porPagar ? { tipo: 'pagar', cita: porPagar }
+      : horas.length > 0 ? { tipo: 'proxima', cita: horas[0] }
+      : { tipo: 'reservar' };
   }
   next();
 });

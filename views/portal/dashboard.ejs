@@ -27,6 +27,35 @@
                 </div>
             </div>
 
+            <% if (typeof agendaCta !== 'undefined' && agendaCta.tipo === 'reservar') { %>
+                <div class="agenda-cta">
+                    <div class="agenda-cta-icon">📅</div>
+                    <div class="agenda-cta-texto">
+                        <strong>Agenda tu hora con tu trabajadora social</strong>
+                        <span>Elige el servicio, el día y la hora que mejor te acomode. Reservar toma menos de 2 minutos.</span>
+                    </div>
+                    <a href="/portal/agenda" class="agenda-cta-btn">Reservar mi hora &rarr;</a>
+                </div>
+            <% } else if (typeof agendaCta !== 'undefined' && agendaCta.tipo === 'pagar') { %>
+                <div class="agenda-cta pagar">
+                    <div class="agenda-cta-icon">⏱</div>
+                    <div class="agenda-cta-texto">
+                        <strong>Tu hora está reservada: falta el abono</strong>
+                        <span><%= formatearDiaLargo(agendaCta.cita.fecha_inicio) %>, <%= formatearHora(agendaCta.cita.fecha_inicio) %>. Realiza la transferencia y avísanos para confirmarla antes de que se libere el horario.</span>
+                    </div>
+                    <a href="/portal/agenda" class="agenda-cta-btn">Ver datos de transferencia &rarr;</a>
+                </div>
+            <% } else if (typeof agendaCta !== 'undefined' && agendaCta.tipo === 'proxima') { %>
+                <div class="agenda-cta proxima">
+                    <div class="agenda-cta-icon">✅</div>
+                    <div class="agenda-cta-texto">
+                        <strong>Tu próxima hora: <%= formatearDiaLargo(agendaCta.cita.fecha_inicio) %>, <%= formatearHora(agendaCta.cita.fecha_inicio) %></strong>
+                        <span><%= agendaCta.cita.servicio || agendaCta.cita.tipo_subsidio || 'Sesión' %> · <%= agendaCta.cita.duracion_minutos %> min<%= agendaCta.cita.estado === 'pendiente_pago' ? ' · pago en revisión' : ' · confirmada' %></span>
+                    </div>
+                    <a href="/portal/agenda" class="agenda-cta-btn">Ver mi agenda</a>
+                </div>
+            <% } %>
+
             <% if (pendientes.length > 0) { %>
                 <div class="attention-banner">
                     <div class="attention-banner-title">⚠️ Necesita tu atención (<%= pendientes.length %>)</div>
