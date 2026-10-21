@@ -756,6 +756,19 @@
                 grid-template-columns: 1fr;
             }
         }
+    
+        /* Menú en una sola línea (escritorio) */
+        @media (min-width: 1101px) {
+            nav ul, .nav-links { gap: 1.25rem !important; flex-wrap: nowrap !important; }
+            nav ul li a, .nav-links a { white-space: nowrap; font-size: 0.95rem; }
+            .logo, .logo span { white-space: nowrap; }
+            .nav-container { max-width: 1320px; }
+        }
+        @media (min-width: 769px) and (max-width: 1100px) {
+            nav ul, .nav-links { gap: 0.75rem !important; }
+            nav ul li a, .nav-links a { white-space: nowrap; font-size: 0.82rem; }
+            .logo, .logo span { white-space: nowrap; font-size: 1.2rem; }
+        }
     </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-68TR16JKCD"></script>
