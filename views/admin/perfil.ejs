@@ -21,6 +21,26 @@
             font-size: 2.2rem;
             margin-bottom: 1.25rem;
         }
+        .crop-box { display: none; margin: 1rem 0; text-align: center; }
+        .crop-box.active { display: block; }
+        .crop-viewport {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 0.75rem;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #e2e8f0;
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            box-shadow: 0 0 0 4px #fff, 0 0 0 6px #cbd5e1;
+        }
+        .crop-viewport.dragging { cursor: grabbing; }
+        .crop-viewport img { position: absolute; left: 0; top: 0; max-width: none; transform-origin: 0 0; pointer-events: none; -webkit-user-drag: none; }
+        .crop-hint { font-size: 0.8rem; color: #64748b; margin-bottom: 0.6rem; }
+        .crop-zoom { width: 260px; max-width: 100%; display: block; margin: 0 auto; padding: 0; border: none; }
+        .btn-link-small { display: block; background: none; border: none; color: #2563eb; text-decoration: underline; font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0.2rem; margin-bottom: 0.75rem; }
     </style>
 </head>
 <body>
@@ -51,9 +71,108 @@
             <form class="stacked" method="POST" action="/admin/perfil/foto" enctype="multipart/form-data" style="text-align: left;">
                 <label for="foto">Subir nueva foto (JPG, PNG o WEBP, máx. 3 MB)</label>
                 <input type="file" id="foto" name="foto" accept=".jpg,.jpeg,.png,.webp" required>
+                <% if (cuenta.foto_perfil) { %>
+                    <button type="button" class="btn-link-small" id="reencuadrar">Reencuadrar mi foto actual</button>
+                <% } %>
+                <div class="crop-box" id="cropBox">
+                    <p class="crop-hint">Arrastra la foto para centrar tu rostro y usa el control para acercar o alejar.</p>
+                    <div class="crop-viewport" id="cropViewport"><img id="cropImg" alt=""></div>
+                    <input type="range" class="crop-zoom" id="cropZoom" min="1" max="3" step="0.01" value="1" aria-label="Zoom">
+                </div>
                 <button type="submit" class="btn">Guardar foto</button>
             </form>
         </div>
     </main>
+    <script>
+    (function () {
+        var V = 260, OUT = 600;
+        var input = document.getElementById('foto');
+        var form = input.form;
+        var box = document.getElementById('cropBox');
+        var vp = document.getElementById('cropViewport');
+        var img = document.getElementById('cropImg');
+        var zoom = document.getElementById('cropZoom');
+        var btnRe = document.getElementById('reencuadrar');
+        var ready = false, nw = 0, nh = 0, base = 1, scale = 1, ox = 0, oy = 0;
+
+        function clamp() {
+            var w = nw * scale, h = nh * scale;
+            ox = Math.min(0, Math.max(V - w, ox));
+            oy = Math.min(0, Math.max(V - h, oy));
+        }
+        function pintar() {
+            clamp();
+            img.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + scale + ')';
+        }
+        function cargar(src) {
+            ready = false;
+            img.onload = function () {
+                nw = img.naturalWidth; nh = img.naturalHeight;
+                base = V / Math.min(nw, nh);
+                zoom.value = 1; scale = base;
+                ox = (V - nw * scale) / 2; oy = (V - nh * scale) / 2;
+                pintar();
+                ready = true;
+                box.classList.add('active');
+                input.removeAttribute('required');
+            };
+            img.src = src;
+        }
+
+        input.addEventListener('change', function () {
+            var f = input.files && input.files[0];
+            if (!f) return;
+            var url = URL.createObjectURL(f);
+            cargar(url);
+        });
+        if (btnRe) btnRe.addEventListener('click', function () {
+            cargar('<%= cuenta.foto_perfil ? "/avatars/" + cuenta.foto_perfil : "" %>');
+        });
+
+        zoom.addEventListener('input', function () {
+            var cx = (V / 2 - ox) / scale, cy = (V / 2 - oy) / scale;
+            scale = base * parseFloat(zoom.value);
+            ox = V / 2 - cx * scale; oy = V / 2 - cy * scale;
+            pintar();
+        });
+
+        var drag = null;
+        vp.addEventListener('pointerdown', function (e) {
+            if (!ready) return;
+            drag = { x: e.clientX, y: e.clientY, ox: ox, oy: oy };
+            vp.setPointerCapture(e.pointerId);
+            vp.classList.add('dragging');
+        });
+        vp.addEventListener('pointermove', function (e) {
+            if (!drag) return;
+            ox = drag.ox + (e.clientX - drag.x);
+            oy = drag.oy + (e.clientY - drag.y);
+            pintar();
+        });
+        function soltar() { drag = null; vp.classList.remove('dragging'); }
+        vp.addEventListener('pointerup', soltar);
+        vp.addEventListener('pointercancel', soltar);
+
+        form.addEventListener('submit', function (e) {
+            if (!ready) return;
+            e.preventDefault();
+            var c = document.createElement('canvas');
+            c.width = OUT; c.height = OUT;
+            var ctx = c.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, OUT, OUT);
+            var k = OUT / V;
+            ctx.drawImage(img, ox * k, oy * k, nw * scale * k, nh * scale * k);
+            c.toBlob(function (blob) {
+                var file = new File([blob], 'perfil.jpg', { type: 'image/jpeg' });
+                var dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                ready = false;
+                form.submit();
+            }, 'image/jpeg', 0.9);
+        });
+    })();
+    </script>
 </body>
 </html>
