@@ -7,6 +7,31 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
+    <style>
+        .section-title { font-size: 1.05rem; margin-bottom: 0.25rem; color: #1f2937; }
+        .section-sub { font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; }
+        .pago-item { border: 1px solid #e2e8f0; border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 0.8rem; background: #fff; }
+        .pago-item.informado { border-color: #93c5fd; background: #eff6ff; }
+        .pago-item-top { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: flex-start; }
+        .pago-item strong { color: #1f2937; }
+        .pago-item .meta { font-size: 0.82rem; color: #64748b; }
+        .pago-item .motivo { font-size: 0.85rem; color: #334155; margin-top: 0.5rem; white-space: pre-wrap; }
+        .pago-acciones { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+        .btn-ok { border: none; cursor: pointer; font: inherit; font-weight: 700; font-size: 0.85rem; color: #fff; background: #059669; padding: 0.55rem 1.1rem; border-radius: 10px; }
+        .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 100px; }
+        .tag-info { background: #dbeafe; color: #1e40af; }
+        .tag-espera { background: #fef3c7; color: #92400e; }
+        .tag-ok { background: #d1fae5; color: #065f46; }
+        .dia-agenda { margin-bottom: 1.1rem; }
+        .dia-agenda h3 { font-size: 0.92rem; text-transform: capitalize; color: #1f2937; margin-bottom: 0.4rem; }
+        .franja { display: flex; gap: 0.75rem; align-items: baseline; padding: 0.45rem 0.7rem; border-radius: 10px; margin-bottom: 0.3rem; font-size: 0.85rem; flex-wrap: wrap; }
+        .franja .hora { font-weight: 700; min-width: 105px; color: #1f2937; }
+        .franja.libre { background: #ecfdf5; color: #047857; }
+        .franja.cita { background: #eff6ff; color: #1e3a8a; }
+        .franja.cita.pendiente { background: #fffbeb; color: #92400e; }
+        .franja .detalle { flex: 1; }
+        .franja .detalle small { display: block; color: #64748b; }
+    </style>
 </head>
 <body>
     <header class="app-header">
@@ -22,31 +47,78 @@
     <main class="app-main">
         <div class="toolbar">
             <a href="/admin/disponibilidad" class="btn btn-secondary">Mi disponibilidad</a>
+            <a href="/admin/pagos" class="btn btn-secondary">Datos de pago y tarifas</a>
         </div>
 
         <div class="card">
+            <h2 class="section-title">Pagos por confirmar (<%= pagosPendientes.length %>)</h2>
+            <p class="section-sub">Reservas que esperan el abono del 50%. Cuando veas la transferencia en tu cuenta, confirma la recepción para aprobar la hora. Las que no se paguen dentro del plazo se liberan solas.</p>
+            <% if (pagosPendientes.length === 0) { %>
+                <div class="empty-state">No hay reservas esperando pago.</div>
+            <% } else { %>
+                <% pagosPendientes.forEach(function (cita) { %>
+                    <div class="pago-item<%= cita.pago_estado === 'informado' ? ' informado' : '' %>">
+                        <div class="pago-item-top">
+                            <div>
+                                <strong><%= cita.cliente_nombre %></strong> <span class="meta">· <%= cita.cliente_rut %></span><br>
+                                <span class="meta"><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %> · <%= cita.duracion_minutos %> min · <%= cita.tipo_subsidio || 'Gestión' %></span>
+                            </div>
+                            <div style="text-align: right;">
+                                <strong><%= formatearPesos(cita.monto_reserva) %></strong><br>
+                                <% if (cita.pago_estado === 'informado') { %>
+                                    <span class="tag tag-info">Informó transferencia</span>
+                                <% } else { %>
+                                    <span class="tag tag-espera">Esperando transferencia</span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="meta" style="margin-top: 0.4rem;">Código de referencia: <strong>CITA-<%= cita.id %></strong>
+                            <% if (cita.pago_estado === 'pendiente' && cita.expira_en) { %> · se libera el <%= formatearFecha(cita.expira_en) %><% } %>
+                        </div>
+                        <% if (cita.motivo) { %><div class="motivo"><strong>Consulta:</strong> <%= cita.motivo %></div><% } %>
+                        <div class="pago-acciones">
+                            <form method="POST" action="/admin/citas/<%= cita.id %>/confirmar-pago" onsubmit="return confirm('¿Confirmas que recibiste <%= formatearPesos(cita.monto_reserva) %> de <%= cita.cliente_nombre.replace(/'/g, '') %>?');">
+                                <button type="submit" class="btn-ok">✓ Confirmar recepción del pago</button>
+                            </form>
+                            <form method="POST" action="/admin/citas/<%= cita.id %>/rechazar-pago" onsubmit="return confirm('¿Liberar este horario? La reserva se cancelará.');">
+                                <button type="submit" class="btn-delete">No llegó / liberar horario</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Próximas citas confirmadas (<%= citas.length %>)</h2>
             <% if (citas.length === 0) { %>
-                <div class="empty-state">No tienes citas agendadas próximamente.</div>
+                <div class="empty-state">No tienes citas confirmadas próximamente.</div>
             <% } else { %>
                 <table>
                     <thead>
                         <tr>
                             <th>Cliente</th>
-                            <th>RUT</th>
-                            <th>Gestión</th>
                             <th>Fecha y hora</th>
-                            <th>Duración</th>
+                            <th>Gestión</th>
+                            <th>Consulta</th>
+                            <th>Pago</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <% citas.forEach(function (cita) { %>
                             <tr>
-                                <td><%= cita.cliente_nombre %></td>
-                                <td><%= cita.cliente_rut %></td>
+                                <td><%= cita.cliente_nombre %><br><span class="meta" style="font-size: 0.78rem; color: #64748b;"><%= cita.cliente_rut %></span></td>
+                                <td><%= formatearFecha(cita.fecha_inicio) %><br><span style="font-size: 0.78rem; color: #64748b;"><%= cita.duracion_minutos %> min</span></td>
                                 <td><%= cita.tipo_subsidio || '—' %></td>
-                                <td><%= formatearFecha(cita.fecha_inicio) %></td>
-                                <td><%= cita.duracion_minutos %> min</td>
+                                <td style="max-width: 280px; white-space: pre-wrap;"><%= cita.motivo || '—' %></td>
+                                <td>
+                                    <% if (cita.pago_estado === 'recibido') { %>
+                                        <span class="tag tag-ok">Abono <%= formatearPesos(cita.monto_reserva) %> recibido</span>
+                                    <% } else { %>
+                                        <span style="font-size: 0.8rem; color: #94a3b8;">Sin abono</span>
+                                    <% } %>
+                                </td>
                                 <td>
                                     <form method="POST" action="/admin/citas/<%= cita.id %>/cancelar" onsubmit="return confirm('¿Cancelar esta cita?');" style="display: inline;">
                                         <button type="submit" class="btn-delete">Cancelar</button>
@@ -56,6 +128,35 @@
                         <% }); %>
                     </tbody>
                 </table>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Mi agenda: horarios libres y ocupados</h2>
+            <p class="section-sub">Próximos 21 días según tu disponibilidad semanal. En verde, lo que aún está libre para reservar.</p>
+            <% if (!hayDisponibilidad) { %>
+                <div class="empty-state">Aún no defines tu disponibilidad. <a href="/admin/disponibilidad">Agrega tus bloques de horario</a> para que los clientes puedan reservar.</div>
+            <% } else if (diasAgenda.length === 0) { %>
+                <div class="empty-state">No quedan horarios dentro de los próximos días.</div>
+            <% } else { %>
+                <% diasAgenda.forEach(function (dia) { %>
+                    <div class="dia-agenda">
+                        <h3><%= formatearDiaLargo(dia.fecha) %></h3>
+                        <% dia.items.forEach(function (it) { %>
+                            <% if (it.tipo === 'libre') { %>
+                                <div class="franja libre"><span class="hora"><%= formatearHora(it.inicio) %> – <%= formatearHora(it.fin) %></span><span class="detalle">Libre</span></div>
+                            <% } else { %>
+                                <div class="franja cita<%= it.cita.estado === 'pendiente_pago' ? ' pendiente' : '' %>">
+                                    <span class="hora"><%= formatearHora(it.inicio) %> – <%= formatearHora(it.fin) %></span>
+                                    <span class="detalle">
+                                        <strong><%= it.cita.cliente_nombre %></strong> · <%= it.cita.tipo_subsidio || 'Gestión' %><%= it.cita.estado === 'pendiente_pago' ? ' · pago pendiente' : '' %>
+                                        <% if (it.cita.motivo) { %><small><%= it.cita.motivo %></small><% } %>
+                                    </span>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    </div>
+                <% }); %>
             <% } %>
         </div>
     </main>

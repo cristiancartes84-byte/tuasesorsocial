@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos de pago | Tu Asesor Social</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <%- include('../partials/app-styles') %>
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header-title">
+            <%- include('../partials/brand-mark') %>
+            <h1>Datos de pago y tarifas</h1>
+        </div>
+        <div class="admin-topbar-right">
+            <a href="/admin/citas">&larr; Volver a citas</a>
+            <%- include('../partials/admin-topbar') %>
+        </div>
+    </header>
+    <main class="app-main" style="max-width: 640px;">
+        <% if (error) { %>
+            <div class="form-error"><%= error %></div>
+        <% } %>
+        <% if (guardado) { %>
+            <div class="success-banner" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;padding:0.9rem 1.1rem;border-radius:12px;margin-bottom:1rem;font-weight:600;font-size:0.9rem;">✅ Cambios guardados.</div>
+        <% } %>
+
+        <form method="POST" action="/admin/pagos" class="stacked">
+            <div class="card">
+                <h2>Tarifas por sesión</h2>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                    El cliente debe abonar el <strong><%= porcentaje %>%</strong> para reservar; el resto se paga en la sesión. Si dejas una tarifa en 0, ese tipo de sesión se reserva sin abono (queda confirmada de inmediato).
+                </p>
+                <label for="precio_sesion">Valor sesión (subsidios, orientación, etc.) en pesos</label>
+                <input type="text" inputmode="numeric" id="precio_sesion" name="precio_sesion" value="<%= parseInt(config.precio_sesion, 10) || '' %>" placeholder="Ej: 20000">
+
+                <label for="precio_informe">Valor sesión de Informes Sociales (120 min) en pesos</label>
+                <input type="text" inputmode="numeric" id="precio_informe" name="precio_informe" value="<%= parseInt(config.precio_informe, 10) || '' %>" placeholder="Ej: 45000">
+            </div>
+
+            <div class="card">
+                <h2>Datos para la transferencia</h2>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Se muestran al cliente al reservar y se envían en el correo de instrucciones. Una reserva queda retenida <%= horasRetencion %> horas esperando el pago.
+                </p>
+                <label for="banco">Banco</label>
+                <input type="text" id="banco" name="banco" value="<%= config.banco %>" placeholder="Ej: Banco Estado">
+
+                <label for="tipo_cuenta">Tipo de cuenta</label>
+                <input type="text" id="tipo_cuenta" name="tipo_cuenta" value="<%= config.tipo_cuenta %>" placeholder="Ej: Cuenta Vista / Cuenta RUT / Cuenta Corriente">
+
+                <label for="numero_cuenta">Número de cuenta</label>
+                <input type="text" id="numero_cuenta" name="numero_cuenta" value="<%= config.numero_cuenta %>">
+
+                <label for="titular">Nombre del titular</label>
+                <input type="text" id="titular" name="titular" value="<%= config.titular %>">
+
+                <label for="rut_titular">RUT del titular</label>
+                <input type="text" id="rut_titular" name="rut_titular" value="<%= config.rut_titular %>" placeholder="12.345.678-9">
+
+                <label for="email_pago">Correo para comprobantes (opcional)</label>
+                <input type="email" id="email_pago" name="email_pago" value="<%= config.email_pago %>">
+
+                <button type="submit" class="btn">Guardar</button>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

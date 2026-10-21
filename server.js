@@ -27,6 +27,7 @@ const PORT = process.env.PORT || 3000;
 app.locals.formatearFecha = formatearFecha;
 app.locals.formatearHora = formatearHora;
 app.locals.formatearDiaLargo = formatearDiaLargo;
+app.locals.formatearPesos = (n) => '$' + Number(n || 0).toLocaleString('es-CL');
 
 // Detrás de Traefik/Coolify: necesario para que las cookies "secure" funcionen
 app.set('trust proxy', 1);
@@ -110,7 +111,19 @@ app.post('/api/heartbeat', (req, res) => {
 // las vistas admin/* sin repetir la consulta en cada ruta.
 app.use('/admin', async (req, res, next) => {
   if (req.session.usuario && req.session.usuario.rol === 'trabajador_social') {
-    res.locals.notificacionesAdmin = casos.contarNotificacionesAdmin();
+    const notificaciones = casos.contarNotificacionesAdmin();
+    agenda.listarPagosPendientesAdmin()
+      .filter((c) => c.pago_estado === 'informado')
+      .forEach((c) => {
+        notificaciones.items.unshift({
+          url: '/admin/citas',
+          clienteNombre: c.cliente_nombre,
+          tipoSubsidio: c.tipo_subsidio || 'Hora agendada',
+          detalle: `Informó transferencia de ${app.locals.formatearPesos(c.monto_reserva)}: confirma el pago`,
+        });
+        notificaciones.total += 1;
+      });
+    res.locals.notificacionesAdmin = notificaciones;
     res.locals.cuentaActual = obtenerUsuarioPorId(req.session.usuario.id);
     res.locals.qrSitio = await obtenerQrSitio();
   }
@@ -319,61 +332,56 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
   res.download(rutaArchivo(documento), documento.nombre_original);
 });
 
-app.get('/portal/agenda', requireRole('cliente'), (req, res) => {
+// Datos comunes de la vista de agenda del cliente.
+function datosAgendaCliente(req, casoSeleccionado, extra = {}) {
   const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
-  const misCitas = agenda.listarCitasDeUsuario(req.session.usuario.id);
-
-  if (misCasos.length === 0) {
-    return res.render('portal/agenda', {
-      usuario: req.session.usuario,
-      misCasos: [],
-      casoSeleccionado: null,
-      duracion: null,
-      diasConSlots: [],
-      misCitas,
-      error: null,
-      reservado: false,
-    });
-  }
-
-  const casoIdQuery = parseInt(req.query.caso_id, 10);
-  const casoSeleccionado = misCasos.find((c) => c.id === casoIdQuery) || misCasos[0];
-  const duracion = agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio);
-  const diasConSlots = agenda.generarSlotsDisponibles(duracion);
-
-  res.render('portal/agenda', {
+  const caso = casoSeleccionado || misCasos[0] || null;
+  const duracion = caso ? agenda.duracionParaTipo(caso.tipo_subsidio) : null;
+  const config = agenda.obtenerConfigPago();
+  return {
     usuario: req.session.usuario,
     misCasos,
-    casoSeleccionado,
+    casoSeleccionado: caso,
     duracion,
-    diasConSlots,
-    misCitas,
+    diasConSlots: duracion ? agenda.generarSlotsDisponibles(duracion) : [],
+    misCitas: agenda.listarCitasDeUsuario(req.session.usuario.id),
+    config,
+    montos: caso ? agenda.calcularMontos(caso.tipo_subsidio, config) : { total: 0, reserva: 0 },
+    horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    motivo: '',
     error: null,
-    reservado: req.query.reservado === '1',
-  });
+    reservado: null,
+    ...extra,
+  };
+}
+
+app.get('/portal/agenda', requireRole('cliente'), (req, res) => {
+  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
+  const casoIdQuery = parseInt(req.query.caso_id, 10);
+  const casoSeleccionado = misCasos.find((c) => c.id === casoIdQuery) || misCasos[0] || null;
+  res.render('portal/agenda', datosAgendaCliente(req, casoSeleccionado, {
+    reservado: req.query.reservado || null,
+    pagoInformado: req.query.pago === 'informado',
+  }));
 });
 
 app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => {
   const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
   const casoSeleccionado = misCasos.find((c) => c.id === parseInt(req.body.caso_id, 10));
   const inicioSolicitado = req.body.inicio;
+  const motivo = String(req.body.motivo || '').trim().slice(0, 500);
 
-  const renderError = (mensaje) => {
-    const duracion = casoSeleccionado ? agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio) : null;
-    return res.status(400).render('portal/agenda', {
-      usuario: req.session.usuario,
-      misCasos,
-      casoSeleccionado: casoSeleccionado || misCasos[0] || null,
-      duracion,
-      diasConSlots: duracion ? agenda.generarSlotsDisponibles(duracion) : [],
-      misCitas: agenda.listarCitasDeUsuario(req.session.usuario.id),
-      error: mensaje,
-      reservado: false,
-    });
-  };
+  const renderError = (mensaje) => res.status(400).render('portal/agenda',
+    datosAgendaCliente(req, casoSeleccionado, { error: mensaje, motivo }));
 
   if (!casoSeleccionado) {
     return renderError('Selecciona una gestión válida para agendar.');
+  }
+  if (!inicioSolicitado) {
+    return renderError('Elige el día y la hora que quieres reservar.');
+  }
+  if (motivo.length < 5) {
+    return renderError('Cuéntanos brevemente de qué trata tu consulta (mínimo 5 caracteres).');
   }
 
   const duracion = agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio);
@@ -388,12 +396,19 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
     return renderError('Ese horario ya no está disponible, elige otro.');
   }
 
+  const config = agenda.obtenerConfigPago();
+  const montos = agenda.calcularMontos(casoSeleccionado.tipo_subsidio, config);
+  const exigePago = montos.reserva > 0 && agenda.datosPagoCompletos(config);
+
   const resultado = agenda.crearCita({
     usuarioId: req.session.usuario.id,
     casoId: casoSeleccionado.id,
     inicio: slotValido.inicio,
     fin: slotValido.fin,
     duracionMinutos: duracion,
+    motivo,
+    montoTotal: exigePago ? montos.total : 0,
+    montoReserva: exigePago ? montos.reserva : 0,
   });
 
   if (!resultado.ok) {
@@ -402,18 +417,48 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
 
   const fechaFmt = formatearDiaLargo(slotValido.inicio);
   const horaFmt = formatearHora(slotValido.inicio);
-  await mailer.confirmarCitaCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
+  const pago = resultado.requierePago ? { monto: montos.reserva, estado: 'pendiente' } : null;
+
+  if (resultado.requierePago) {
+    await mailer.instruccionesPagoCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, {
+      ...config, monto: montos.reserva, codigo: `CITA-${resultado.citaId}`, horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    });
+  } else {
+    await mailer.confirmarCitaCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
+  }
   for (const trabajador of casos.listarTrabajadoresSociales()) {
-    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
+    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion, motivo, pago);
   }
 
-  res.redirect('/portal/agenda?reservado=1');
+  res.redirect(`/portal/agenda?reservado=${resultado.citaId}`);
+});
+
+// El cliente avisa que ya transfirió el abono.
+app.post('/portal/agenda/:id/informar-pago', requireRole('cliente'), async (req, res) => {
+  const cita = agenda.obtenerCita(req.params.id);
+  if (!cita || cita.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Hora no encontrada</h1>');
+  }
+  if (cita.estado === 'pendiente_pago' && cita.pago_estado === 'pendiente') {
+    agenda.informarPago(cita.id);
+    const fechaFmt = formatearDiaLargo(cita.fecha_inicio);
+    const horaFmt = formatearHora(cita.fecha_inicio);
+    for (const trabajador of casos.listarTrabajadoresSociales()) {
+      await mailer.avisarPagoInformadoAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, cita.monto_reserva);
+    }
+  }
+  res.redirect('/portal/agenda?pago=informado');
 });
 
 app.post('/portal/agenda/:id/cancelar', requireRole('cliente'), (req, res) => {
   const cita = agenda.obtenerCita(req.params.id);
   if (!cita || cita.usuario_id !== req.session.usuario.id) {
     return res.status(404).send('<h1>Hora no encontrada</h1>');
+  }
+  // Con el abono ya recibido, cancelar o reagendar se coordina con la
+  // trabajadora social (el abono no se devuelve automáticamente).
+  if (cita.pago_estado === 'recibido') {
+    return res.status(400).send('<h1>Esta hora ya tiene el abono confirmado</h1><p>Para cancelarla o reagendarla, escríbele a tu trabajadora social por WhatsApp.</p><p><a href="/portal/agenda">Volver a mi agenda</a></p>');
   }
   agenda.cancelarCita(cita.id);
   res.redirect('/portal/agenda');
@@ -705,12 +750,72 @@ app.post('/admin/disponibilidad/:id/eliminar', requireRole('trabajador_social'),
 });
 
 app.get('/admin/citas', requireRole('trabajador_social'), (req, res) => {
-  res.render('admin/citas', { usuario: req.session.usuario, citas: agenda.listarCitasFuturasAdmin() });
+  res.render('admin/citas', {
+    usuario: req.session.usuario,
+    pagosPendientes: agenda.listarPagosPendientesAdmin(),
+    citas: agenda.listarCitasFuturasAdmin(),
+    diasAgenda: agenda.agendaAdmin(),
+    hayDisponibilidad: agenda.obtenerDisponibilidad().length > 0,
+  });
 });
 
 app.post('/admin/citas/:id/cancelar', requireRole('trabajador_social'), (req, res) => {
   agenda.cancelarCita(req.params.id);
   res.redirect('/admin/citas');
+});
+
+// Francis confirma que el abono llegó a su cuenta: la hora queda confirmada.
+app.post('/admin/citas/:id/confirmar-pago', requireRole('trabajador_social'), async (req, res) => {
+  const cita = agenda.obtenerCita(req.params.id);
+  if (cita && agenda.confirmarPago(cita.id)) {
+    const cliente = obtenerUsuarioPorId(cita.usuario_id);
+    if (cliente) {
+      await mailer.confirmarCitaCliente(cliente.email, cliente.nombre, formatearDiaLargo(cita.fecha_inicio), formatearHora(cita.fecha_inicio), cita.duracion_minutos);
+    }
+  }
+  res.redirect('/admin/citas');
+});
+
+// No llegó el dinero (o no corresponde): se libera el horario.
+app.post('/admin/citas/:id/rechazar-pago', requireRole('trabajador_social'), (req, res) => {
+  const cita = agenda.obtenerCita(req.params.id);
+  if (cita && cita.estado === 'pendiente_pago') agenda.cancelarCita(cita.id);
+  res.redirect('/admin/citas');
+});
+
+app.get('/admin/pagos', requireRole('trabajador_social'), (req, res) => {
+  res.render('admin/pagos', {
+    usuario: req.session.usuario,
+    config: agenda.obtenerConfigPago(),
+    porcentaje: agenda.PORCENTAJE_RESERVA,
+    horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    error: null,
+    guardado: req.query.guardado === '1',
+  });
+});
+
+app.post('/admin/pagos', requireRole('trabajador_social'), (req, res) => {
+  const datos = req.body || {};
+  const precioSesion = parseInt(String(datos.precio_sesion || '').replace(/\D/g, ''), 10) || 0;
+  const precioInforme = parseInt(String(datos.precio_informe || '').replace(/\D/g, ''), 10) || 0;
+  const hayPrecio = precioSesion > 0 || precioInforme > 0;
+  const completos = agenda.datosPagoCompletos({
+    banco: String(datos.banco || '').trim(),
+    numero_cuenta: String(datos.numero_cuenta || '').trim(),
+    titular: String(datos.titular || '').trim(),
+  });
+  if (hayPrecio && !completos) {
+    return res.status(400).render('admin/pagos', {
+      usuario: req.session.usuario,
+      config: { ...agenda.obtenerConfigPago(), ...datos },
+      porcentaje: agenda.PORCENTAJE_RESERVA,
+      horasRetencion: agenda.HORAS_RETENCION_PAGO,
+      error: 'Para cobrar el abono debes completar al menos banco, número de cuenta y titular.',
+      guardado: false,
+    });
+  }
+  agenda.guardarConfigPago(datos);
+  res.redirect('/admin/pagos?guardado=1');
 });
 
 app.get('/admin/logout', (req, res) => {
