@@ -31,9 +31,9 @@
             <div class="card">
                 <h2>Tarifas por sesión</h2>
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                    El cliente debe abonar el <strong><%= porcentaje %>%</strong> para reservar; el resto se paga en la sesión. Si dejas una tarifa en 0, ese tipo de sesión se reserva sin abono (queda confirmada de inmediato).
+                    El cliente debe abonar el <strong><%= porcentaje %>%</strong> para reservar; el resto se paga en la sesión. Mientras una tarifa esté en 0 o falten los datos de transferencia, los clientes <strong>no pueden reservar</strong> ese tipo de sesión en línea.
                 </p>
-                <label for="precio_sesion">Valor sesión (subsidios, orientación, etc.) en pesos</label>
+                <label for="precio_sesion">Valor de la sesión estándar (45 min: subsidios, orientación, mediación, etc.) en pesos</label>
                 <input type="text" inputmode="numeric" id="precio_sesion" name="precio_sesion" value="<%= parseInt(config.precio_sesion, 10) || '' %>" placeholder="Ej: 20000">
 
                 <label for="precio_informe">Valor sesión de Informes Sociales (120 min) en pesos</label>
@@ -43,7 +43,7 @@
             <div class="card">
                 <h2>Datos para la transferencia</h2>
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                    Se muestran al cliente al reservar y se envían en el correo de instrucciones. Una reserva queda retenida <%= horasRetencion %> horas esperando el pago.
+                    Se muestran al cliente al reservar y se envían en el correo de instrucciones. Una reserva queda retenida <%= minutosRetencion %> minutos esperando la transferencia.
                 </p>
                 <label for="banco">Banco</label>
                 <input type="text" id="banco" name="banco" value="<%= config.banco %>" placeholder="Ej: Banco Estado">

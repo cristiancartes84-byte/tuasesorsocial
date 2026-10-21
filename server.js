@@ -332,60 +332,73 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
   res.download(rutaArchivo(documento), documento.nombre_original);
 });
 
+// Servicios que se pueden agendar: los mismos tipos de gestión del sistema.
+const SERVICIOS_AGENDA = TIPOS_SUBSIDIO.map((t) => (t === 'Otro' ? 'Otra consulta' : t));
+const servicioATipo = (servicio) => (servicio === 'Otra consulta' ? 'Otro' : servicio);
+
 // Datos comunes de la vista de agenda del cliente.
-function datosAgendaCliente(req, casoSeleccionado, extra = {}) {
+function datosAgendaCliente(req, servicioElegido, extra = {}) {
   const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
-  const caso = casoSeleccionado || misCasos[0] || null;
-  const duracion = caso ? agenda.duracionParaTipo(caso.tipo_subsidio) : null;
+  const servicio = SERVICIOS_AGENDA.includes(servicioElegido)
+    ? servicioElegido
+    : (misCasos[0] && SERVICIOS_AGENDA.includes(misCasos[0].tipo_subsidio) ? misCasos[0].tipo_subsidio : SERVICIOS_AGENDA[0]);
+  const tipo = servicioATipo(servicio);
   const config = agenda.obtenerConfigPago();
+  const duracion = agenda.duracionParaTipo(tipo);
+  const montos = agenda.calcularMontos(tipo, config);
+  const habilitada = agenda.reservaHabilitada(tipo, config);
   return {
     usuario: req.session.usuario,
-    misCasos,
-    casoSeleccionado: caso,
+    servicios: SERVICIOS_AGENDA,
+    servicioSeleccionado: servicio,
     duracion,
-    diasConSlots: duracion ? agenda.generarSlotsDisponibles(duracion) : [],
+    // Sin datos de transferencia o sin tarifa no se puede reservar (siempre se exige abono).
+    reservaHabilitada: habilitada,
+    pagoConfigurado: agenda.datosPagoCompletos(config),
+    diasConSlots: habilitada ? agenda.generarSlotsDisponibles(duracion) : [],
     misCitas: agenda.listarCitasDeUsuario(req.session.usuario.id),
     config,
-    montos: caso ? agenda.calcularMontos(caso.tipo_subsidio, config) : { total: 0, reserva: 0 },
-    horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    montos,
+    minutosRetencion: agenda.MINUTOS_RETENCION_PAGO,
     hoyClave: agenda.claveHoy(),
-    motivo: '',
+    detalle: '',
     error: null,
     reservado: null,
+    pagoInformado: false,
     ...extra,
   };
 }
 
 app.get('/portal/agenda', requireRole('cliente'), (req, res) => {
-  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
-  const casoIdQuery = parseInt(req.query.caso_id, 10);
-  const casoSeleccionado = misCasos.find((c) => c.id === casoIdQuery) || misCasos[0] || null;
-  res.render('portal/agenda', datosAgendaCliente(req, casoSeleccionado, {
+  res.render('portal/agenda', datosAgendaCliente(req, req.query.servicio, {
     reservado: req.query.reservado || null,
     pagoInformado: req.query.pago === 'informado',
   }));
 });
 
 app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => {
-  const misCasos = casos.obtenerCasosDeUsuario(req.session.usuario.id);
-  const casoSeleccionado = misCasos.find((c) => c.id === parseInt(req.body.caso_id, 10));
+  const servicio = String(req.body.servicio || '');
   const inicioSolicitado = req.body.inicio;
-  const motivo = String(req.body.motivo || '').trim().slice(0, 500);
+  const detalle = String(req.body.detalle || '').trim().slice(0, 500);
 
   const renderError = (mensaje) => res.status(400).render('portal/agenda',
-    datosAgendaCliente(req, casoSeleccionado, { error: mensaje, motivo }));
+    datosAgendaCliente(req, servicio, { error: mensaje, detalle }));
 
-  if (!casoSeleccionado) {
-    return renderError('Selecciona una gestión válida para agendar.');
+  if (!SERVICIOS_AGENDA.includes(servicio)) {
+    return renderError('Selecciona el tipo de servicio que necesitas.');
   }
   if (!inicioSolicitado) {
     return renderError('Elige el día y la hora que quieres reservar.');
   }
-  if (motivo.length < 5) {
-    return renderError('Cuéntanos brevemente de qué trata tu consulta (mínimo 5 caracteres).');
-  }
 
-  const duracion = agenda.duracionParaTipo(casoSeleccionado.tipo_subsidio);
+  const tipo = servicioATipo(servicio);
+  const config = agenda.obtenerConfigPago();
+  if (!agenda.reservaHabilitada(tipo, config)) {
+    return renderError('La reserva en línea de este servicio aún no está habilitada. Escríbele a tu trabajadora social por WhatsApp.');
+  }
+  const montos = agenda.calcularMontos(tipo, config);
+
+  const duracion = agenda.duracionParaTipo(tipo);
   const diasConSlots = agenda.generarSlotsDisponibles(duracion);
   let slotValido = null;
   for (const dia of diasConSlots) {
@@ -397,19 +410,19 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
     return renderError('Ese horario ya no está disponible, elige otro.');
   }
 
-  const config = agenda.obtenerConfigPago();
-  const montos = agenda.calcularMontos(casoSeleccionado.tipo_subsidio, config);
-  const exigePago = montos.reserva > 0 && agenda.datosPagoCompletos(config);
+  // Si el cliente tiene una gestión abierta de este mismo servicio, se asocia a ella.
+  const casoRelacionado = casos.obtenerCasosDeUsuario(req.session.usuario.id).find((c) => c.tipo_subsidio === tipo);
 
   const resultado = agenda.crearCita({
     usuarioId: req.session.usuario.id,
-    casoId: casoSeleccionado.id,
+    casoId: casoRelacionado ? casoRelacionado.id : null,
     inicio: slotValido.inicio,
     fin: slotValido.fin,
     duracionMinutos: duracion,
-    motivo,
-    montoTotal: exigePago ? montos.total : 0,
-    montoReserva: exigePago ? montos.reserva : 0,
+    servicio,
+    motivo: detalle,
+    montoTotal: montos.total,
+    montoReserva: montos.reserva,
   });
 
   if (!resultado.ok) {
@@ -418,17 +431,12 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
 
   const fechaFmt = formatearDiaLargo(slotValido.inicio);
   const horaFmt = formatearHora(slotValido.inicio);
-  const pago = resultado.requierePago ? { monto: montos.reserva, estado: 'pendiente' } : null;
 
-  if (resultado.requierePago) {
-    await mailer.instruccionesPagoCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, {
-      ...config, monto: montos.reserva, codigo: `CITA-${resultado.citaId}`, horasRetencion: agenda.HORAS_RETENCION_PAGO,
-    });
-  } else {
-    await mailer.confirmarCitaCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
-  }
+  await mailer.instruccionesPagoCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, {
+    ...config, monto: montos.reserva, codigo: `CITA-${resultado.citaId}`, minutosRetencion: agenda.MINUTOS_RETENCION_PAGO,
+  });
   for (const trabajador of casos.listarTrabajadoresSociales()) {
-    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion, motivo, pago);
+    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion, detalle, { monto: montos.reserva, estado: 'pendiente' }, servicio);
   }
 
   res.redirect(`/portal/agenda?reservado=${resultado.citaId}`);
@@ -754,8 +762,11 @@ app.get('/admin/citas', requireRole('trabajador_social'), (req, res) => {
   res.render('admin/citas', {
     usuario: req.session.usuario,
     pagosPendientes: agenda.listarPagosPendientesAdmin(),
+    vencidas: agenda.listarVencidasRecientesAdmin(),
     citas: agenda.listarCitasFuturasAdmin(),
     diasAgenda: agenda.agendaAdmin(),
+    reservasHabilitadas: agenda.reservaHabilitada('Informes Sociales') && agenda.reservaHabilitada('Gestión de Subsidios Estatales'),
+    minutosRetencion: agenda.MINUTOS_RETENCION_PAGO,
     hayDisponibilidad: agenda.obtenerDisponibilidad().length > 0,
   });
 });
@@ -789,7 +800,7 @@ app.get('/admin/pagos', requireRole('trabajador_social'), (req, res) => {
     usuario: req.session.usuario,
     config: agenda.obtenerConfigPago(),
     porcentaje: agenda.PORCENTAJE_RESERVA,
-    horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    minutosRetencion: agenda.MINUTOS_RETENCION_PAGO,
     error: null,
     guardado: req.query.guardado === '1',
   });
@@ -810,7 +821,7 @@ app.post('/admin/pagos', requireRole('trabajador_social'), (req, res) => {
       usuario: req.session.usuario,
       config: { ...agenda.obtenerConfigPago(), ...datos },
       porcentaje: agenda.PORCENTAJE_RESERVA,
-      horasRetencion: agenda.HORAS_RETENCION_PAGO,
+      minutosRetencion: agenda.MINUTOS_RETENCION_PAGO,
       error: 'Para cobrar el abono debes completar al menos banco, número de cuenta y titular.',
       guardado: false,
     });

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citas agendadas | Tu Asesor Social</title>
     <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="60">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
     <style>
@@ -50,9 +51,16 @@
             <a href="/admin/pagos" class="btn btn-secondary">Datos de pago y tarifas</a>
         </div>
 
+        <% if (!reservasHabilitadas) { %>
+            <div class="form-error">
+                ⚠️ Los clientes <strong>aún no pueden reservar</strong>: faltan las tarifas o los datos de transferencia.
+                <a href="/admin/pagos">Completa los datos de pago y tarifas</a> para habilitar la agenda en línea.
+            </div>
+        <% } %>
+
         <div class="card">
             <h2 class="section-title">Pagos por confirmar (<%= pagosPendientes.length %>)</h2>
-            <p class="section-sub">Reservas que esperan el abono del 50%. Cuando veas la transferencia en tu cuenta, confirma la recepción para aprobar la hora. Las que no se paguen dentro del plazo se liberan solas.</p>
+            <p class="section-sub">Reservas que esperan el abono del 50%. El cliente tiene <%= minutosRetencion %> minutos para transferir. Cuando veas el dinero en tu cuenta, marca que lo recibiste y la hora queda confirmada para ese cliente. Si no avisa dentro del plazo, el horario se libera solo.</p>
             <% if (pagosPendientes.length === 0) { %>
                 <div class="empty-state">No hay reservas esperando pago.</div>
             <% } else { %>
@@ -61,7 +69,7 @@
                         <div class="pago-item-top">
                             <div>
                                 <strong><%= cita.cliente_nombre %></strong> <span class="meta">· <%= cita.cliente_rut %></span><br>
-                                <span class="meta"><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %> · <%= cita.duracion_minutos %> min · <%= cita.tipo_subsidio || 'Gestión' %></span>
+                                <span class="meta"><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %> · <%= cita.duracion_minutos %> min · <%= cita.servicio || cita.tipo_subsidio || 'Gestión' %></span>
                             </div>
                             <div style="text-align: right;">
                                 <strong><%= formatearPesos(cita.monto_reserva) %></strong><br>
@@ -73,9 +81,9 @@
                             </div>
                         </div>
                         <div class="meta" style="margin-top: 0.4rem;">Código de referencia: <strong>CITA-<%= cita.id %></strong>
-                            <% if (cita.pago_estado === 'pendiente' && cita.expira_en) { %> · se libera el <%= formatearFecha(cita.expira_en) %><% } %>
+                            <% if (cita.pago_estado === 'pendiente' && cita.expira_en) { %> · se libera a las <%= formatearHora(cita.expira_en) %> si no avisa<% } %>
                         </div>
-                        <% if (cita.motivo) { %><div class="motivo"><strong>Consulta:</strong> <%= cita.motivo %></div><% } %>
+                        <% if (cita.motivo) { %><div class="motivo"><strong>Detalle:</strong> <%= cita.motivo %></div><% } %>
                         <div class="pago-acciones">
                             <form method="POST" action="/admin/citas/<%= cita.id %>/confirmar-pago" onsubmit="return confirm('¿Confirmas que recibiste <%= formatearPesos(cita.monto_reserva) %> de <%= cita.cliente_nombre.replace(/'/g, '') %>?');">
                                 <button type="submit" class="btn-ok">✓ Confirmar recepción del pago</button>
@@ -89,6 +97,29 @@
             <% } %>
         </div>
 
+        <% if (vencidas.length > 0) { %>
+            <div class="card">
+                <h2 class="section-title">Reservas vencidas (últimas 24 h)</h2>
+                <p class="section-sub">No avisaron su transferencia a tiempo y el horario se liberó. Si el dinero sí llegó a tu cuenta, puedes confirmarlas igual (mientras el horario siga libre).</p>
+                <% vencidas.forEach(function (cita) { %>
+                    <div class="pago-item">
+                        <div class="pago-item-top">
+                            <div>
+                                <strong><%= cita.cliente_nombre %></strong> <span class="meta">· <%= cita.cliente_rut %></span><br>
+                                <span class="meta"><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %> · <%= cita.servicio || cita.tipo_subsidio || 'Gestión' %> · CITA-<%= cita.id %></span>
+                            </div>
+                            <strong><%= formatearPesos(cita.monto_reserva) %></strong>
+                        </div>
+                        <div class="pago-acciones">
+                            <form method="POST" action="/admin/citas/<%= cita.id %>/confirmar-pago" onsubmit="return confirm('¿Confirmas que recibiste el pago de esta reserva vencida?');">
+                                <button type="submit" class="btn-ok">✓ Recibí el pago: confirmar hora</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
         <div class="card">
             <h2 class="section-title">Próximas citas confirmadas (<%= citas.length %>)</h2>
             <% if (citas.length === 0) { %>
@@ -99,8 +130,8 @@
                         <tr>
                             <th>Cliente</th>
                             <th>Fecha y hora</th>
-                            <th>Gestión</th>
-                            <th>Consulta</th>
+                            <th>Servicio</th>
+                            <th>Detalle</th>
                             <th>Pago</th>
                             <th></th>
                         </tr>
@@ -110,7 +141,7 @@
                             <tr>
                                 <td><%= cita.cliente_nombre %><br><span class="meta" style="font-size: 0.78rem; color: #64748b;"><%= cita.cliente_rut %></span></td>
                                 <td><%= formatearFecha(cita.fecha_inicio) %><br><span style="font-size: 0.78rem; color: #64748b;"><%= cita.duracion_minutos %> min</span></td>
-                                <td><%= cita.tipo_subsidio || '—' %></td>
+                                <td><%= cita.servicio || cita.tipo_subsidio || '—' %></td>
                                 <td style="max-width: 280px; white-space: pre-wrap;"><%= cita.motivo || '—' %></td>
                                 <td>
                                     <% if (cita.pago_estado === 'recibido') { %>
@@ -149,7 +180,7 @@
                                 <div class="franja cita<%= it.cita.estado === 'pendiente_pago' ? ' pendiente' : '' %>">
                                     <span class="hora"><%= formatearHora(it.inicio) %> – <%= formatearHora(it.fin) %></span>
                                     <span class="detalle">
-                                        <strong><%= it.cita.cliente_nombre %></strong> · <%= it.cita.tipo_subsidio || 'Gestión' %><%= it.cita.estado === 'pendiente_pago' ? ' · pago pendiente' : '' %>
+                                        <strong><%= it.cita.cliente_nombre %></strong> · <%= it.cita.servicio || it.cita.tipo_subsidio || 'Gestión' %><%= it.cita.estado === 'pendiente_pago' ? ' · pago pendiente' : '' %>
                                         <% if (it.cita.motivo) { %><small><%= it.cita.motivo %></small><% } %>
                                     </span>
                                 </div>
