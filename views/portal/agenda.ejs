@@ -9,22 +9,48 @@
     <%- include('../partials/app-styles') %>
     <%- include('../partials/dashboard-styles') %>
     <style>
-        .slot-opt { position: relative; }
-        .slot-opt input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
-        .slot-opt span {
-            display: block;
-            padding: 0.55rem 1rem;
-            border-radius: 10px;
-            border: 1.5px solid #dbeafe;
-            background: #f8fafc;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #2563eb;
+        .cal-wrap { display: grid; grid-template-columns: minmax(280px, 340px) 1fr; gap: 1.5rem; align-items: start; }
+        @media (max-width: 760px) { .cal-wrap { grid-template-columns: 1fr; } }
+        .cal { border: 1px solid #e2e8f0; border-radius: 16px; padding: 1rem; background: #fff; }
+        .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+        .cal-head strong { font-size: 0.98rem; color: #1f2937; text-transform: capitalize; }
+        .cal-nav { width: 32px; height: 32px; border-radius: 50%; border: none; background: #f1f5f9; color: #334155; cursor: pointer; font-size: 1.1rem; line-height: 1; }
+        .cal-nav:hover:not(:disabled) { background: #e2e8f0; }
+        .cal-nav:disabled { opacity: 0.3; cursor: default; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+        .cal-dow { font-size: 0.7rem; font-weight: 700; color: #94a3b8; padding: 0.3rem 0; text-transform: uppercase; }
+        .cal-day {
+            aspect-ratio: 1; border: none; background: none; border-radius: 50%; font: inherit; font-size: 0.85rem;
+            color: #cbd5e1; cursor: default; position: relative; display: flex; align-items: center; justify-content: center;
         }
-        .slot-opt:hover span { background: #eff6ff; border-color: #2563eb; }
-        .slot-opt input:checked + span { background: linear-gradient(135deg, #2563eb 0%, #059669 100%); color: #fff; border-color: transparent; }
-        .slot-opt input:focus-visible + span { outline: 3px solid #93c5fd; outline-offset: 2px; }
+        .cal-day.libre { color: #1d4ed8; font-weight: 700; background: #eff6ff; cursor: pointer; }
+        .cal-day.libre:hover { background: #dbeafe; }
+        .cal-day.hoy:not(.sel) { box-shadow: inset 0 0 0 2px #93c5fd; }
+        .cal-day.sel { background: linear-gradient(135deg, #2563eb 0%, #059669 100%); color: #fff; font-weight: 700; }
+        .cal-leyenda { font-size: 0.74rem; color: #94a3b8; margin-top: 0.7rem; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+        .cal-leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #dbeafe; margin-right: 0.3rem; vertical-align: -1px; }
 
+        .cal-slots h3 { font-size: 1rem; color: #1f2937; text-transform: capitalize; margin-bottom: 0.15rem; }
+        .cal-slots .sub { font-size: 0.8rem; color: #64748b; margin-bottom: 0.9rem; }
+        .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 0.5rem; }
+        .slot-chip {
+            padding: 0.6rem 0.4rem; border-radius: 12px; border: 1.5px solid #dbeafe; background: #fff; cursor: pointer;
+            font: inherit; font-size: 0.9rem; font-weight: 700; color: #2563eb; text-align: center;
+        }
+        .slot-chip small { display: block; font-size: 0.68rem; font-weight: 500; color: #94a3b8; margin-top: 0.1rem; }
+        .slot-chip:hover { background: #eff6ff; border-color: #2563eb; }
+        .slot-chip.sel { background: linear-gradient(135deg, #2563eb 0%, #059669 100%); color: #fff; border-color: transparent; }
+        .slot-chip.sel small { color: rgba(255,255,255,0.85); }
+
+        .resumen {
+            display: none; margin-top: 1.25rem; padding: 1.1rem 1.2rem; border-radius: 16px;
+            background: #f8fafc; border: 1.5px solid #bfdbfe;
+        }
+        .resumen.activo { display: block; }
+        .resumen-top { display: flex; gap: 0.9rem; align-items: center; margin-bottom: 0.9rem; flex-wrap: wrap; }
+        .resumen-fecha { font-size: 1.05rem; font-weight: 800; color: #1f2937; text-transform: capitalize; }
+        .resumen-det { font-size: 0.82rem; color: #64748b; }
+        .resumen-badge { margin-left: auto; font-size: 0.8rem; font-weight: 700; color: #92400e; background: #fef3c7; padding: 0.25rem 0.7rem; border-radius: 100px; }
         .reserva-form { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; }
         .reserva-form label { display: block; font-weight: 700; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem; }
         .reserva-form textarea {
@@ -181,23 +207,52 @@
                             Tu trabajadora social todavía no tiene horarios disponibles publicados. Contáctala por WhatsApp si necesitas agendar.
                         </div>
                     <% } else { %>
-                        <form method="POST" action="/portal/agenda/reservar" id="formReserva">
-                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
-                            <% diasConSlots.forEach(function (dia) { %>
-                                <div class="agenda-dia">
-                                    <div class="agenda-dia-titulo"><%= formatearDiaLargo(dia.fecha) %></div>
-                                    <div class="agenda-slots">
-                                        <% dia.slots.forEach(function (slot) { %>
-                                            <label class="slot-opt">
-                                                <input type="radio" name="inicio" value="<%= slot.inicio.toISOString() %>" required>
-                                                <span><%= formatearHora(slot.inicio) %></span>
-                                            </label>
-                                        <% }); %>
-                                    </div>
-                                </div>
-                            <% }); %>
+                        <%
+                            var datosAgenda = {
+                                hoy: hoyClave,
+                                dias: diasConSlots.map(function (d) {
+                                    return {
+                                        clave: d.clave,
+                                        etiqueta: formatearDiaLargo(d.fecha),
+                                        slots: d.slots.map(function (sl) {
+                                            return { iso: sl.inicio.toISOString(), hora: formatearHora(sl.inicio), fin: formatearHora(sl.fin) };
+                                        })
+                                    };
+                                })
+                            };
+                        %>
+                        <script type="application/json" id="agendaData"><%- JSON.stringify(datosAgenda).replace(/</g, '\\u003c') %></script>
 
-                            <div class="reserva-form">
+                        <div class="cal-wrap">
+                            <div class="cal">
+                                <div class="cal-head">
+                                    <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior">&lsaquo;</button>
+                                    <strong id="calTitulo"></strong>
+                                    <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente">&rsaquo;</button>
+                                </div>
+                                <div class="cal-grid" id="calGrid"></div>
+                                <div class="cal-leyenda"><span><i></i>Días con horas disponibles</span></div>
+                            </div>
+                            <div class="cal-slots">
+                                <h3 id="slotsTitulo"></h3>
+                                <p class="sub" id="slotsSub"></p>
+                                <div class="slot-grid" id="slotGrid"></div>
+                            </div>
+                        </div>
+
+                        <form method="POST" action="/portal/agenda/reservar" id="formReserva" class="resumen">
+                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
+                            <input type="hidden" name="inicio" id="inicioInput" value="">
+                            <div class="resumen-top">
+                                <div>
+                                    <div class="resumen-fecha" id="resFecha"></div>
+                                    <div class="resumen-det" id="resDet"></div>
+                                </div>
+                                <% if (montos.reserva > 0 && pagoCfgListo) { %>
+                                    <span class="resumen-badge">Abono 50%: <%= formatearPesos(montos.reserva) %></span>
+                                <% } %>
+                            </div>
+                            <div class="reserva-form" style="margin-top: 0; padding-top: 0; border-top: none;">
                                 <label for="motivo">¿De qué trata tu consulta?</label>
                                 <textarea id="motivo" name="motivo" maxlength="500" required placeholder="Cuéntale brevemente a tu trabajadora social qué necesitas revisar en esta sesión."><%= motivo %></textarea>
                                 <p class="reserva-ayuda">Así ella puede preparar la sesión. Máximo 500 caracteres.</p>
@@ -210,6 +265,113 @@
                                 <button type="submit" class="btn-reservar">Reservar hora</button>
                             </div>
                         </form>
+
+                        <script>
+                        (function () {
+                            var datos = JSON.parse(document.getElementById('agendaData').textContent);
+                            var duracion = <%= duracion %>;
+                            var porClave = {};
+                            datos.dias.forEach(function (d) { porClave[d.clave] = d; });
+                            var primera = datos.dias[0].clave.split('-');
+                            var mes = { y: +primera[0], m: +primera[1] };
+                            var ultima = datos.dias[datos.dias.length - 1].clave.split('-');
+                            var mesMin = { y: +primera[0], m: +primera[1] };
+                            var mesMax = { y: +ultima[0], m: +ultima[1] };
+                            var seleccionDia = null, seleccionSlot = null;
+                            var NOMBRES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                            var DOW = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+                            var grid = document.getElementById('calGrid');
+                            var titulo = document.getElementById('calTitulo');
+                            var prev = document.getElementById('calPrev');
+                            var next = document.getElementById('calNext');
+                            var slotGrid = document.getElementById('slotGrid');
+                            var form = document.getElementById('formReserva');
+
+                            function pad(n) { return (n < 10 ? '0' : '') + n; }
+                            function cmp(a, b) { return (a.y - b.y) * 12 + (a.m - b.m); }
+
+                            function pintarMes() {
+                                titulo.textContent = NOMBRES[mes.m - 1] + ' ' + mes.y;
+                                prev.disabled = cmp(mes, mesMin) <= 0;
+                                next.disabled = cmp(mes, mesMax) >= 0;
+                                grid.innerHTML = '';
+                                DOW.forEach(function (d) { var e = document.createElement('div'); e.className = 'cal-dow'; e.textContent = d; grid.appendChild(e); });
+                                var primero = new Date(mes.y, mes.m - 1, 1);
+                                var offset = (primero.getDay() + 6) % 7;
+                                var diasMes = new Date(mes.y, mes.m, 0).getDate();
+                                for (var i = 0; i < offset; i++) grid.appendChild(document.createElement('div'));
+                                for (var d = 1; d <= diasMes; d++) {
+                                    var clave = mes.y + '-' + pad(mes.m) + '-' + pad(d);
+                                    var b = document.createElement('button');
+                                    b.type = 'button';
+                                    b.textContent = d;
+                                    b.className = 'cal-day';
+                                    if (porClave[clave]) { b.className += ' libre'; b.setAttribute('data-clave', clave); }
+                                    else b.disabled = true;
+                                    if (clave === datos.hoy) b.className += ' hoy';
+                                    if (clave === seleccionDia) b.className += ' sel';
+                                    grid.appendChild(b);
+                                }
+                            }
+
+                            function pintarSlots() {
+                                var dia = porClave[seleccionDia];
+                                document.getElementById('slotsTitulo').textContent = dia.etiqueta;
+                                document.getElementById('slotsSub').textContent = dia.slots.length + (dia.slots.length === 1 ? ' hora disponible' : ' horas disponibles') + ' · sesión de ' + duracion + ' min · hora de Santiago';
+                                slotGrid.innerHTML = '';
+                                dia.slots.forEach(function (sl) {
+                                    var b = document.createElement('button');
+                                    b.type = 'button';
+                                    b.className = 'slot-chip' + (sl.iso === seleccionSlot ? ' sel' : '');
+                                    b.setAttribute('data-iso', sl.iso);
+                                    b.innerHTML = sl.hora + '<small>hasta ' + sl.fin + '</small>';
+                                    slotGrid.appendChild(b);
+                                });
+                            }
+
+                            function elegirDia(clave) {
+                                seleccionDia = clave;
+                                var p = clave.split('-');
+                                mes = { y: +p[0], m: +p[1] };
+                                if (seleccionSlot && !porClave[clave].slots.some(function (s) { return s.iso === seleccionSlot; })) {
+                                    seleccionSlot = null;
+                                    form.classList.remove('activo');
+                                    document.getElementById('inicioInput').value = '';
+                                }
+                                pintarMes();
+                                pintarSlots();
+                            }
+
+                            function elegirSlot(iso) {
+                                seleccionSlot = iso;
+                                var dia = porClave[seleccionDia];
+                                var sl = dia.slots.filter(function (s) { return s.iso === iso; })[0];
+                                document.getElementById('inicioInput').value = iso;
+                                document.getElementById('resFecha').textContent = dia.etiqueta + ', ' + sl.hora;
+                                document.getElementById('resDet').textContent = '<%= casoSeleccionado.tipo_subsidio %> · ' + duracion + ' min (hasta las ' + sl.fin + ')';
+                                form.classList.add('activo');
+                                pintarSlots();
+                                form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+
+                            grid.addEventListener('click', function (e) {
+                                var b = e.target.closest('.cal-day.libre');
+                                if (b) elegirDia(b.getAttribute('data-clave'));
+                            });
+                            slotGrid.addEventListener('click', function (e) {
+                                var b = e.target.closest('.slot-chip');
+                                if (b) elegirSlot(b.getAttribute('data-iso'));
+                            });
+                            prev.addEventListener('click', function () { mes = mes.m === 1 ? { y: mes.y - 1, m: 12 } : { y: mes.y, m: mes.m - 1 }; pintarMes(); });
+                            next.addEventListener('click', function () { mes = mes.m === 12 ? { y: mes.y + 1, m: 1 } : { y: mes.y, m: mes.m + 1 }; pintarMes(); });
+                            form.addEventListener('submit', function (e) {
+                                if (!document.getElementById('inicioInput').value) { e.preventDefault(); }
+                            });
+
+                            elegirDia(datos.dias[0].clave);
+                        })();
+                        </script>
                     <% } %>
                 </div>
             <% } %>
