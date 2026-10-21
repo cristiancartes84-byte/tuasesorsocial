@@ -516,8 +516,8 @@
     .user-chip.user-chip-light:hover { background: #f8fafc; }
     .user-chip.user-chip-light .user-chip-avatar { background: #e2e8f0; }
     .user-chip-avatar {
-        width: 28px;
-        height: 28px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
         display: flex;
@@ -529,11 +529,11 @@
     }
     .user-chip-name { font-size: 0.85rem; font-weight: 600; }
 
-    .user-card { width: 260px; padding: 1.5rem; text-align: center; }
+    .user-card { width: 280px; padding: 1.5rem; text-align: center; }
     .user-card-photo-wrap { position: relative; display: inline-block; margin-bottom: 0.85rem; }
     .user-card-photo {
-        width: 72px;
-        height: 72px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
         display: flex;
@@ -628,7 +628,21 @@
     .modal-card .password-toggle:hover { color: #475569; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1.25rem; }
     .user-card-qr { width: 140px; height: 140px; margin: 0 auto 0.5rem; display: block; border-radius: 8px; }
-    .user-card-qr-caption { font-size: 0.75rem; color: #94a3b8; margin-bottom: 1.1rem; }
+    .user-card-qr-caption { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    .user-card-qr-share {
+        display: inline-block;
+        background: none;
+        border: none;
+        padding: 0.2rem;
+        margin-bottom: 1.1rem;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #2563eb;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .user-card-qr-share:hover { color: #1d4ed8; }
     .user-card-link, .user-card-logout {
         display: block;
         width: 100%;
