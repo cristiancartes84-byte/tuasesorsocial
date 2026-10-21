@@ -390,9 +390,10 @@
     </div>
     <%- include('../partials/modal-cambiar-password') %>
     <script>
-        // Si hay horas esperando pago, se consulta el estado cada pocos segundos y
-        // la página se recarga sola cuando cambia (p. ej. al confirmar el abono).
-        <% var hayPendientes = misCitas.some(function (c) { return c.estado === 'pendiente_pago'; }); %>
+        // Si el cliente tiene horas reservadas (pendientes o confirmadas), se consulta
+        // el estado cada pocos segundos y la página se recarga sola cuando cambia
+        // (p. ej. al confirmar el abono o cuando la trabajadora social cancela una hora).
+        <% var hayPendientes = misCitas.length > 0; %>
         <% if (hayPendientes) { %>
         (function () {
             var inicial = <%- JSON.stringify(misCitas.map(function (c) { return c.id + ':' + c.estado + ':' + c.pago_estado; })) %>.join('|');
