@@ -348,6 +348,7 @@ function datosAgendaCliente(req, casoSeleccionado, extra = {}) {
     config,
     montos: caso ? agenda.calcularMontos(caso.tipo_subsidio, config) : { total: 0, reserva: 0 },
     horasRetencion: agenda.HORAS_RETENCION_PAGO,
+    hoyClave: agenda.claveHoy(),
     motivo: '',
     error: null,
     reservado: null,
