@@ -40,6 +40,7 @@
         <p class="user-card-status">● En línea</p>
         <img class="user-card-qr" src="<%= qrSitio %>" alt="Código QR de tuasesorsocial.cl">
         <p class="user-card-qr-caption">Comparte Tu Asesor Social con tus clientes</p>
+        <button type="button" class="user-card-qr-share" id="compartirQr">Compartir código QR</button>
         <a href="/admin/perfil" class="user-card-link">Editar mi perfil</a>
         <a href="/admin/logout" class="user-card-logout">Cerrar sesión</a>
     </div>
@@ -62,6 +63,37 @@
         setup('userToggle', 'userCard');
         document.addEventListener('click', function () {
             document.querySelectorAll('.bell-dropdown.open, .user-card.open').forEach(function (el) { el.classList.remove('open'); });
+        });
+    })();
+
+    (function () {
+        var btn = document.getElementById('compartirQr');
+        if (!btn) return;
+        var url = 'https://tuasesorsocial.cl';
+        var textoOriginal = btn.textContent;
+        function aviso(t) {
+            btn.textContent = t;
+            setTimeout(function () { btn.textContent = textoOriginal; }, 2500);
+        }
+        function copiar() {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function () { aviso('¡Enlace copiado!'); }, function () { aviso(url); });
+            } else {
+                aviso(url);
+            }
+        }
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var datos = { title: 'Tu Asesor Social', text: 'Tu Asesor Social - Asesoría social profesional', url: url };
+            if (!navigator.share) return copiar();
+            var img = document.querySelector('.user-card-qr');
+            fetch(img.src).then(function (r) { return r.blob(); }).then(function (blob) {
+                var archivo = new File([blob], 'qr-tuasesorsocial.png', { type: 'image/png' });
+                if (navigator.canShare && navigator.canShare({ files: [archivo] })) datos.files = [archivo];
+                return navigator.share(datos);
+            }).catch(function (err) {
+                if (err && err.name !== 'AbortError') copiar();
+            });
         });
     })();
 
