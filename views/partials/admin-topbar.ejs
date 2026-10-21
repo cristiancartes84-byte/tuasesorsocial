@@ -9,7 +9,7 @@
             <p class="empty">No hay nada pendiente de revisar.</p>
         <% } else { %>
             <% notificacionesAdmin.items.forEach(function (item) { %>
-                <a href="/admin/casos/<%= item.casoId %>" class="bell-item">
+                <a href="<%= item.url || ("/admin/casos/" + item.casoId) %>" class="bell-item">
                     <strong><%= item.clienteNombre %> — <%= item.tipoSubsidio %></strong>
                     <span><%= item.detalle %></span>
                 </a>

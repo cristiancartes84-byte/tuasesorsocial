@@ -8,6 +8,60 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
     <%- include('../partials/dashboard-styles') %>
+    <style>
+        .slot-opt { position: relative; }
+        .slot-opt input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+        .slot-opt span {
+            display: block;
+            padding: 0.55rem 1rem;
+            border-radius: 10px;
+            border: 1.5px solid #dbeafe;
+            background: #f8fafc;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        .slot-opt:hover span { background: #eff6ff; border-color: #2563eb; }
+        .slot-opt input:checked + span { background: linear-gradient(135deg, #2563eb 0%, #059669 100%); color: #fff; border-color: transparent; }
+        .slot-opt input:focus-visible + span { outline: 3px solid #93c5fd; outline-offset: 2px; }
+
+        .reserva-form { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; }
+        .reserva-form label { display: block; font-weight: 700; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem; }
+        .reserva-form textarea {
+            width: 100%; min-height: 96px; padding: 0.75rem 0.9rem; border: 1.5px solid #e2e8f0;
+            border-radius: 12px; font: inherit; font-size: 0.9rem; resize: vertical; color: #1f2937; background: #fff;
+        }
+        .reserva-form textarea:focus { outline: none; border-color: #2563eb; }
+        .reserva-ayuda { font-size: 0.78rem; color: #94a3b8; margin: 0.3rem 0 1rem; }
+        .abono-aviso {
+            background: #fffbeb; border: 1px solid #fde68a; color: #92400e;
+            border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5;
+        }
+        .btn-reservar {
+            border: none; cursor: pointer; font: inherit; font-weight: 700; font-size: 0.95rem; color: #fff;
+            padding: 0.8rem 1.6rem; border-radius: 12px; background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+        }
+        .btn-reservar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .cita-card { border: 1px solid #e2e8f0; border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 0.9rem; background: #fff; }
+        .cita-card:last-child { margin-bottom: 0; }
+        .cita-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+        .cita-estado { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 100px; font-size: 0.72rem; font-weight: 700; margin-top: 0.35rem; }
+        .cita-estado.ok { background: #d1fae5; color: #065f46; }
+        .cita-estado.espera { background: #fef3c7; color: #92400e; }
+        .cita-estado.revision { background: #dbeafe; color: #1e40af; }
+        .cita-motivo { font-size: 0.82rem; color: #64748b; margin-top: 0.5rem; }
+        .pago-box { background: #f8fafc; border-radius: 12px; padding: 0.9rem 1rem; margin-top: 0.9rem; }
+        .pago-box h3 { font-size: 0.9rem; color: #1f2937; margin-bottom: 0.2rem; }
+        .pago-box p.small { font-size: 0.8rem; color: #64748b; margin-bottom: 0.7rem; }
+        .pago-dato { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.35rem 0; border-bottom: 1px dashed #e2e8f0; font-size: 0.85rem; }
+        .pago-dato:last-of-type { border-bottom: none; }
+        .pago-dato span { color: #64748b; }
+        .pago-dato strong { color: #1f2937; word-break: break-all; text-align: right; }
+        .btn-copiar { border: none; background: #e0e7ff; color: #3730a3; border-radius: 8px; font: inherit; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; cursor: pointer; margin-left: 0.4rem; }
+        .btn-pagado { margin-top: 0.8rem; border: none; cursor: pointer; font: inherit; font-weight: 700; font-size: 0.88rem; color: #fff; padding: 0.65rem 1.2rem; border-radius: 10px; background: #059669; }
+        .pago-nota { font-size: 0.78rem; color: #92400e; margin-top: 0.6rem; }
+    </style>
 </head>
 <body>
     <div class="app-shell">
@@ -26,12 +80,20 @@
                 </div>
             </div>
 
-            <% if (reservado) { %>
+            <% var citaReservada = reservado ? misCitas.find(function (c) { return String(c.id) === String(reservado); }) : null; %>
+            <% if (citaReservada && citaReservada.estado === 'confirmada') { %>
                 <div class="success-banner">✅ Tu hora quedó confirmada. Te enviamos un correo con los detalles.</div>
+            <% } else if (citaReservada) { %>
+                <div class="success-banner">✅ Tu hora quedó reservada. Para confirmarla, realiza la transferencia del abono (más abajo) y luego pulsa “Ya hice la transferencia”.</div>
+            <% } %>
+            <% if (typeof pagoInformado !== 'undefined' && pagoInformado) { %>
+                <div class="success-banner">✅ Avisamos que ya transferiste. Tu trabajadora social revisará el pago y te confirmará la hora por correo.</div>
             <% } %>
             <% if (error) { %>
                 <div class="form-error"><%= error %></div>
             <% } %>
+
+            <% var pagoCfgListo = !!(config.banco && config.numero_cuenta && config.titular); %>
 
             <% if (misCasos.length === 0) { %>
                 <div class="panel">
@@ -47,14 +109,51 @@
                             <h2>Tus próximas horas</h2>
                         </div>
                         <% misCitas.forEach(function (cita) { %>
-                            <div class="cita-row">
-                                <div class="cita-info">
-                                    <strong><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %></strong>
-                                    <span><%= cita.tipo_subsidio || 'Gestión' %> · <%= cita.duracion_minutos %> min</span>
+                            <div class="cita-card">
+                                <div class="cita-card-top">
+                                    <div class="cita-info">
+                                        <strong><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %></strong>
+                                        <span><%= cita.tipo_subsidio || 'Gestión' %> · <%= cita.duracion_minutos %> min</span><br>
+                                        <% if (cita.estado === 'confirmada') { %>
+                                            <span class="cita-estado ok">✓ Confirmada<%= cita.pago_estado === 'recibido' ? ' · abono recibido' : '' %></span>
+                                        <% } else if (cita.pago_estado === 'informado') { %>
+                                            <span class="cita-estado revision">Pago informado · en revisión</span>
+                                        <% } else { %>
+                                            <span class="cita-estado espera">Esperando abono</span>
+                                        <% } %>
+                                    </div>
+                                    <% if (cita.pago_estado !== 'recibido') { %>
+                                        <form method="POST" action="/portal/agenda/<%= cita.id %>/cancelar" onsubmit="return confirm('¿Cancelar esta hora agendada?');">
+                                            <button type="submit" class="btn-delete">Cancelar</button>
+                                        </form>
+                                    <% } %>
                                 </div>
-                                <form method="POST" action="/portal/agenda/<%= cita.id %>/cancelar" onsubmit="return confirm('¿Cancelar esta hora agendada?');">
-                                    <button type="submit" class="btn-delete">Cancelar</button>
-                                </form>
+                                <% if (cita.motivo) { %>
+                                    <div class="cita-motivo"><strong>Consulta:</strong> <%= cita.motivo %></div>
+                                <% } %>
+
+                                <% if (cita.estado === 'pendiente_pago') { %>
+                                    <div class="pago-box">
+                                        <% if (cita.pago_estado === 'pendiente') { %>
+                                            <h3>Transfiere el abono de <%= formatearPesos(cita.monto_reserva) %> para confirmar</h3>
+                                            <p class="small">Es el 50% del valor de la sesión (<%= formatearPesos(cita.monto_total) %>); el resto se paga en la sesión. Usa este código como comentario de la transferencia.</p>
+                                        <% } else { %>
+                                            <h3>Recibimos tu aviso de transferencia</h3>
+                                            <p class="small">Tu trabajadora social verificará que el abono (<%= formatearPesos(cita.monto_reserva) %>) haya llegado y confirmará tu hora. Te avisaremos por correo.</p>
+                                        <% } %>
+                                        <% [['Banco', config.banco], ['Tipo de cuenta', config.tipo_cuenta], ['N° de cuenta', config.numero_cuenta], ['Titular', config.titular], ['RUT', config.rut_titular], ['Correo', config.email_pago]].forEach(function (d) { if (d[1]) { %>
+                                            <div class="pago-dato"><span><%= d[0] %></span><div><strong><%= d[1] %></strong><button type="button" class="btn-copiar" data-copiar="<%= d[1] %>">Copiar</button></div></div>
+                                        <% } }); %>
+                                        <div class="pago-dato"><span>Monto</span><div><strong><%= formatearPesos(cita.monto_reserva) %></strong></div></div>
+                                        <div class="pago-dato"><span>Comentario</span><div><strong>CITA-<%= cita.id %></strong><button type="button" class="btn-copiar" data-copiar="CITA-<%= cita.id %>">Copiar</button></div></div>
+                                        <% if (cita.pago_estado === 'pendiente') { %>
+                                            <form method="POST" action="/portal/agenda/<%= cita.id %>/informar-pago">
+                                                <button type="submit" class="btn-pagado">Ya hice la transferencia</button>
+                                            </form>
+                                            <p class="pago-nota">Tu hora queda retenida hasta el <%= formatearFecha(cita.expira_en) %> Si no se informa el pago, el horario se libera.</p>
+                                        <% } %>
+                                    </div>
+                                <% } %>
                             </div>
                         <% }); %>
                     </div>
@@ -82,25 +181,49 @@
                             Tu trabajadora social todavía no tiene horarios disponibles publicados. Contáctala por WhatsApp si necesitas agendar.
                         </div>
                     <% } else { %>
-                        <% diasConSlots.forEach(function (dia) { %>
-                            <div class="agenda-dia">
-                                <div class="agenda-dia-titulo"><%= formatearDiaLargo(dia.fecha) %></div>
-                                <div class="agenda-slots">
-                                    <% dia.slots.forEach(function (slot) { %>
-                                        <form method="POST" action="/portal/agenda/reservar">
-                                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
-                                            <input type="hidden" name="inicio" value="<%= slot.inicio.toISOString() %>">
-                                            <button type="submit" class="slot-btn"><%= formatearHora(slot.inicio) %></button>
-                                        </form>
-                                    <% }); %>
+                        <form method="POST" action="/portal/agenda/reservar" id="formReserva">
+                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
+                            <% diasConSlots.forEach(function (dia) { %>
+                                <div class="agenda-dia">
+                                    <div class="agenda-dia-titulo"><%= formatearDiaLargo(dia.fecha) %></div>
+                                    <div class="agenda-slots">
+                                        <% dia.slots.forEach(function (slot) { %>
+                                            <label class="slot-opt">
+                                                <input type="radio" name="inicio" value="<%= slot.inicio.toISOString() %>" required>
+                                                <span><%= formatearHora(slot.inicio) %></span>
+                                            </label>
+                                        <% }); %>
+                                    </div>
                                 </div>
+                            <% }); %>
+
+                            <div class="reserva-form">
+                                <label for="motivo">¿De qué trata tu consulta?</label>
+                                <textarea id="motivo" name="motivo" maxlength="500" required placeholder="Cuéntale brevemente a tu trabajadora social qué necesitas revisar en esta sesión."><%= motivo %></textarea>
+                                <p class="reserva-ayuda">Así ella puede preparar la sesión. Máximo 500 caracteres.</p>
+
+                                <% if (montos.reserva > 0 && pagoCfgListo) { %>
+                                    <div class="abono-aviso">
+                                        💳 Para reservar debes abonar el <strong>50%</strong> del valor de la sesión: <strong><%= formatearPesos(montos.reserva) %></strong> (valor total <%= formatearPesos(montos.total) %>). Al reservar verás los datos de transferencia. Tu hora queda retenida <%= horasRetencion %> horas y se confirma cuando tu trabajadora social recibe el abono.
+                                    </div>
+                                <% } %>
+                                <button type="submit" class="btn-reservar">Reservar hora</button>
                             </div>
-                        <% }); %>
+                        </form>
                     <% } %>
                 </div>
             <% } %>
         </div>
     </div>
     <%- include('../partials/modal-cambiar-password') %>
+    <script>
+        document.querySelectorAll('[data-copiar]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var t = b.getAttribute('data-copiar');
+                var ok = function () { var o = b.textContent; b.textContent = '¡Copiado!'; setTimeout(function () { b.textContent = o; }, 1500); };
+                if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function () {});
+            });
+        });
+    </script>
 </body>
 </html>
