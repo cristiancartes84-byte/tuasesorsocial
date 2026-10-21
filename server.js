@@ -440,6 +440,13 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
   res.redirect(`/portal/agenda?reservado=${resultado.citaId}`);
 });
 
+// Estado de las horas del cliente, para que la agenda se actualice sola
+// cuando la trabajadora social confirma un pago (sin recargar a mano).
+app.get('/portal/agenda/estado', requireRole('cliente'), (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(agenda.listarCitasDeUsuario(req.session.usuario.id).map((c) => `${c.id}:${c.estado}:${c.pago_estado}`));
+});
+
 // El cliente avisa que ya transfirió el abono.
 app.post('/portal/agenda/:id/informar-pago', requireRole('cliente'), async (req, res) => {
   const cita = agenda.obtenerCita(req.params.id);
