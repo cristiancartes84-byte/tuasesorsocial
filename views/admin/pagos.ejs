@@ -3,23 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datos de pago | Tu Asesor Social</title>
+    <title>Servicios y datos de pago | Tu Asesor Social</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
+    <style>
+        .srv-row { display: grid; grid-template-columns: minmax(180px, 1.6fr) 150px 130px 100px 130px; gap: 0.75rem; align-items: center; padding: 0.7rem 0; border-bottom: 1px solid #f1f5f9; }
+        .srv-row.head { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; padding-bottom: 0.4rem; }
+        .srv-row:last-child { border-bottom: none; }
+        .srv-nombre { display: flex !important; flex-direction: row !important; align-items: center; margin: 0 !important; gap: 0.6rem; font-weight: 600; color: #1f2937; font-size: 0.92rem; }
+        .srv-nombre input[type=checkbox] { width: 18px !important; min-width: 18px; height: 18px; padding: 0 !important; margin: 0 !important; accent-color: #059669; flex: 0 0 18px; }
+        .srv-row select, .srv-row input[type=text], .srv-row input[type=number] { width: 100%; padding: 0.5rem 0.6rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font: inherit; font-size: 0.88rem; background: #fff; }
+        .srv-row.off { opacity: 0.55; }
+        .srv-row.off .srv-nombre { font-weight: 500; }
+        .srv-abono { font-size: 0.85rem; font-weight: 700; color: #92400e; }
+        .srv-abono.sin { color: #64748b; font-weight: 500; }
+        .srv-etq { display: none; }
+        @media (max-width: 820px) {
+            .srv-row { grid-template-columns: 1fr 1fr; }
+            .srv-row.head { display: none; }
+            .srv-nombre { grid-column: 1 / -1; }
+            .srv-etq { display: block; font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.15rem; }
+        }
+    </style>
 </head>
 <body>
     <header class="app-header">
         <div class="app-header-title">
             <%- include('../partials/brand-mark') %>
-            <h1>Datos de pago y tarifas</h1>
+            <h1>Servicios y datos de pago</h1>
         </div>
         <div class="admin-topbar-right">
             <a href="/admin/citas">&larr; Volver a citas</a>
             <%- include('../partials/admin-topbar') %>
         </div>
     </header>
-    <main class="app-main" style="max-width: 640px;">
+    <main class="app-main" style="max-width: 920px;">
         <% if (error) { %>
             <div class="form-error"><%= error %></div>
         <% } %>
@@ -29,21 +48,43 @@
 
         <form method="POST" action="/admin/pagos" class="stacked">
             <div class="card">
-                <h2>Tarifas por sesión</h2>
+                <h2>Servicios que los clientes pueden agendar</h2>
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                    El cliente debe abonar el <strong><%= porcentaje %>%</strong> para reservar; el resto se paga en la sesión. Si dejas una tarifa en 0, ese tipo de sesión se reserva sin abono (queda confirmada de inmediato).
+                    Marca los servicios que se pueden reservar en línea. Para cada uno define si exige un <strong>abono previo del <%= porcentaje %>%</strong> (el cliente transfiere y tú confirmas la recepción) y su valor. Los servicios sin marcar no aparecen en la agenda de los clientes.
                 </p>
-                <label for="precio_sesion">Valor sesión (subsidios, orientación, etc.) en pesos</label>
-                <input type="text" inputmode="numeric" id="precio_sesion" name="precio_sesion" value="<%= parseInt(config.precio_sesion, 10) || '' %>" placeholder="Ej: 20000">
-
-                <label for="precio_informe">Valor sesión de Informes Sociales (120 min) en pesos</label>
-                <input type="text" inputmode="numeric" id="precio_informe" name="precio_informe" value="<%= parseInt(config.precio_informe, 10) || '' %>" placeholder="Ej: 45000">
+                <div class="srv-row head">
+                    <div>Servicio</div><div>Abono previo</div><div>Valor ($)</div><div>Minutos</div><div>Abono a pagar</div>
+                </div>
+                <% servicios.forEach(function (sv, i) { %>
+                    <div class="srv-row<%= sv.activo ? '' : ' off' %>" data-fila>
+                        <label class="srv-nombre">
+                            <input type="checkbox" name="srv_<%= i %>_activo" value="1" data-activo<%= sv.activo ? ' checked' : '' %>>
+                            <%= sv.nombre %>
+                        </label>
+                        <div>
+                            <span class="srv-etq">Abono previo</span>
+                            <select name="srv_<%= i %>_abono" data-abono>
+                                <option value="1"<%= sv.requiereAbono ? ' selected' : '' %>>Sí, <%= porcentaje %>%</option>
+                                <option value="0"<%= sv.requiereAbono ? '' : ' selected' %>>No requiere</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span class="srv-etq">Valor ($)</span>
+                            <input type="text" inputmode="numeric" name="srv_<%= i %>_precio" value="<%= sv.precio || '' %>" placeholder="Ej: 40000" data-precio>
+                        </div>
+                        <div>
+                            <span class="srv-etq">Minutos</span>
+                            <input type="number" min="15" max="480" step="5" name="srv_<%= i %>_duracion" value="<%= sv.duracion %>">
+                        </div>
+                        <div class="srv-abono" data-calculo></div>
+                    </div>
+                <% }); %>
             </div>
 
             <div class="card">
                 <h2>Datos para la transferencia</h2>
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
-                    Se muestran al cliente al reservar y se envían en el correo de instrucciones. Una reserva queda retenida <%= horasRetencion %> horas esperando el pago.
+                    Se muestran al cliente al reservar un servicio con abono y se envían en el correo de instrucciones. La hora queda retenida <%= minutosRetencion %> minutos esperando la transferencia.
                 </p>
                 <label for="banco">Banco</label>
                 <input type="text" id="banco" name="banco" value="<%= config.banco %>" placeholder="Ej: Banco Estado">
@@ -62,10 +103,36 @@
 
                 <label for="email_pago">Correo para comprobantes (opcional)</label>
                 <input type="email" id="email_pago" name="email_pago" value="<%= config.email_pago %>">
-
-                <button type="submit" class="btn">Guardar</button>
             </div>
+
+            <button type="submit" class="btn">Guardar cambios</button>
         </form>
     </main>
+    <script>
+        (function () {
+            var PORC = <%= porcentaje %>;
+            function pesos(n) { return '$' + n.toLocaleString('es-CL'); }
+            document.querySelectorAll('[data-fila]').forEach(function (fila) {
+                var activo = fila.querySelector('[data-activo]');
+                var abono = fila.querySelector('[data-abono]');
+                var precio = fila.querySelector('[data-precio]');
+                var calc = fila.querySelector('[data-calculo]');
+                function actualizar() {
+                    fila.classList.toggle('off', !activo.checked);
+                    var p = parseInt((precio.value || '').replace(/\D/g, ''), 10) || 0;
+                    if (!activo.checked) { calc.textContent = ''; calc.className = 'srv-abono sin'; return; }
+                    if (abono.value === '1') {
+                        calc.className = 'srv-abono';
+                        calc.textContent = p > 0 ? pesos(Math.round(p * PORC / 100)) : 'Falta el valor';
+                    } else {
+                        calc.className = 'srv-abono sin';
+                        calc.textContent = 'Sin abono';
+                    }
+                }
+                [activo, abono, precio].forEach(function (el) { el.addEventListener('input', actualizar); el.addEventListener('change', actualizar); });
+                actualizar();
+            });
+        })();
+    </script>
 </body>
 </html>

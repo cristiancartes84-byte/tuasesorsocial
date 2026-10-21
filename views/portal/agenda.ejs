@@ -87,6 +87,14 @@
         .btn-copiar { border: none; background: #e0e7ff; color: #3730a3; border-radius: 8px; font: inherit; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; cursor: pointer; margin-left: 0.4rem; }
         .btn-pagado { margin-top: 0.8rem; border: none; cursor: pointer; font: inherit; font-weight: 700; font-size: 0.88rem; color: #fff; padding: 0.65rem 1.2rem; border-radius: 10px; background: #059669; }
         .pago-nota { font-size: 0.78rem; color: #92400e; margin-top: 0.6rem; }
+        .srv-select { width: 100%; max-width: 420px; padding: 0.7rem 0.9rem; border: 1.5px solid #e2e8f0; border-radius: 12px; font: inherit; font-size: 0.92rem; font-weight: 600; color: #1f2937; background: #fff; }
+        .srv-select:focus { outline: none; border-color: #2563eb; }
+        .srv-label { display: block; font-weight: 700; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem; }
+        .srv-info { font-size: 0.83rem; color: #64748b; margin: 0.6rem 0 1.25rem; }
+        .aviso-cierre { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 12px; padding: 0.9rem 1.1rem; font-size: 0.88rem; line-height: 1.5; }
+        .cuenta-regresiva { display: flex; align-items: center; gap: 0.6rem; background: #fef3c7; color: #92400e; border-radius: 12px; padding: 0.6rem 0.9rem; margin-bottom: 0.7rem; font-size: 0.85rem; font-weight: 600; }
+        .cuenta-regresiva .tiempo { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .cita-card.destacada { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18); }
     </style>
 </head>
 <body>
@@ -110,36 +118,28 @@
             <% if (citaReservada && citaReservada.estado === 'confirmada') { %>
                 <div class="success-banner">✅ Tu hora quedó confirmada. Te enviamos un correo con los detalles.</div>
             <% } else if (citaReservada) { %>
-                <div class="success-banner">✅ Tu hora quedó reservada. Para confirmarla, realiza la transferencia del abono (más abajo) y luego pulsa “Ya hice la transferencia”.</div>
+                <div class="success-banner">✅ Tu hora está reservada por <%= minutosRetencion %> minutos. Realiza la transferencia del abono (datos abajo) y pulsa “Ya hice la transferencia”. Tu trabajadora social confirmará el pago y la hora quedará tuya.</div>
             <% } %>
-            <% if (typeof pagoInformado !== 'undefined' && pagoInformado) { %>
+            <% if (pagoInformado) { %>
                 <div class="success-banner">✅ Avisamos que ya transferiste. Tu trabajadora social revisará el pago y te confirmará la hora por correo.</div>
             <% } %>
             <% if (error) { %>
                 <div class="form-error"><%= error %></div>
             <% } %>
 
-            <% var pagoCfgListo = !!(config.banco && config.numero_cuenta && config.titular); %>
-
-            <% if (misCasos.length === 0) { %>
-                <div class="panel">
-                    <div class="empty-state">
-                        Todavía no tienes una gestión registrada en el portal.
-                        <br>Cuando tu trabajadora social cree tu caso, podrás agendar una sesión aquí.
-                    </div>
-                </div>
-            <% } else { %>
+            
+            <% { %>
                 <% if (misCitas.length > 0) { %>
                     <div class="panel" style="margin-bottom: 1.5rem;">
                         <div class="panel-header">
                             <h2>Tus próximas horas</h2>
                         </div>
                         <% misCitas.forEach(function (cita) { %>
-                            <div class="cita-card">
+                            <div class="cita-card<%= cita.estado === 'pendiente_pago' && cita.pago_estado === 'pendiente' ? ' destacada' : '' %>" id="cita-<%= cita.id %>">
                                 <div class="cita-card-top">
                                     <div class="cita-info">
                                         <strong><%= formatearDiaLargo(cita.fecha_inicio) %>, <%= formatearHora(cita.fecha_inicio) %></strong>
-                                        <span><%= cita.tipo_subsidio || 'Gestión' %> · <%= cita.duracion_minutos %> min</span><br>
+                                        <span><%= cita.servicio || cita.tipo_subsidio || 'Gestión' %> · <%= cita.duracion_minutos %> min</span><br>
                                         <% if (cita.estado === 'confirmada') { %>
                                             <span class="cita-estado ok">✓ Confirmada<%= cita.pago_estado === 'recibido' ? ' · abono recibido' : '' %></span>
                                         <% } else if (cita.pago_estado === 'informado') { %>
@@ -155,12 +155,13 @@
                                     <% } %>
                                 </div>
                                 <% if (cita.motivo) { %>
-                                    <div class="cita-motivo"><strong>Consulta:</strong> <%= cita.motivo %></div>
+                                    <div class="cita-motivo"><strong>Tu consulta:</strong> <%= cita.motivo %></div>
                                 <% } %>
 
                                 <% if (cita.estado === 'pendiente_pago') { %>
                                     <div class="pago-box">
                                         <% if (cita.pago_estado === 'pendiente') { %>
+                                            <div class="cuenta-regresiva" data-expira="<%= cita.expira_en.replace(' ', 'T') %>Z">⏱ Tu hora está retenida por <span class="tiempo">--:--</span></div>
                                             <h3>Transfiere el abono de <%= formatearPesos(cita.monto_reserva) %> para confirmar</h3>
                                             <p class="small">Es el 50% del valor de la sesión (<%= formatearPesos(cita.monto_total) %>); el resto se paga en la sesión. Usa este código como comentario de la transferencia.</p>
                                         <% } else { %>
@@ -176,7 +177,7 @@
                                             <form method="POST" action="/portal/agenda/<%= cita.id %>/informar-pago">
                                                 <button type="submit" class="btn-pagado">Ya hice la transferencia</button>
                                             </form>
-                                            <p class="pago-nota">Tu hora queda retenida hasta el <%= formatearFecha(cita.expira_en) %> Si no se informa el pago, el horario se libera.</p>
+                                            <p class="pago-nota">Si no pulsas el botón dentro del tiempo indicado, el horario se libera para otras personas.</p>
                                         <% } %>
                                     </div>
                                 <% } %>
@@ -190,19 +191,25 @@
                         <h2>Agendar una nueva hora</h2>
                     </div>
 
-                    <% if (misCasos.length > 1) { %>
-                        <div class="caso-selector">
-                            <% misCasos.forEach(function (c) { %>
-                                <a href="/portal/agenda?caso_id=<%= c.id %>" class="caso-pill<%= c.id === casoSeleccionado.id ? ' active' : '' %>"><%= c.tipo_subsidio %></a>
+                    <% if (reservaHabilitada) { %>
+                        <label class="srv-label" for="servicioSel">¿Qué servicio necesitas?</label>
+                        <select id="servicioSel" class="srv-select" onchange="location.href='/portal/agenda?servicio=' + encodeURIComponent(this.value)">
+                            <% servicios.forEach(function (sv) { %>
+                                <option value="<%= sv %>"<%= sv === servicioSeleccionado ? ' selected' : '' %>><%= sv %></option>
                             <% }); %>
-                        </div>
+                        </select>
+                        <p class="srv-info">
+                            Sesión de <strong><%= duracion %> minutos</strong><% if (montos.total > 0) { %> · valor <strong><%= formatearPesos(montos.total) %></strong><% } %>
+                            <% if (montos.requiereAbono) { %> · para reservar abonas el <strong>50% (<%= formatearPesos(montos.reserva) %>)</strong> por transferencia<% } else { %> · <strong>sin abono previo</strong>: la hora queda confirmada al reservar<% } %>.
+                            Elige un día y una hora (hora de Santiago de Chile):
+                        </p>
                     <% } %>
 
-                    <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1.25rem;">
-                        Para <strong><%= casoSeleccionado.tipo_subsidio %></strong>, cada sesión dura aproximadamente <strong><%= duracion %> minutos</strong>. Elige un horario disponible (hora de Santiago de Chile):
-                    </p>
-
-                    <% if (diasConSlots.length === 0) { %>
+                    <% if (!reservaHabilitada) { %>
+                        <div class="aviso-cierre">
+                            La reserva en línea todavía no está habilitada. Escríbele a tu trabajadora social por WhatsApp para coordinar tu hora.
+                        </div>
+                    <% } else if (diasConSlots.length === 0) { %>
                         <div class="empty-state">
                             Tu trabajadora social todavía no tiene horarios disponibles publicados. Contáctala por WhatsApp si necesitas agendar.
                         </div>
@@ -241,28 +248,32 @@
                         </div>
 
                         <form method="POST" action="/portal/agenda/reservar" id="formReserva" class="resumen">
-                            <input type="hidden" name="caso_id" value="<%= casoSeleccionado.id %>">
+                            <input type="hidden" name="servicio" value="<%= servicioSeleccionado %>">
                             <input type="hidden" name="inicio" id="inicioInput" value="">
                             <div class="resumen-top">
                                 <div>
                                     <div class="resumen-fecha" id="resFecha"></div>
                                     <div class="resumen-det" id="resDet"></div>
                                 </div>
-                                <% if (montos.reserva > 0 && pagoCfgListo) { %>
+                                <% if (montos.requiereAbono) { %>
                                     <span class="resumen-badge">Abono 50%: <%= formatearPesos(montos.reserva) %></span>
+                                <% } else { %>
+                                    <span class="resumen-badge" style="background: #d1fae5; color: #065f46;">Sin abono previo</span>
                                 <% } %>
                             </div>
                             <div class="reserva-form" style="margin-top: 0; padding-top: 0; border-top: none;">
-                                <label for="motivo">¿De qué trata tu consulta?</label>
-                                <textarea id="motivo" name="motivo" maxlength="500" required placeholder="Cuéntale brevemente a tu trabajadora social qué necesitas revisar en esta sesión."><%= motivo %></textarea>
+                                <label for="detalle">Cuéntanos tus dudas o qué quieres lograr con la asesoría <span style="font-weight: 500; color: #94a3b8;">(opcional)</span></label>
+                                <textarea id="detalle" name="detalle" maxlength="500" placeholder="Ej: quiero postular al subsidio y no sé qué documentos necesito."><%= detalle %></textarea>
                                 <p class="reserva-ayuda">Así ella puede preparar la sesión. Máximo 500 caracteres.</p>
 
-                                <% if (montos.reserva > 0 && pagoCfgListo) { %>
+                                <% if (montos.requiereAbono) { %>
                                     <div class="abono-aviso">
-                                        💳 Para reservar debes abonar el <strong>50%</strong> del valor de la sesión: <strong><%= formatearPesos(montos.reserva) %></strong> (valor total <%= formatearPesos(montos.total) %>). Al reservar verás los datos de transferencia. Tu hora queda retenida <%= horasRetencion %> horas y se confirma cuando tu trabajadora social recibe el abono.
+                                        💳 Al pulsar <strong>Reservar</strong> te mostraremos los datos para transferir el abono de <strong><%= formatearPesos(montos.reserva) %></strong> (50% de <%= formatearPesos(montos.total) %>). Tu hora quedará <strong>pendiente por <%= minutosRetencion %> minutos</strong>; cuando tu trabajadora social confirme que recibió la transferencia, la hora queda confirmada y tomada para ti.
                                     </div>
+                                    <button type="submit" class="btn-reservar">Reservar y ver datos de transferencia</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn-reservar">Reservar hora</button>
                                 <% } %>
-                                <button type="submit" class="btn-reservar">Reservar hora</button>
                             </div>
                         </form>
 
@@ -349,7 +360,7 @@
                                 var sl = dia.slots.filter(function (s) { return s.iso === iso; })[0];
                                 document.getElementById('inicioInput').value = iso;
                                 document.getElementById('resFecha').textContent = dia.etiqueta + ', ' + sl.hora;
-                                document.getElementById('resDet').textContent = '<%= casoSeleccionado.tipo_subsidio %> · ' + duracion + ' min (hasta las ' + sl.fin + ')';
+                                document.getElementById('resDet').textContent = <%- JSON.stringify(servicioSeleccionado) %> + ' · ' + duracion + ' min (hasta las ' + sl.fin + ')';
                                 form.classList.add('activo');
                                 pintarSlots();
                                 form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -379,6 +390,17 @@
     </div>
     <%- include('../partials/modal-cambiar-password') %>
     <script>
+        document.querySelectorAll('[data-expira]').forEach(function (el) {
+            var fin = new Date(el.getAttribute('data-expira')).getTime();
+            var t = el.querySelector('.tiempo');
+            function tick() {
+                var resta = Math.max(0, Math.round((fin - Date.now()) / 1000));
+                t.textContent = Math.floor(resta / 60) + ':' + ('0' + (resta % 60)).slice(-2);
+                if (resta <= 0) { clearInterval(iv); location.href = '/portal/agenda'; }
+            }
+            var iv = setInterval(tick, 1000);
+            tick();
+        });
         document.querySelectorAll('[data-copiar]').forEach(function (b) {
             b.addEventListener('click', function () {
                 var t = b.getAttribute('data-copiar');
