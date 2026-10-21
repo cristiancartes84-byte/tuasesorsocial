@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Disparar deploy en Coolify
         run: |
-          curl --fail --silent --show-error -X GET "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
+          curl --fail --silent --show-error -X POST "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
