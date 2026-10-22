@@ -7,6 +7,28 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
+    <style>
+        .inf-estado { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 100px; }
+        .inf-estado.borrador { background: #dbeafe; color: #1e40af; }
+        .inf-estado.cambios_solicitados { background: #fef3c7; color: #92400e; }
+        .inf-estado.aprobado { background: #d1fae5; color: #065f46; }
+        .inf-estado.oficial { background: #065f46; color: #fff; }
+        .inf-estado.reemplazado { background: #f1f5f9; color: #64748b; }
+        .inf-fila { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; padding: 0.7rem 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .inf-fila:last-child { border-bottom: none; }
+        .inf-fila a { font-weight: 600; }
+        .inf-coment { font-size: 0.84rem; color: #475569; background: #f8fafc; border-radius: 10px; padding: 0.6rem 0.8rem; margin-top: 0.35rem; white-space: pre-wrap; }
+        .inf-aviso { border-radius: 12px; padding: 0.85rem 1.1rem; font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; }
+        .inf-aviso.ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-weight: 600; }
+        .inf-aviso.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .inf-destacado { border: 2px solid #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12); }
+        .inf-opciones { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 0.9rem 0; }
+        .inf-opciones label { flex: 1 1 220px; display: flex !important; flex-direction: row !important; align-items: center; gap: 0.6rem; margin: 0 !important; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+        .inf-opciones input[type=radio] { width: 18px !important; min-width: 18px; height: 18px; padding: 0 !important; margin: 0 !important; flex: 0 0 18px; }
+        .inf-opciones label:has(input:checked) { border-color: #2563eb; background: #eff6ff; }
+        .inf-confirma { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.8rem; }
+        .inf-confirma p { font-size: 0.82rem; color: #64748b; margin-bottom: 0.5rem; }
+    </style>
 </head>
 <body>
     <header class="app-header">
@@ -33,6 +55,96 @@
                 </span>
             </p>
         </div>
+
+        <% var hayInforme = borrador || oficial; %>
+        <% if (hayInforme || informeOk) { %>
+            <div class="card<%= borrador && borrador.estado === 'borrador' && !oficial ? ' inf-destacado' : '' %>" id="informe">
+                <h2>📄 Tu informe de <%= caso.tipo_subsidio %></h2>
+
+                <% if (informeOk === 'cambios') { %>
+                    <div class="inf-aviso ok">✅ Enviamos tus comentarios. Tu trabajadora social subirá una nueva versión y te avisaremos.</div>
+                <% } %>
+
+                <% if (oficial) { %>
+                    <div class="inf-aviso ok">✅ Tu informe oficial, firmado con firma electrónica, ya está disponible.</div>
+                    <div class="inf-fila">
+                        <span>📄 <a href="/portal/informes/<%= oficial.id %>/descargar" target="_blank" rel="noopener">Descargar informe oficial — <%= oficial.nombre_original %></a></span>
+                        <span class="inf-estado oficial">Oficial firmado</span>
+                    </div>
+                <% } else if (borrador && borrador.estado === 'borrador') { %>
+                    <div class="inf-aviso info">
+                        Tu trabajadora social subió el <strong>borrador (versión <%= borrador.version %>)</strong> de tu informe. Revísalo con calma: lleva una marca de agua porque aún no es el documento oficial. Cuando estés conforme, da tu visto bueno; si algo debe corregirse, cuéntanos qué cambiar.
+                    </div>
+                    <div class="inf-fila">
+                        <span>📝 <a href="/portal/informes/<%= borrador.id %>/descargar" target="_blank" rel="noopener">Abrir borrador versión <%= borrador.version %></a>
+                            <span class="meta" style="color:#64748b;font-size:0.8rem;">· <%= formatearFecha(borrador.creado_en) %></span></span>
+                        <span class="inf-estado borrador">Esperando tu revisión</span>
+                    </div>
+
+                    <form class="stacked" method="POST" action="/portal/casos/<%= caso.id %>/informes/<%= borrador.id %>/responder" id="formInforme" style="margin-top: 0.6rem;">
+                        <div class="inf-opciones">
+                            <label><input type="radio" name="accion" value="aprobar" required> ✅ Estoy conforme (visto bueno)</label>
+                            <label><input type="radio" name="accion" value="cambios" required> ✏️ Necesito cambios</label>
+                        </div>
+
+                        <label for="informeComentario" id="comentarioEtiqueta">Comentarios (opcional)</label>
+                        <textarea id="informeComentario" name="comentario" maxlength="1000" placeholder="Cuéntanos tus comentarios sobre el informe..."></textarea>
+
+                        <div class="inf-confirma" id="bloqueConfirma" style="display: none;">
+                            <p>🔒 Para registrar tu visto bueno, confirma tu identidad con tu RUT y la contraseña de tu cuenta.</p>
+                            <label for="informeRut">Tu RUT</label>
+                            <input type="text" id="informeRut" name="rut" autocomplete="username" placeholder="12.345.678-9">
+                            <label for="informePassword">Tu contraseña</label>
+                            <input type="password" id="informePassword" name="password" autocomplete="current-password">
+                        </div>
+
+                        <button type="submit" class="btn" id="btnInforme">Enviar</button>
+                    </form>
+                <% } else if (borrador && borrador.estado === 'cambios_solicitados') { %>
+                    <div class="inf-aviso info">Enviaste tus comentarios sobre la versión <%= borrador.version %>. Tu trabajadora social subirá una nueva versión y te avisaremos.</div>
+                <% } else if (borrador && borrador.estado === 'aprobado') { %>
+                    <div class="inf-aviso ok">✅ Diste tu visto bueno a la versión <%= borrador.version %> (<%= formatearFecha(borrador.respondido_en) %>). Tu trabajadora social está preparando el informe oficial firmado y te avisaremos cuando esté listo.</div>
+                <% } %>
+
+                <% if (versionesInforme.length > 1) { %>
+                    <details style="margin-top: 1rem;">
+                        <summary style="cursor: pointer; font-size: 0.85rem; color: #64748b;">Ver versiones anteriores del borrador</summary>
+                        <% versionesInforme.filter(function (v) { return v.id !== (borrador && borrador.id); }).forEach(function (v) { %>
+                            <div class="inf-fila" style="display:block;">
+                                <div style="display:flex;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+                                    <span>📝 Versión <%= v.version %> · <%= formatearFecha(v.creado_en) %></span>
+                                    <span class="inf-estado <%= v.estado %>"><%= v.estado === 'reemplazado' ? 'Reemplazada' : 'Revisada' %></span>
+                                </div>
+                                <% if (v.comentario_cliente) { %><div class="inf-coment"><strong>Tu comentario:</strong> <%= v.comentario_cliente %></div><% } %>
+                            </div>
+                        <% }); %>
+                    </details>
+                <% } %>
+            </div>
+            <script>
+                (function () {
+                    var form = document.getElementById('formInforme');
+                    if (!form) return;
+                    var bloque = document.getElementById('bloqueConfirma');
+                    var rut = document.getElementById('informeRut');
+                    var pass = document.getElementById('informePassword');
+                    var comentario = document.getElementById('informeComentario');
+                    var etiqueta = document.getElementById('comentarioEtiqueta');
+                    var boton = document.getElementById('btnInforme');
+                    function actualizar() {
+                        var accion = (form.querySelector('input[name=accion]:checked') || {}).value;
+                        var aprueba = accion === 'aprobar';
+                        bloque.style.display = aprueba ? 'block' : 'none';
+                        rut.required = pass.required = aprueba;
+                        comentario.required = accion === 'cambios';
+                        etiqueta.textContent = accion === 'cambios' ? 'Cuéntanos qué cambios necesitas' : 'Comentarios (opcional)';
+                        boton.textContent = aprueba ? 'Confirmar mi visto bueno' : accion === 'cambios' ? 'Enviar mis cambios' : 'Enviar';
+                    }
+                    form.addEventListener('change', actualizar);
+                    actualizar();
+                })();
+            </script>
+        <% } %>
 
         <div class="card">
             <h2>Notas de tu trabajadora social</h2>
