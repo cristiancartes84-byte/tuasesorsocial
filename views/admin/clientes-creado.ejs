@@ -29,7 +29,8 @@
                 </p>
             <% } else { %>
                 <div class="form-error">
-                    No se pudo enviar el correo de bienvenida (revisa la configuración de correo). Entrega estas credenciales al cliente manualmente:
+                    No se pudo enviar el correo de bienvenida. Entrega estas credenciales al cliente manualmente:
+                    <% if (typeof motivoFallo !== 'undefined' && motivoFallo) { %><br><small><strong>Motivo:</strong> <%= motivoFallo %></small><% } %>
                 </div>
             <% } %>
 

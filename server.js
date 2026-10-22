@@ -548,6 +548,7 @@ app.post('/admin/clientes/nuevo', requireRole('trabajador_social'), async (req, 
     rut: rut.normalizar(rutInput),
     passwordTemporal,
     correoEnviado: enviado,
+    motivoFallo: enviado ? null : mailer.motivoUltimoFallo(),
     usuarioId,
   });
 });
