@@ -7,6 +7,28 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <%- include('../partials/app-styles') %>
+    <style>
+        .inf-estado { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 100px; }
+        .inf-estado.borrador { background: #dbeafe; color: #1e40af; }
+        .inf-estado.cambios_solicitados { background: #fef3c7; color: #92400e; }
+        .inf-estado.aprobado { background: #d1fae5; color: #065f46; }
+        .inf-estado.oficial { background: #065f46; color: #fff; }
+        .inf-estado.reemplazado { background: #f1f5f9; color: #64748b; }
+        .inf-fila { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; padding: 0.7rem 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .inf-fila:last-child { border-bottom: none; }
+        .inf-fila a { font-weight: 600; }
+        .inf-coment { font-size: 0.84rem; color: #475569; background: #f8fafc; border-radius: 10px; padding: 0.6rem 0.8rem; margin-top: 0.35rem; white-space: pre-wrap; }
+        .inf-aviso { border-radius: 12px; padding: 0.85rem 1.1rem; font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; }
+        .inf-aviso.ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-weight: 600; }
+        .inf-aviso.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .inf-destacado { border: 2px solid #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12); }
+        .inf-opciones { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 0.9rem 0; }
+        .inf-opciones label { flex: 1 1 220px; display: flex !important; flex-direction: row !important; align-items: center; gap: 0.6rem; margin: 0 !important; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+        .inf-opciones input[type=radio] { width: 18px !important; min-width: 18px; height: 18px; padding: 0 !important; margin: 0 !important; flex: 0 0 18px; }
+        .inf-opciones label:has(input:checked) { border-color: #2563eb; background: #eff6ff; }
+        .inf-confirma { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.8rem; }
+        .inf-confirma p { font-size: 0.82rem; color: #64748b; margin-bottom: 0.5rem; }
+    </style>
 </head>
 <body>
     <header class="app-header">
@@ -43,6 +65,62 @@
                 </select>
                 <button type="submit" class="btn">Guardar hito y notificar al cliente</button>
             </form>
+        </div>
+
+        <div class="card" id="informe">
+            <h2>Informe para el cliente</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                Tipo de informe: <strong><%= caso.tipo_subsidio %></strong>. Sube primero un <strong>borrador en PDF</strong>: el sistema le estampa la marca de agua "TU ASESOR SOCIAL" en todas las páginas y se lo muestra al cliente para que lo revise. Cuando el cliente da su visto bueno, subes el informe oficial firmado.
+            </p>
+            <% if (informeError) { %><div class="form-error"><%= informeError %></div><% } %>
+            <% if (informeOk) { %><div class="inf-aviso ok">✅ <%= informeOk %></div><% } %>
+
+            <% if (oficial) { %>
+                <div class="inf-aviso ok">✅ El informe oficial firmado ya fue entregado al cliente.</div>
+            <% } %>
+
+            <% if (versionesInforme.length === 0 && !oficial) { %>
+                <div class="empty-state">Todavía no has subido ningún borrador para este caso.</div>
+            <% } else { %>
+                <% if (oficial) { %>
+                    <div class="inf-fila">
+                        <span>📄 <a href="/admin/informes/<%= oficial.id %>/descargar" target="_blank" rel="noopener">Informe oficial — <%= oficial.nombre_original %></a>
+                            <span class="meta" style="color:#64748b;font-size:0.8rem;">· <%= formatearFecha(oficial.creado_en) %></span></span>
+                        <span class="inf-estado oficial">Oficial firmado</span>
+                    </div>
+                <% } %>
+                <% versionesInforme.forEach(function (v) { %>
+                    <div class="inf-fila" style="display:block;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                            <span>📝 <a href="/admin/informes/<%= v.id %>/descargar" target="_blank" rel="noopener">Borrador versión <%= v.version %></a>
+                                <span class="meta" style="color:#64748b;font-size:0.8rem;">· <%= formatearFecha(v.creado_en) %></span></span>
+                            <span class="inf-estado <%= v.estado %>"><%= v.estado === 'borrador' ? 'Esperando al cliente' : v.estado === 'cambios_solicitados' ? 'Cliente pidió cambios' : v.estado === 'aprobado' ? 'Aprobado por el cliente' : 'Reemplazado por versión nueva' %></span>
+                        </div>
+                        <% if (v.comentario_cliente) { %><div class="inf-coment"><strong>Comentario del cliente:</strong> <%= v.comentario_cliente %></div><% } %>
+                        <% if (v.estado === 'aprobado' && v.respondido_en) { %>
+                            <div class="meta" style="color:#047857;font-size:0.8rem;margin-top:0.3rem;">Visto bueno confirmado con RUT y contraseña el <%= formatearFecha(v.respondido_en) %> (RUT <%= v.rut_confirmacion %>).</div>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% } %>
+
+            <% if (!oficial) { %>
+                <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/informe/borrador" enctype="multipart/form-data" style="margin-top: 1.1rem;">
+                    <label for="informeBorrador"><%= borrador ? 'Subir una nueva versión del borrador' : 'Subir borrador del informe' %> (PDF, máx. 15 MB)</label>
+                    <input type="file" id="informeBorrador" name="informe" accept="application/pdf,.pdf" required>
+                    <button type="submit" class="btn">Subir borrador con marca de agua y avisar al cliente</button>
+                </form>
+
+                <% if (borrador && borrador.estado === 'aprobado') { %>
+                    <form class="stacked" method="POST" action="/admin/casos/<%= caso.id %>/informe/oficial" enctype="multipart/form-data" style="margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid #e2e8f0;" onsubmit="return confirm('Se entregará al cliente el informe oficial tal como está (sin marca de agua). ¿Continuar?');">
+                        <label for="informeOficial">El cliente dio su visto bueno: sube el informe oficial firmado con firma electrónica (PDF, máx. 15 MB)</label>
+                        <input type="file" id="informeOficial" name="informe" accept="application/pdf,.pdf" required>
+                        <button type="submit" class="btn">Entregar informe oficial al cliente</button>
+                    </form>
+                <% } else if (borrador) { %>
+                    <p style="margin-top: 1rem; font-size: 0.84rem; color: #94a3b8;">El informe oficial se podrá subir cuando el cliente dé su visto bueno a la última versión del borrador.</p>
+                <% } %>
+            <% } %>
         </div>
 
         <div class="card">

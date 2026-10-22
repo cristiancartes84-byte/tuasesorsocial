@@ -18,6 +18,7 @@ const { upload, rutaArchivo, uploadFotoPerfil, PERFILES_DIR } = require('./lib/u
 const { obtenerQrSitio } = require('./lib/qr');
 const { formatearFecha, fechaHoyLarga, formatearDiaLargo, formatearHora, construirFechaSantiago } = require('./lib/fechas');
 const agenda = require('./lib/agenda');
+const informes = require('./lib/informes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -250,8 +251,68 @@ app.get('/portal/casos/:id', requireRole('cliente'), (req, res) => {
     notas: casos.listarNotas(caso.id, { soloVisibles: true }),
     solicitudes: casos.listarSolicitudesDeCaso(caso.id),
     respuestas: casos.listarRespuestasGenerales(caso.id),
+    borrador: informes.ultimoBorrador(caso.id),
+    oficial: informes.obtenerOficial(caso.id),
+    versionesInforme: informes.listarInformesDeCaso(caso.id).filter((i) => !i.es_oficial),
+    informeOk: req.query.informe === 'ok' ? req.query.accion || 'ok' : null,
     error: req.query.error || null,
   });
+});
+
+// Visto bueno o solicitud de cambios sobre el último borrador del informe. El
+// visto bueno exige RUT y contraseña (se verifican contra la cuenta en sesión)
+// para dejar constancia de que lo confirma el propio cliente.
+app.post('/portal/casos/:casoId/informes/:informeId/responder', requireRole('cliente'), loginLimiter, async (req, res) => {
+  const caso = casos.obtenerCaso(req.params.casoId);
+  if (!caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Caso no encontrado</h1>');
+  }
+  const volver = (query) => res.redirect(`/portal/casos/${caso.id}?${query}#informe`);
+  const informe = informes.obtenerInforme(req.params.informeId);
+  if (!informe || informe.caso_id !== caso.id || informe.es_oficial) {
+    return res.status(404).send('<h1>Informe no encontrado</h1>');
+  }
+  const vigente = informes.ultimoBorrador(caso.id);
+  if (!vigente || vigente.id !== informe.id || informe.estado !== 'borrador') {
+    return volver('error=' + encodeURIComponent('Este borrador ya no está disponible para responder. Recarga la página para ver la versión vigente.'));
+  }
+
+  const aprueba = req.body.accion === 'aprobar';
+  const comentario = (req.body.comentario || '').trim().slice(0, 1000);
+  if (!aprueba && !comentario) {
+    return volver('error=' + encodeURIComponent('Cuéntanos qué cambios necesitas en el informe.'));
+  }
+
+  if (aprueba) {
+    const usuarioVerificado = autenticar(req.body.rut || '', req.body.password || '');
+    if (!usuarioVerificado || usuarioVerificado.id !== req.session.usuario.id) {
+      return volver('error=' + encodeURIComponent('El RUT o la contraseña no coinciden con tu cuenta. El visto bueno no fue registrado.'));
+    }
+  }
+
+  informes.responderBorrador({ informe, aprueba, comentario, rutConfirmacion: req.session.usuario.rut });
+  const resumen = aprueba
+    ? `Dio su visto bueno al borrador del informe (versión ${informe.version}).${comentario ? ' Comentario: ' + comentario : ''}`
+    : `Solicitó cambios al borrador del informe (versión ${informe.version}): ${comentario}`;
+  casos.crearRespuestaCliente(caso.id, req.session.usuario.id, resumen, null);
+  if (aprueba) {
+    casos.actualizarHito(caso.id, 'Informe aprobado por el cliente', req.session.usuario.id);
+  }
+  for (const trabajador of casos.listarTrabajadoresSociales()) {
+    await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
+  }
+  volver(`informe=ok&accion=${aprueba ? 'aprobado' : 'cambios'}`);
+});
+
+// El cliente solo puede ver informes de sus propios casos: el borrador vigente
+// (con marca de agua) y el oficial firmado.
+app.get('/portal/informes/:id/descargar', requireRole('cliente'), (req, res) => {
+  const informe = informes.obtenerInforme(req.params.id);
+  const caso = informe && casos.obtenerCaso(informe.caso_id);
+  if (!informe || !caso || caso.usuario_id !== req.session.usuario.id) {
+    return res.status(404).send('<h1>Informe no encontrado</h1>');
+  }
+  enviarPdf(res, informe);
 });
 
 app.post('/portal/casos/:id/responder', requireRole('cliente'), async (req, res) => {
@@ -339,6 +400,16 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
   }
   res.download(rutaArchivo(documento), documento.nombre_original);
 });
+
+// Entrega un informe en el navegador (no como descarga forzada) para que se
+// pueda revisar en pantalla; el nombre sugerido es el del archivo original.
+function enviarPdf(res, informe) {
+  const nombre = informe.es_oficial ? informe.nombre_original : `borrador-v${informe.version}-${informe.nombre_original}`;
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(nombre)}`);
+  res.setHeader('Cache-Control', 'private, no-store');
+  res.sendFile(informes.rutaInforme(informe));
+}
 
 // Datos comunes de la vista de agenda del cliente.
 function datosAgendaCliente(req, servicioElegido, extra = {}) {
@@ -653,7 +724,56 @@ app.get('/admin/casos/:id', requireRole('trabajador_social'), (req, res) => {
     notas: casos.listarNotas(caso.id),
     solicitudes: casos.listarSolicitudesDeCaso(caso.id),
     respuestas: casos.listarRespuestasGenerales(caso.id),
+    versionesInforme: informes.listarInformesDeCaso(caso.id).filter((i) => !i.es_oficial),
+    borrador: informes.ultimoBorrador(caso.id),
+    oficial: informes.obtenerOficial(caso.id),
+    informeError: req.query.informeError || null,
+    informeOk: req.query.informeOk || null,
   });
+});
+
+function subirInformeAdmin(tipo) {
+  return [
+    requireRole('trabajador_social'),
+    (req, res, next) => {
+      informes.subirPdf.single('informe')(req, res, (err) => {
+        if (err) {
+          const mensaje = err.code === 'LIMIT_FILE_SIZE' ? 'El PDF supera el máximo de 15 MB.' : err.message;
+          return res.redirect(`/admin/casos/${req.params.id}?informeError=${encodeURIComponent(mensaje)}#informe`);
+        }
+        next();
+      });
+    },
+    async (req, res) => {
+      const caso = casos.obtenerCaso(req.params.id);
+      if (!caso) return res.status(404).send('<h1>Caso no encontrado</h1>');
+      const volver = (query) => res.redirect(`/admin/casos/${caso.id}?${query}#informe`);
+      if (!req.file) return volver('informeError=' + encodeURIComponent('Selecciona el archivo PDF del informe.'));
+      try {
+        const datos = { caso, bytes: req.file.buffer, nombreOriginal: req.file.originalname, subidoPor: req.session.usuario.id };
+        if (tipo === 'borrador') {
+          const informe = await informes.subirBorrador(datos);
+          casos.actualizarHito(caso.id, 'Borrador del informe disponible para tu revisión', req.session.usuario.id);
+          await mailer.avisarInformeBorrador(caso.cliente_email, caso.cliente_nombre, caso.tipo_subsidio, informe.version);
+          return volver(`informeOk=${encodeURIComponent(`Borrador versión ${informe.version} subido con marca de agua. Se avisó al cliente.`)}`);
+        }
+        await informes.subirOficial(datos);
+        casos.actualizarHito(caso.id, 'Informe oficial firmado entregado', req.session.usuario.id);
+        await mailer.avisarInformeOficial(caso.cliente_email, caso.cliente_nombre, caso.tipo_subsidio);
+        return volver(`informeOk=${encodeURIComponent('Informe oficial entregado. Se avisó al cliente.')}`);
+      } catch (err) {
+        return volver('informeError=' + encodeURIComponent(err.message));
+      }
+    },
+  ];
+}
+app.post('/admin/casos/:id/informe/borrador', ...subirInformeAdmin('borrador'));
+app.post('/admin/casos/:id/informe/oficial', ...subirInformeAdmin('oficial'));
+
+app.get('/admin/informes/:id/descargar', requireRole('trabajador_social'), (req, res) => {
+  const informe = informes.obtenerInforme(req.params.id);
+  if (!informe) return res.status(404).send('<h1>Informe no encontrado</h1>');
+  enviarPdf(res, informe);
 });
 
 app.post('/admin/casos/:id/hito', requireRole('trabajador_social'), async (req, res) => {

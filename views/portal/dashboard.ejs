@@ -64,6 +64,8 @@
                             <span class="dot"></span>
                             <% if (item.tipo === 'documento') { %>
                                 Falta subir <strong><%= item.texto %></strong> (<%= item.faltan %> pendiente<%= item.faltan > 1 ? 's' : '' %>) en <%= item.tipoSubsidio %>
+                            <% } else if (item.tipo === 'informe') { %>
+                                Revisa y da tu visto bueno al <strong><%= item.texto %></strong> de <%= item.tipoSubsidio %>
                             <% } else { %>
                                 Tienes una pregunta sin responder en <strong><%= item.tipoSubsidio %></strong>
                             <% } %>
