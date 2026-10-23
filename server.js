@@ -298,8 +298,8 @@ app.post('/portal/casos/:casoId/informes/:informeId/responder', requireRole('cli
   if (aprueba) {
     casos.actualizarHito(caso.id, 'Informe aprobado por el cliente', req.session.usuario.id);
   }
-  for (const trabajador of casos.listarTrabajadoresSociales()) {
-    await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
+  for (const emailAdmin of correosAdmin()) {
+    await mailer.avisarRespuestaCliente(emailAdmin, caso.cliente_nombre, caso.id);
   }
   volver(`informe=ok&accion=${aprueba ? 'aprobado' : 'cambios'}`);
 });
@@ -325,8 +325,8 @@ app.post('/portal/casos/:id/responder', requireRole('cliente'), async (req, res)
   const notaId = req.body.nota_id || null;
   if (texto) {
     casos.crearRespuestaCliente(caso.id, req.session.usuario.id, texto, notaId);
-    for (const trabajador of casos.listarTrabajadoresSociales()) {
-      await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
+    for (const emailAdmin of correosAdmin()) {
+      await mailer.avisarRespuestaCliente(emailAdmin, caso.cliente_nombre, caso.id);
     }
   }
 
@@ -384,8 +384,8 @@ app.post('/portal/casos/:casoId/solicitudes/:solicitudId/subir', requireRole('cl
     casos.marcarSolicitudCompletada(solicitud.id);
   }
 
-  for (const trabajador of casos.listarTrabajadoresSociales()) {
-    await mailer.avisarRespuestaCliente(trabajador.email, caso.cliente_nombre, caso.id);
+  for (const emailAdmin of correosAdmin()) {
+    await mailer.avisarRespuestaCliente(emailAdmin, caso.cliente_nombre, caso.id);
   }
 
   res.redirect(`/portal/casos/${caso.id}`);
@@ -400,6 +400,15 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
   }
   res.download(rutaArchivo(documento), documento.nombre_original);
 });
+
+// Destinatarios de los avisos internos: el correo de cada trabajadora social
+// registrada, más los de la variable AVISOS_EMAIL (separados por coma) si se
+// quiere que lleguen también a otra bandeja.
+function correosAdmin() {
+  const correos = new Set(casos.listarTrabajadoresSociales().map((t) => (t.email || '').trim()).filter(Boolean));
+  (process.env.AVISOS_EMAIL || '').split(',').map((e) => e.trim()).filter(Boolean).forEach((e) => correos.add(e));
+  return [...correos];
+}
 
 // Entrega un informe en el navegador (no como descarga forzada) para que se
 // pueda revisar en pantalla; el nombre sugerido es el del archivo original.
@@ -512,8 +521,8 @@ app.post('/portal/agenda/reservar', requireRole('cliente'), async (req, res) => 
   } else {
     await mailer.confirmarCitaCliente(req.session.usuario.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion);
   }
-  for (const trabajador of casos.listarTrabajadoresSociales()) {
-    await mailer.avisarNuevaCitaAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, duracion, detalle, pago, servicio);
+  for (const emailAdmin of correosAdmin()) {
+    await mailer.avisarNuevaCitaAdmin(emailAdmin, req.session.usuario.nombre, fechaFmt, horaFmt, duracion, detalle, pago, servicio);
   }
 
   res.redirect(`/portal/agenda?reservado=${resultado.citaId}`);
@@ -536,8 +545,8 @@ app.post('/portal/agenda/:id/informar-pago', requireRole('cliente'), async (req,
     agenda.informarPago(cita.id);
     const fechaFmt = formatearDiaLargo(cita.fecha_inicio);
     const horaFmt = formatearHora(cita.fecha_inicio);
-    for (const trabajador of casos.listarTrabajadoresSociales()) {
-      await mailer.avisarPagoInformadoAdmin(trabajador.email, req.session.usuario.nombre, fechaFmt, horaFmt, cita.monto_reserva);
+    for (const emailAdmin of correosAdmin()) {
+      await mailer.avisarPagoInformadoAdmin(emailAdmin, req.session.usuario.nombre, fechaFmt, horaFmt, cita.monto_reserva);
     }
   }
   res.redirect('/portal/agenda?pago=informado');
@@ -849,6 +858,22 @@ app.post('/admin/documentos/:id/revision', requireRole('trabajador_social'), (re
   const estado = req.body.estado === 'aprobado' ? 'aprobado' : 'rechazado';
   casos.actualizarEstadoDocumento(documento.id, estado);
   res.redirect(`/admin/casos/${documento.caso_id}`);
+});
+
+// Envía un correo de prueba a los destinatarios de avisos y muestra el
+// resultado, para comprobar que los avisos a la trabajadora social llegan.
+app.get('/admin/correo-prueba', requireRole('trabajador_social'), async (req, res) => {
+  const destinos = correosAdmin();
+  const resultados = [];
+  for (const destino of destinos) {
+    const ok = await mailer.enviar({
+      to: destino,
+      subject: 'Prueba de avisos — Tu Asesor Social',
+      text: 'Este es un correo de prueba. Si lo ves, los avisos del portal (transferencias, reservas, respuestas) te van a llegar a esta dirección.',
+    });
+    resultados.push(`${destino}: ${ok ? 'enviado' : 'FALLÓ — ' + (mailer.motivoUltimoFallo() || 'motivo desconocido')}`);
+  }
+  res.type('text/plain; charset=utf-8').send(`Correo de prueba\n\n${resultados.join('\n') || 'No hay destinatarios registrados.'}\n\nSi dice "enviado" y no lo ves, revisa Spam.`);
 });
 
 app.get('/admin/perfil', requireRole('trabajador_social'), (req, res) => {
