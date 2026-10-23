@@ -405,7 +405,14 @@ app.get('/portal/documentos/:id/descargar', requireRole('cliente'), (req, res) =
 // registrada, más los de la variable AVISOS_EMAIL (separados por coma) si se
 // quiere que lleguen también a otra bandeja.
 function correosAdmin() {
-  const correos = new Set(casos.listarTrabajadoresSociales().map((t) => (t.email || '').trim()).filter(Boolean));
+  const dominioPropio = (process.env.MAIL_FROM || 'francis@tuasesorsocial.cl').split('@')[1];
+  const gmailSistema = (process.env.GMAIL_USER || '').trim();
+  const correos = new Set(casos.listarTrabajadoresSociales()
+    .map((t) => (t.email || '').trim())
+    // Las casillas del propio dominio se reenvían al Gmail del sistema: si
+    // existe, el aviso va directo ahí en vez de duplicarse.
+    .filter((e) => e && !(gmailSistema && dominioPropio && e.toLowerCase().endsWith('@' + dominioPropio.toLowerCase()))));
+  if (gmailSistema) correos.add(gmailSistema);
   (process.env.AVISOS_EMAIL || '').split(',').map((e) => e.trim()).filter(Boolean).forEach((e) => correos.add(e));
   return [...correos];
 }
@@ -869,6 +876,7 @@ app.get('/admin/correo-prueba', requireRole('trabajador_social'), async (req, re
     const ok = await mailer.enviar({
       to: destino,
       subject: 'Prueba de avisos — Tu Asesor Social',
+      interno: true,
       text: 'Este es un correo de prueba. Si lo ves, los avisos del portal (transferencias, reservas, respuestas) te van a llegar a esta dirección.',
     });
     resultados.push(`${destino}: ${ok ? 'enviado' : 'FALLÓ — ' + (mailer.motivoUltimoFallo() || 'motivo desconocido')}`);
