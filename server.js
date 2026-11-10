@@ -1153,6 +1153,10 @@ app.get('/gestion-de-subsidios-estatales/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'gestion-de-subsidios-estatales.html'));
 });
 
+app.get('/pension-de-alimentos/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'pension-de-alimentos.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
