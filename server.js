@@ -1157,6 +1157,10 @@ app.get('/pension-de-alimentos/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'pension-de-alimentos.html'));
 });
 
+app.get('/aumento-rebaja-pension-de-alimentos/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'aumento-rebaja-pension-de-alimentos.html'));
+});
+
 app.get('/guias/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'guias.html'));
 });
