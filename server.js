@@ -1157,6 +1157,10 @@ app.get('/pension-de-alimentos/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'pension-de-alimentos.html'));
 });
 
+app.get('/guias/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'guias.html'));
+});
+
 // Sitemap y robots
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
